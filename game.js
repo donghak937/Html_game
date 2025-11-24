@@ -342,17 +342,8 @@ function harvestMushroom(slotIndex) {
     if (mushroomEl) {
         mushroomEl.classList.add('harvest-animation');
 
-        // 포인트 팝업
-        const popup = document.createElement('div');
-        popup.className = 'points-popup';
-        popup.textContent = `+${mushroom.value}`;
-        popup.style.left = '50%';
-        popup.style.top = '50%';
-        slot.appendChild(popup);
-
         setTimeout(() => {
             mushroomEl.remove();
-            popup.remove();
         }, 500);
     }
 
