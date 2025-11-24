@@ -54,7 +54,7 @@ export function Collection({ collection }) {
                 boxShadow: '0 4px 15px rgba(0,0,0,0.05)'
             }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
-                    <span style={{ fontWeight: 'bold' }}>도감 완성도</span>
+                    <span style={{ fontWeight: 'bold', color: '#2d3436' }}>도감 완성도</span>
                     <span style={{ fontWeight: 'bold', color: '#6c5ce7' }}>{completionPercentage}%</span>
                 </div>
                 <div style={{ height: '10px', background: '#dfe6e9', borderRadius: '5px', overflow: 'hidden' }}>
@@ -72,7 +72,8 @@ export function Collection({ collection }) {
                 display: 'flex',
                 gap: '8px',
                 flexWrap: 'wrap',
-                marginBottom: '20px'
+                marginBottom: '20px',
+                justifyContent: 'center'
             }}>
                 {['all', 'discovered', 'undiscovered', 'common', 'rare', 'epic', 'legendary', 'mythic'].map(f => {
                     const labels = {
@@ -137,7 +138,6 @@ export function Collection({ collection }) {
                                 border: `2px solid ${getRarityColor(mushroom.rarity)}`,
                                 boxShadow: isDiscovered ? `0 0 15px ${getRarityColor(mushroom.rarity)}40` : 'none',
                                 opacity: isDiscovered ? 1 : 0.5,
-                                filter: isDiscovered ? 'none' : 'grayscale(100%)',
                                 cursor: isDiscovered ? 'pointer' : 'default'
                             }}
                         >

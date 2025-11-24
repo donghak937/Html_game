@@ -93,8 +93,8 @@ function App() {
             }}>
               {getRarityProbabilities().map(({ rarity, probability }) => (
                 <div key={rarity} style={{ textAlign: 'center' }}>
-                  <div style={{ fontWeight: 'bold', textTransform: 'capitalize' }}>{rarity}</div>
-                  <div>{probability}%</div>
+                  <div style={{ fontWeight: 'bold', textTransform: 'capitalize', color: '#2d3436' }}>{rarity}</div>
+                  <div style={{ color: '#2d3436' }}>{probability}%</div>
                 </div>
               ))}
             </div>
