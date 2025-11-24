@@ -211,16 +211,16 @@ export function Collection({ collection }) {
                         </div>
                         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '10px', marginTop: '20px', padding: '15px', background: '#f8f9fa', borderRadius: '10px' }}>
                             <div style={{ textAlign: 'center' }}>
-                                <div style={{ fontSize: '0.8em', color: '#636e72', marginBottom: '5px' }}>가치</div>
-                                <div style={{ fontWeight: 'bold' }}>💰 {selectedPlant.value}</div>
+                                <div style={{ fontSize: '0.8em', color: '#2d3436', marginBottom: '5px' }}>가치</div>
+                                <div style={{ fontWeight: 'bold', color: '#2d3436' }}>💰 {selectedPlant.value}</div>
                             </div>
                             <div style={{ textAlign: 'center' }}>
-                                <div style={{ fontSize: '0.8em', color: '#636e72', marginBottom: '5px' }}>등장 확률</div>
-                                <div style={{ fontWeight: 'bold' }}>🎲 {((selectedPlant.weight / allMushrooms.reduce((sum, m) => sum + m.weight, 0)) * 100).toFixed(2)}%</div>
+                                <div style={{ fontSize: '0.8em', color: '#2d3436', marginBottom: '5px' }}>등장 확률</div>
+                                <div style={{ fontWeight: 'bold', color: '#2d3436' }}>🎲 {((selectedPlant.weight / allMushrooms.reduce((sum, m) => sum + m.weight, 0)) * 100).toFixed(2)}%</div>
                             </div>
                             <div style={{ textAlign: 'center' }}>
-                                <div style={{ fontSize: '0.8em', color: '#636e72', marginBottom: '5px' }}>수확 횟수</div>
-                                <div style={{ fontWeight: 'bold' }}>🌱 {selectedPlant.collectionData.count}번</div>
+                                <div style={{ fontSize: '0.8em', color: '#2d3436', marginBottom: '5px' }}>수확 횟수</div>
+                                <div style={{ fontWeight: 'bold', color: '#2d3436' }}>📈 {selectedPlant.collectionData.count}번</div>
                             </div>
                         </div>
                         <button
