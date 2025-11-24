@@ -68,7 +68,16 @@ export function Collection({ collection }) {
             </div>
 
             {/* Filters */}
-            <div style={{ display: 'flex', gap: '8px', overflowX: 'auto', paddingBottom: '10px', marginBottom: '10px' }}>
+            <div style={{
+                display: 'flex',
+                gap: '8px',
+                overflowX: 'auto',
+                paddingBottom: '10px',
+                marginBottom: '10px',
+                scrollbarWidth: 'none',
+                msOverflowStyle: 'none'
+            }}
+                className="rarity-filter">
                 {['all', 'discovered', 'undiscovered', 'common', 'rare', 'epic', 'legendary', 'mythic'].map(f => {
                     const labels = {
                         all: '전체',

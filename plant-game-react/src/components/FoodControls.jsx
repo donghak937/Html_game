@@ -72,7 +72,7 @@ export function FoodControls({ gold, foodState, onActivateFood, onCancelFood }) 
     const foodOptions = [
         { id: '3min-free', name: '🆓 3분 무료', info: '느림 (0.5x)', cost: 0, color: 'linear-gradient(135deg, #a8e6cf 0%, #3dccc7 100%)' },
         { id: '1min', name: '⚡ 1분 속도', info: '빠름 (2x)', cost: 200, color: 'linear-gradient(135deg, #ff9a9e 0%, #ff6b6b 100%)' },
-        { id: '5min', name: '🌱 5분 보통', info: '보통 (1x)', cost: 50, color: 'linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%)' },
+        { id: '5min', name: '🌱 5분 보통', info: '보통 (1x)', cost: 150, color: 'linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%)' },
         { id: '10min', name: '🌳 10분 장기', info: '느림 (0.7x)', cost: 350, color: 'linear-gradient(135deg, #95e1d3 0%, #38ada9 100%)' }
     ];
 

@@ -300,3 +300,4 @@ h1 {
 .collection-grid::-webkit-scrollbar {  
     display: none;  
 } 
+.rarity-filter::-webkit-scrollbar { display: none; } 
