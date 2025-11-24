@@ -1,0 +1,313 @@
+{
+    "mushrooms": [
+        {
+            "emoji": "🍄",
+            "value": 10,
+            "rarity": "common",
+            "weight": 50,
+            "description": "일반 버섯",
+            "flavorText": "가장 흔하게 볼 수 있는 붉은 버섯입니다. 숲속 어디서나 잘 자라며, 초보 농부들에게 친숙한 친구입니다."
+        },
+        {
+            "emoji": "🍄‍🟫",
+            "value": 12,
+            "rarity": "common",
+            "weight": 45,
+            "description": "갈색 버섯",
+            "flavorText": "차분한 갈색을 띠는 버섯입니다. 그늘진 곳을 좋아하며, 깊은 흙냄새가 납니다."
+        },
+        {
+            "emoji": "🌰",
+            "value": 15,
+            "rarity": "common",
+            "weight": 40,
+            "description": "밤",
+            "flavorText": "가을의 정취를 담은 알밤입니다. 단단한 껍질 속에 고소한 맛을 숨기고 있습니다."
+        },
+        {
+            "emoji": "🥜",
+            "value": 18,
+            "rarity": "common",
+            "weight": 35,
+            "description": "땅콩",
+            "flavorText": "땅속에서 자라나는 고소한 땅콩입니다. 둘이서 껍질 하나를 나눠 쓰고 있는 모습이 귀엽습니다."
+        },
+        {
+            "emoji": "🌾",
+            "value": 20,
+            "rarity": "common",
+            "weight": 30,
+            "description": "벼",
+            "flavorText": "황금빛으로 익어가는 벼입니다. 고개를 숙일 줄 아는 겸손함을 가르쳐 줍니다."
+        },
+        {
+            "emoji": "🍃",
+            "value": 22,
+            "rarity": "rare",
+            "weight": 25,
+            "description": "나뭇잎",
+            "flavorText": "바람에 살랑이는 푸른 나뭇잎입니다. 숲의 싱그러운 기운을 머금고 있습니다."
+        },
+        {
+            "emoji": "🍀",
+            "value": 25,
+            "rarity": "rare",
+            "weight": 20,
+            "description": "클로버",
+            "flavorText": "행운을 가져다준다는 네 잎 클로버입니다. 발견하는 사람에게 좋은 일이 생길지도 모릅니다."
+        },
+        {
+            "emoji": "🌿",
+            "value": 28,
+            "rarity": "rare",
+            "weight": 18,
+            "description": "허브",
+            "flavorText": "향긋한 향기를 내뿜는 허브입니다. 마음을 편안하게 해주는 치유의 힘이 있습니다."
+        },
+        {
+            "emoji": "🍓",
+            "value": 30,
+            "rarity": "rare",
+            "weight": 16,
+            "description": "딸기",
+            "flavorText": "새콤달콤한 붉은 딸기입니다. 봄의 시작을 알리는 사랑스러운 과일입니다."
+        },
+        {
+            "emoji": "🍒",
+            "value": 32,
+            "rarity": "rare",
+            "weight": 15,
+            "description": "체리",
+            "flavorText": "탐스러운 붉은 체리입니다. 쌍둥이처럼 붙어 있는 모습이 앙증맞습니다."
+        },
+        {
+            "emoji": "🍑",
+            "value": 35,
+            "rarity": "rare",
+            "weight": 14,
+            "description": "복숭아",
+            "flavorText": "부드러운 털로 덮인 분홍빛 복숭아입니다. 한 입 베어 물면 달콤한 과즙이 흘러나옵니다."
+        },
+        {
+            "emoji": "🍊",
+            "value": 38,
+            "rarity": "rare",
+            "weight": 13,
+            "description": "귤",
+            "flavorText": "상큼한 비타민이 가득한 귤입니다. 겨울철 따뜻한 이불 속에서 까먹기 딱 좋습니다."
+        },
+        {
+            "emoji": "🍋",
+            "value": 40,
+            "rarity": "rare",
+            "weight": 12,
+            "description": "레몬",
+            "flavorText": "보기만 해도 침이 고이는 노란 레몬입니다. 톡 쏘는 상큼함이 정신을 번쩍 들게 합니다."
+        },
+        {
+            "emoji": "🍌",
+            "value": 42,
+            "rarity": "rare",
+            "weight": 11,
+            "description": "바나나",
+            "flavorText": "길쭉하고 달콤한 바나나입니다. 원숭이들이 가장 좋아하는 간식입니다."
+        },
+        {
+            "emoji": "🍉",
+            "value": 45,
+            "rarity": "epic",
+            "weight": 10,
+            "description": "수박",
+            "flavorText": "여름의 대표 과일 수박입니다. 시원한 줄무늬와 붉은 속살이 더위를 잊게 해줍니다."
+        },
+        {
+            "emoji": "🍇",
+            "value": 48,
+            "rarity": "epic",
+            "weight": 9,
+            "description": "포도",
+            "flavorText": "보랏빛 알갱이가 주렁주렁 매달린 포도입니다. 풍요와 다산을 상징합니다."
+        },
+        {
+            "emoji": "🍎",
+            "value": 50,
+            "rarity": "epic",
+            "weight": 8,
+            "description": "사과",
+            "flavorText": "백설공주도 반할 만큼 탐스러운 붉은 사과입니다. 아침에 먹으면 금이라고 합니다."
+        },
+        {
+            "emoji": "🍏",
+            "value": 52,
+            "rarity": "epic",
+            "weight": 7,
+            "description": "청사과",
+            "flavorText": "풋풋하고 싱그러운 초록빛 청사과입니다. 아삭한 식감과 새콤한 맛이 일품입니다."
+        },
+        {
+            "emoji": "🍐",
+            "value": 55,
+            "rarity": "epic",
+            "weight": 6,
+            "description": "배",
+            "flavorText": "시원하고 달콤한 과즙이 가득한 배입니다. 목이 마를 때 최고의 갈증 해소제입니다."
+        },
+        {
+            "emoji": "🥝",
+            "value": 58,
+            "rarity": "epic",
+            "weight": 5,
+            "description": "키위",
+            "flavorText": "새콤달콤한 초록색 보석, 키위입니다. 작지만 영양가가 매우 풍부합니다."
+        },
+        {
+            "emoji": "🥥",
+            "value": 60,
+            "rarity": "epic",
+            "weight": 4,
+            "description": "코코넛",
+            "flavorText": "단단한 껍질 속에 시원한 물을 품은 코코넛입니다. 열대 해변의 낭만을 떠올리게 합니다."
+        },
+        {
+            "emoji": "🥑",
+            "value": 65,
+            "rarity": "epic",
+            "weight": 4,
+            "description": "아보카도",
+            "flavorText": "숲속의 버터라고 불리는 아보카도입니다. 고소하고 부드러운 맛이 매력적입니다."
+        },
+        {
+            "emoji": "🍍",
+            "value": 70,
+            "rarity": "epic",
+            "weight": 3,
+            "description": "파인애플",
+            "flavorText": "왕관을 쓴 듯한 모습의 파인애플입니다. 겉은 거칠지만 속은 누구보다 달콤합니다."
+        },
+        {
+            "emoji": "🥭",
+            "value": 75,
+            "rarity": "legendary",
+            "weight": 3,
+            "description": "망고",
+            "flavorText": "열대 과일의 여왕 망고입니다. 입안에서 사르르 녹는 부드러운 달콤함이 환상적입니다."
+        },
+        {
+            "emoji": "🍈",
+            "value": 80,
+            "rarity": "legendary",
+            "weight": 2,
+            "description": "멜론",
+            "flavorText": "그물 무늬가 아름다운 멜론입니다. 고급스러운 단맛과 향기가 일품입니다."
+        },
+        {
+            "emoji": "🌻",
+            "value": 85,
+            "rarity": "legendary",
+            "weight": 2,
+            "description": "해바라기",
+            "flavorText": "태양만을 바라보는 일편단심 해바라기입니다. 밝고 긍정적인 에너지를 줍니다."
+        },
+        {
+            "emoji": "🌹",
+            "value": 90,
+            "rarity": "legendary",
+            "weight": 2,
+            "description": "장미",
+            "flavorText": "꽃 중의 여왕 장미입니다. 아름다움 뒤에 날카로운 가시를 숨기고 있습니다."
+        },
+        {
+            "emoji": "🌺",
+            "value": 95,
+            "rarity": "legendary",
+            "weight": 2,
+            "description": "히비스커스",
+            "flavorText": "강렬한 붉은빛의 히비스커스입니다. 화려한 자태로 보는 이의 시선을 사로잡습니다."
+        },
+        {
+            "emoji": "🌸",
+            "value": 100,
+            "rarity": "legendary",
+            "weight": 1,
+            "description": "벚꽃",
+            "flavorText": "봄바람에 흩날리는 벚꽃입니다. 짧지만 가장 아름다운 순간을 선물합니다."
+        },
+        {
+            "emoji": "💐",
+            "value": 110,
+            "rarity": "legendary",
+            "weight": 1,
+            "description": "꽃다발",
+            "flavorText": "다양한 꽃들이 어우러진 꽃다발입니다. 축하와 감사의 마음을 전할 때 제격입니다."
+        },
+        {
+            "emoji": "🌼",
+            "value": 120,
+            "rarity": "legendary",
+            "weight": 1,
+            "description": "데이지",
+            "flavorText": "순수하고 깨끗한 이미지의 데이지입니다. 들판에서 수줍게 피어나는 작은 꽃입니다."
+        },
+        {
+            "emoji": "🌷",
+            "value": 130,
+            "rarity": "legendary",
+            "weight": 1,
+            "description": "튤립",
+            "flavorText": "우아한 자태를 뽐내는 튤립입니다. 다양한 색상만큼이나 다양한 꽃말을 가지고 있습니다."
+        },
+        {
+            "emoji": "🪻",
+            "value": 140,
+            "rarity": "legendary",
+            "weight": 1,
+            "description": "라벤더",
+            "flavorText": "보랏빛 물결과 향기로운 향의 라벤더입니다. 지친 몸과 마음을 편안하게 해줍니다."
+        },
+        {
+            "emoji": "💎",
+            "value": 200,
+            "rarity": "mythic",
+            "weight": 0.5,
+            "description": "다이아몬드",
+            "flavorText": "영원히 변치 않는 보석 다이아몬드입니다. 눈부신 광채가 모든 것을 압도합니다."
+        },
+        {
+            "emoji": "👑",
+            "value": 250,
+            "rarity": "mythic",
+            "weight": 0.3,
+            "description": "왕관",
+            "flavorText": "권위와 명예의 상징 왕관입니다. 진정한 왕만이 이 무게를 견딜 수 있습니다."
+        },
+        {
+            "emoji": "🌟",
+            "value": 300,
+            "rarity": "mythic",
+            "weight": 0.2,
+            "description": "별",
+            "flavorText": "밤하늘을 수놓는 빛나는 별입니다. 누군가의 소원을 들어줄 것만 같습니다."
+        },
+        {
+            "emoji": "✨",
+            "value": 350,
+            "rarity": "mythic",
+            "weight": 0.1,
+            "description": "반짝이는 별",
+            "flavorText": "더욱 강렬하게 빛나는 별입니다. 우주의 신비로운 힘이 깃들어 있습니다."
+        },
+        {
+            "emoji": "🎁",
+            "value": 400,
+            "rarity": "mythic",
+            "weight": 0.05,
+            "description": "선물상자",
+            "flavorText": "무엇이 들어있을지 모르는 설렘 가득한 선물상자입니다. 최고의 행운이 당신을 기다립니다."
+        }
+    ],
+    "settings": {
+        "totalSlots": 25,
+        "baseGrowthInterval": 3000,
+        "growthProbability": 0.3
+    }
+}
