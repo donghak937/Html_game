@@ -110,12 +110,62 @@ function loadFoodState() {
 }
 
 function initGame() {
+    // 오프라인 성장 시뮬레이션
+    processOfflineGrowth();
+
     // 게임 루프 시작
     growthTimer = setInterval(growMushroom, currentInterval);
 
     // 초기 버섯 생성 (먹이 없이는 생성 안됨)
     updateStats();
-    updateShopUI();
+}
+
+// 오프라인 성장 처리
+function processOfflineGrowth() {
+    const lastVisitTime = parseInt(localStorage.getItem('lastVisitTime')) || Date.now();
+    const currentTime = Date.now();
+    const elapsedTime = currentTime - lastVisitTime;
+
+    // 1초 이하면 오프라인 성장 처리 안함
+    if (elapsedTime < 1000) return;
+
+    // 먹이가 활성화되어 있지 않으면 성장 안함
+    if (!foodActive) return;
+
+    // 경과 시간 동안 몇 번 성장 시도가 있었을지 계산
+    const growthAttempts = Math.floor(elapsedTime / currentInterval);
+
+    // 최대 슬롯 수 만큼만 생성
+    const emptySlots = mushrooms
+        .map((m, i) => m === null ? i : -1)
+        .filter(i => i !== -1);
+
+    let mushroomsToCreate = 0;
+
+    // 각 성장 시도마다 확률 계산
+    for (let i = 0; i < growthAttempts && mushroomsToCreate < emptySlots.length; i++) {
+        if (Math.random() <= SETTINGS.growthProbability) {
+            mushroomsToCreate++;
+        }
+    }
+
+    // 오프라인 동안 자란 버섯 생성
+    for (let i = 0; i < mushroomsToCreate && i < emptySlots.length; i++) {
+        const slotIndex = emptySlots[i];
+        const mushroom = getRandomMushroom();
+
+        // 바로 성체로 생성 (오프라인 성장이므로)
+        mushroom.stage = 'adult';
+        mushrooms[slotIndex] = mushroom;
+
+        const slot = document.getElementById(`slot-${slotIndex}`);
+        const mushroomEl = document.createElement('div');
+        mushroomEl.className = `mushroom rarity-${mushroom.rarity}`;
+        mushroomEl.textContent = mushroom.emoji;
+        mushroomEl.onclick = () => harvestMushroom(slotIndex);
+
+        slot.appendChild(mushroomEl);
+    }
 }
 
 function getRandomMushroom() {
@@ -342,5 +392,11 @@ function updateFoodGauge() {
 
 
 
+
 // 페이지 로드 시 초기화
 loadMushroomData();
+
+// 페이지를 떠날 때 타임스탬프 저장
+window.addEventListener('beforeunload', () => {
+    localStorage.setItem('lastVisitTime', Date.now().toString());
+});
