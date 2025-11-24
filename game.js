@@ -60,6 +60,9 @@ function loadGameData() {
     // 먹이 상태 복원
     loadFoodState();
 
+    // 버섯 상태 복원
+    loadMushrooms();
+
     updateStats();
 }
 
@@ -72,6 +75,63 @@ function saveFoodState() {
         currentFoodType
     };
     localStorage.setItem('foodState', JSON.stringify(foodState));
+}
+
+// 버섯 상태 저장
+function saveMushrooms() {
+    // DOM 요소가 아닌 순수 데이터만 저장
+    const mushroomsData = mushrooms.map(m => {
+        if (!m) return null;
+        return {
+            ...m,
+            // DOM 요소 관련 정보는 제외하고 저장
+            element: undefined
+        };
+    });
+    localStorage.setItem('mushrooms', JSON.stringify(mushroomsData));
+}
+
+// 버섯 상태 복원
+function loadMushrooms() {
+    const saved = localStorage.getItem('mushrooms');
+    if (saved) {
+        const savedMushrooms = JSON.parse(saved);
+        // 저장된 데이터가 현재 슬롯 크기와 맞는지 확인
+        if (savedMushrooms.length === totalSlots) {
+            mushrooms = savedMushrooms;
+
+            // UI 복원
+            mushrooms.forEach((m, i) => {
+                if (m) {
+                    const slot = document.getElementById(`slot-${i}`);
+                    slot.innerHTML = ''; // 기존 내용 제거
+
+                    const mushroomEl = document.createElement('div');
+
+                    if (m.stage === 'baby') {
+                        mushroomEl.className = 'mushroom mushroom-baby';
+                        mushroomEl.textContent = '🌱';
+                        mushroomEl.onclick = () => touchBabyMushroom(i);
+
+                        // 성장 타이머 재설정 (남은 시간 계산 필요하지만, 단순화를 위해 다시 전체 시간 대기)
+                        // 더 정확하게 하려면 남은 시간을 저장했어야 함. 
+                        // 여기서는 이미 자라고 있던 중이라면 바로 성체로 만드는 것이 사용자 경험상 나을 수 있음
+                        // 또는 남은 시간을 계산해서 setTimeout 설정
+                        const elapsed = Date.now() - m.growthStartTime;
+                        const remaining = Math.max(0, m.growthDuration - elapsed);
+
+                        setTimeout(() => upgradeToAdult(i), remaining);
+                    } else {
+                        mushroomEl.className = `mushroom rarity-${m.rarity}`;
+                        mushroomEl.textContent = m.emoji;
+                        mushroomEl.onclick = () => harvestMushroom(i);
+                    }
+
+                    slot.appendChild(mushroomEl);
+                }
+            });
+        }
+    }
 }
 
 // 먹이 상태 복원
@@ -167,6 +227,10 @@ function processOfflineGrowth() {
 
         slot.appendChild(mushroomEl);
     }
+
+    if (mushroomsToCreate > 0) {
+        saveMushrooms();
+    }
 }
 
 function getRandomMushroom() {
@@ -210,13 +274,15 @@ function growMushroom() {
     const slot = document.getElementById(`slot-${randomSlot}`);
     const mushroomEl = document.createElement('div');
     mushroomEl.className = 'mushroom mushroom-baby';
-    mushroomEl.textContent = '🍄‍🟫'; // 아기 버섯 이모지
+    mushroomEl.textContent = '🌱'; // 아기 버섯 이모지 (새싹)
     mushroomEl.onclick = () => touchBabyMushroom(randomSlot);
 
     slot.appendChild(mushroomEl);
 
     // 성체로 성장
     setTimeout(() => upgradeToAdult(randomSlot), mushroom.growthDuration);
+
+    saveMushrooms();
 
     // 부스터 사용 완료
     if (hasGrowthBooster) {
@@ -261,6 +327,7 @@ function upgradeToAdult(slotIndex) {
             mushroomEl.classList.add(`rarity-${mushroom.rarity}`);
             mushroomEl.textContent = mushroom.emoji;
             mushroomEl.onclick = () => harvestMushroom(slotIndex);
+            saveMushrooms();
         }, 500);
     }
 }
@@ -292,6 +359,7 @@ function harvestMushroom(slotIndex) {
     gold += mushroom.value;
     harvested++;
     mushrooms[slotIndex] = null;
+    saveMushrooms();
 
     // 도감에 기록
     recordHarvest(mushroom.emoji, mushroom.value);

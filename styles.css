@@ -1,114 +1,114 @@
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+﻿:root {
+    --bg-color: #f0e6d2;
+    --container-bg: rgba(255, 255, 255, 0.9);
+    --primary-color: #8b4513;
+    --accent-color: #2ecc71;
 }
 
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    min-height: 100vh;
+    background-color: var(--bg-color);
+    margin: 0;
+    padding: 0;
     display: flex;
     justify-content: center;
     align-items: center;
-    overflow-x: hidden;
-    padding: 20px;
+    min-height: 100vh;
+    background-image: url('data:image/svg+xml,%3Csvg width=\"60\" height=\"60\" viewBox=\"0 0 60 60\" xmlns=\"http://www.w3.org/2000/svg\"%3E%3Cg fill=\"none\" fill-rule=\"evenodd\"%3E%3Cg fill=\"%23d4c5a9\" fill-opacity=\"0.4\"%3E%3Cpath d=\"M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z\"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E');
 }
 
 .game-container {
-    background: rgba(255, 255, 255, 0.95);
-    border-radius: 30px;
+    background-color: var(--container-bg);
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
     padding: 30px;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-    max-width: 900px;
-    width: 100%;
-}
-
-.header {
+    width: 90%;
+    max-width: 500px;
     text-align: center;
-    margin-bottom: 20px;
+    backdrop-filter: blur(5px);
+    border: 2px solid rgba(255, 255, 255, 0.5);
 }
 
-h1 {
-    font-size: 2.5em;
-    color: #8b4513;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
-    margin-bottom: 10px;
+.header h1 {
+    color: var(--primary-color);
+    margin-bottom: 20px;
+    font-size: 2em;
+    text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.1);
 }
 
 .stats {
     display: flex;
     justify-content: space-around;
+    background: rgba(255, 255, 255, 0.8);
+    padding: 15px;
+    border-radius: 15px;
     margin-bottom: 20px;
-    gap: 15px;
-    flex-wrap: wrap;
+    box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.05);
 }
 
 .stat-box {
-    background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%);
-    padding: 15px 25px;
-    border-radius: 15px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    flex: 1;
-    text-align: center;
-    min-width: 150px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .stat-label {
-    font-size: 0.9em;
-    color: #8b4513;
-    font-weight: bold;
+    font-size: 0.8em;
+    color: #7f8c8d;
+    margin-bottom: 5px;
 }
 
 .stat-value {
-    font-size: 1.8em;
-    color: #d63031;
+    font-size: 1.2em;
     font-weight: bold;
-    margin-top: 5px;
+    color: #2c3e50;
 }
 
-/* 먹이 시스템 */
 .food-system {
-    background: linear-gradient(135deg, #fff5e6 0%, #ffe4b3 100%);
+    background: rgba(255, 255, 255, 0.6);
+    padding: 15px;
     border-radius: 15px;
-    padding: 20px;
-    margin: 20px 0;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
 }
 
 .food-status {
-    text-align: center;
-    font-size: 1.2em;
+    margin-bottom: 10px;
     font-weight: bold;
-    margin-bottom: 15px;
-    color: #6c5ce7;
+    color: #d35400;
 }
 
 .feed-buttons {
     display: flex;
     gap: 10px;
-    flex-wrap: wrap;
     justify-content: center;
+    flex-wrap: wrap;
 }
 
 .feed-btn {
     flex: 1;
-    min-width: 150px;
-    padding: 15px;
+    min-width: 100px;
+    padding: 10px;
     border: none;
-    border-radius: 12px;
+    border-radius: 10px;
     cursor: pointer;
-    transition: all 0.3s;
-    font-weight: bold;
     color: white;
+    transition: transform 0.2s, box-shadow 0.2s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.feed-free {
+    background: linear-gradient(135deg, #a8e6cf 0%, #3dccc7 100%);
 }
 
 .feed-1min {
-    background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+    background: linear-gradient(135deg, #ff9a9e 0%, #ff6b6b 100%);
 }
 
 .feed-5min {
-    background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%);
+    background: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%);
 }
 
 .feed-10min {
@@ -415,32 +415,42 @@ h1 {
 
 /* 희귀도별 스타일 */
 .rarity-common {
-    filter: hue-rotate(0deg);
+    /* 기본 스타일 */
 }
 
 .rarity-rare {
-    filter: hue-rotate(120deg) brightness(1.2);
+    filter: drop-shadow(0 0 2px #3498db);
 }
 
 .rarity-epic {
-    filter: hue-rotate(240deg) brightness(1.3);
+    filter: drop-shadow(0 0 5px #9b59b6);
+    animation: pulse-purple 2s infinite;
 }
 
 .rarity-legendary {
-    filter: hue-rotate(45deg) brightness(1.5) saturate(1.5);
-    animation: shine 2s infinite;
+    filter: drop-shadow(0 0 8px #f1c40f);
+    animation: pulse-yellow 1.5s infinite;
 }
 
-@keyframes shine {
+/* Mythic 등급 애니메이션 (신화) */
+.rarity-mythic {
+    filter: drop-shadow(0 0 10px #e74c3c);
+    animation: pulse-red 1s infinite;
+}
 
-    0%,
-    100% {
-        filter: hue-rotate(45deg) brightness(1.5) saturate(1.5);
-    }
+@keyframes pulse-purple {
+    0%, 100% { filter: drop-shadow(0 0 5px #9b59b6); transform: scale(1); }
+    50% { filter: drop-shadow(0 0 10px #8e44ad); transform: scale(1.05); }
+}
 
-    50% {
-        filter: hue-rotate(60deg) brightness(1.8) saturate(2);
-    }
+@keyframes pulse-yellow {
+    0%, 100% { filter: drop-shadow(0 0 8px #f1c40f); transform: scale(1); }
+    50% { filter: drop-shadow(0 0 15px #f39c12); transform: scale(1.05); }
+}
+
+@keyframes pulse-red {
+    0%, 100% { filter: drop-shadow(0 0 10px #e74c3c); transform: scale(1); }
+    50% { filter: drop-shadow(0 0 20px #c0392b); transform: scale(1.1); }
 }
 
 /* 상점 모달 */
@@ -521,21 +531,4 @@ h1 {
     opacity: 0.5;
     cursor: not-allowed;
 }
-/* Mythic ?�급 ?�니메이??*/
-.rarity-mythic {
-    filter: brightness(1.8) saturate(2);
-    animation: rainbow 3s infinite, pulse 1.5s infinite;
-}
 
-@keyframes rainbow {
-    0% { filter: hue-rotate(0deg) brightness(1.8) saturate(2); }
-    25% { filter: hue-rotate(90deg) brightness(1.9) saturate(2.2); }
-    50% { filter: hue-rotate(180deg) brightness(2) saturate(2.5); }
-    75% { filter: hue-rotate(270deg) brightness(1.9) saturate(2.2); }
-    100% { filter: hue-rotate(360deg) brightness(1.8) saturate(2); }
-}
-
-@keyframes pulse {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.1); }
-}

@@ -41,15 +41,15 @@ function recordHarvest(mushroomEmoji, value) {
             firstDiscoveredAt: null
         };
     }
-    
+
     if (!collection[mushroomEmoji].discovered) {
         collection[mushroomEmoji].discovered = true;
         collection[mushroomEmoji].firstDiscoveredAt = new Date().toISOString();
     }
-    
+
     collection[mushroomEmoji].count++;
     saveCollection(collection);
-    
+
     // 통계 업데이트
     const stats = getStats();
     stats.totalHarvested++;
@@ -82,7 +82,8 @@ function getRarityName(rarity) {
         'common': '일반',
         'rare': '레어',
         'epic': '에픽',
-        'legendary': '레전더리'
+        'legendary': '레전더리',
+        'mythic': '신화'
     };
     return names[rarity] || rarity;
 }
@@ -93,7 +94,8 @@ function getRarityColor(rarity) {
         'common': '#95a5a6',
         'rare': '#3498db',
         'epic': '#9b59b6',
-        'legendary': '#f39c12'
+        'legendary': '#f39c12',
+        'mythic': '#e74c3c'
     };
     return colors[rarity] || '#95a5a6';
 }
