@@ -196,6 +196,9 @@ body {
     gap: 15px;
     padding: 20px;
     z-index: 1;
+    overflow: hidden;
+    max-width: 100%;
+    box-sizing: border-box;
 }
 
 @media (max-width: 768px) {
@@ -559,6 +562,7 @@ body {
     opacity: 0.5;
     cursor: not-allowed;
 }
+
 .feed-free {
     background: linear-gradient(135deg, #a29bfe 0%, #6c5ce7 100%);
 }
