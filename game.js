@@ -52,7 +52,7 @@ async function loadMushroomData() {
 
 function loadGameData() {
     const stats = getStats();
-    gold = stats.totalGold || 0;
+    gold = stats.totalGold || 200;
     harvested = stats.totalHarvested || 0;
     upgradeLevel = parseInt(localStorage.getItem('upgradeLevel')) || 0;
     hasGrowthBooster = localStorage.getItem('hasGrowthBooster') === 'true';
@@ -90,6 +90,7 @@ function loadFoodState() {
 
         // UI 업데이트
         const foodTypes = {
+            '3min-free': { name: '3분 무료 먹이' },
             '1min': { name: '1분 먹이' },
             '5min': { name: '5분 먹이' },
             '10min': { name: '10분 먹이' }
@@ -316,6 +317,7 @@ function updateStats() {
 // 먹이 급여
 function feedMushrooms(foodType) {
     const foodTypes = {
+        '3min-free': { duration: 180000, growthSpeed: 0.5, cost: 0, name: '3분 무료 먹이' },
         '1min': { duration: 60000, growthSpeed: 2.0, cost: 50, name: '1분 먹이' },
         '5min': { duration: 300000, growthSpeed: 1.0, cost: 200, name: '5분 먹이' },
         '10min': { duration: 600000, growthSpeed: 0.7, cost: 350, name: '10분 먹이' }
@@ -374,6 +376,7 @@ function updateFoodGauge() {
 
     // 게이지 바 업데이트
     const foodTypes = {
+        '3min-free': 180000,
         '1min': 60000,
         '5min': 300000,
         '10min': 600000
