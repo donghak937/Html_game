@@ -71,13 +71,9 @@ export function Collection({ collection }) {
             <div style={{
                 display: 'flex',
                 gap: '8px',
-                overflowX: 'auto',
-                paddingBottom: '10px',
-                marginBottom: '10px',
-                scrollbarWidth: 'none',
-                msOverflowStyle: 'none'
-            }}
-                className="rarity-filter">
+                flexWrap: 'wrap',
+                marginBottom: '20px'
+            }}>
                 {['all', 'discovered', 'undiscovered', 'common', 'rare', 'epic', 'legendary', 'mythic'].map(f => {
                     const labels = {
                         all: '전체',
@@ -138,9 +134,9 @@ export function Collection({ collection }) {
                                 borderRadius: '12px',
                                 padding: '15px',
                                 textAlign: 'center',
-                                border: `2px solid ${isDiscovered ? getRarityColor(mushroom.rarity) : '#dfe6e9'}`,
+                                border: `2px solid ${getRarityColor(mushroom.rarity)}`,
                                 boxShadow: isDiscovered ? `0 0 15px ${getRarityColor(mushroom.rarity)}40` : 'none',
-                                opacity: isDiscovered ? 1 : 0.7,
+                                opacity: isDiscovered ? 1 : 0.5,
                                 filter: isDiscovered ? 'none' : 'grayscale(100%)',
                                 cursor: isDiscovered ? 'pointer' : 'default'
                             }}
