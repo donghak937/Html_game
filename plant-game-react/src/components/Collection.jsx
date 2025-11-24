@@ -106,9 +106,7 @@ export function Collection({ collection }) {
             <div style={{
                 display: 'grid',
                 gridTemplateColumns: 'repeat(auto-fill, minmax(100px, 1fr))',
-                gap: '10px',
-                maxHeight: '400px',
-                overflowY: 'auto'
+                gap: '10px'
             }}>
                 {filteredMushrooms.map(mushroom => {
                     const data = collection[mushroom.emoji];
@@ -203,7 +201,7 @@ export function Collection({ collection }) {
                         }}>
                             {getRarityName(selectedPlant.rarity)}
                         </div>
-                        <div style={{ color: '#636e72', marginBottom: '15px', lineHeight: '1.6', fontSize: '0.95em' }}>
+                        <div style={{ color: '#2d3436', marginBottom: '15px', lineHeight: '1.6', fontSize: '0.95em' }}>
                             {selectedPlant.flavorText}
                         </div>
                         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '10px', marginTop: '20px', padding: '15px', background: '#f8f9fa', borderRadius: '10px' }}>
