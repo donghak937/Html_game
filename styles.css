@@ -163,7 +163,16 @@ body {
     color: #6c5ce7;
 }
 
-.log-container { background: linear-gradient(135deg, #a0826d 0%, #6d4c41 100%); border-radius: 20px; padding: 30px; min-height: 400px; position: relative; box-shadow: inset 0 4px 20px rgba(0, 0, 0, 0.3); overflow: hidden; }
+.log-container {
+    background: linear-gradient(135deg, #a0826d 0%, #6d4c41 100%);
+    border-radius: 20px;
+    padding: 30px;
+    min-height: 400px;
+    position: relative;
+    box-shadow: inset 0 4px 20px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+    -webkit-mask-image: -webkit-radial-gradient(white, black);
+}
 
 .log-texture {
     position: absolute;
@@ -431,18 +440,45 @@ body {
 }
 
 @keyframes pulse-purple {
-    0%, 100% { filter: drop-shadow(0 0 5px #9b59b6); transform: scale(1); }
-    50% { filter: drop-shadow(0 0 10px #8e44ad); transform: scale(1.05); }
+
+    0%,
+    100% {
+        filter: drop-shadow(0 0 5px #9b59b6);
+        transform: scale(1);
+    }
+
+    50% {
+        filter: drop-shadow(0 0 10px #8e44ad);
+        transform: scale(1.05);
+    }
 }
 
 @keyframes pulse-yellow {
-    0%, 100% { filter: drop-shadow(0 0 8px #f1c40f); transform: scale(1); }
-    50% { filter: drop-shadow(0 0 15px #f39c12); transform: scale(1.05); }
+
+    0%,
+    100% {
+        filter: drop-shadow(0 0 8px #f1c40f);
+        transform: scale(1);
+    }
+
+    50% {
+        filter: drop-shadow(0 0 15px #f39c12);
+        transform: scale(1.05);
+    }
 }
 
 @keyframes pulse-red {
-    0%, 100% { filter: drop-shadow(0 0 10px #e74c3c); transform: scale(1); }
-    50% { filter: drop-shadow(0 0 20px #c0392b); transform: scale(1.1); }
+
+    0%,
+    100% {
+        filter: drop-shadow(0 0 10px #e74c3c);
+        transform: scale(1);
+    }
+
+    50% {
+        filter: drop-shadow(0 0 20px #c0392b);
+        transform: scale(1.1);
+    }
 }
 
 /* 상점 모달 */
@@ -523,7 +559,3 @@ body {
     opacity: 0.5;
     cursor: not-allowed;
 }
-
-
-
-
