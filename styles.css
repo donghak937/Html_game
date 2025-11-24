@@ -559,3 +559,6 @@ body {
     opacity: 0.5;
     cursor: not-allowed;
 }
+.feed-free {
+    background: linear-gradient(135deg, #a29bfe 0%, #6c5ce7 100%);
+}
