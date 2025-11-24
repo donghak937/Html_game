@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🍄 버섯 재배 키우기 🍄</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="game-container">
+        <div class="header">
+            <h1>🍄 버섯 재배 키우기 🍄</h1>
+        </div>
+
+        <div class="stats">
+            <div class="stat-box">
+                <div class="stat-label">💰 골드</div>
+                <div class="stat-value" id="gold">0</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">🍄 수확한 버섯</div>
+                <div class="stat-value" id="harvested">0</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">⚡ 업그레이드</div>
+                <div class="stat-value" id="upgradeLevel">0</div>
+            </div>
+        </div>
+
+        <!-- 먹이 시스템 -->
+        <div class="food-system">
+            <div class="food-status">
+                <span>🍖 먹이 상태:</span>
+                <span id="foodStatus">먹이 없음</span>
+            </div>
+
+            <!-- 먹이 버튼 -->
+            <div id="feedButtons" class="feed-buttons">
+                <button class="feed-btn feed-1min" onclick="feedMushrooms('1min')">
+                    <div class="feed-name">⚡ 1분 먹이</div>
+                    <div class="feed-info">빠르게 자람 (2x)</div>
+                    <div class="feed-cost">💰 50</div>
+                </button>
+                <button class="feed-btn feed-5min" onclick="feedMushrooms('5min')">
+                    <div class="feed-name">🌱 5분 먹이</div>
+                    <div class="feed-info">보통 속도 (1x)</div>
+                    <div class="feed-cost">💰 200</div>
+                </button>
+                <button class="feed-btn feed-10min" onclick="feedMushrooms('10min')">
+                    <div class="feed-name">🌳 10분 먹이</div>
+                    <div class="feed-info">느리지만 오래 (0.7x)</div>
+                    <div class="feed-cost">💰 350</div>
+                </button>
+            </div>
+
+            <!-- 먹이 게이지 -->
+            <div id="foodGaugeContainer" class="food-gauge-container" style="display: none;">
+                <div class="food-gauge-bar-bg">
+                    <div id="foodGaugeBar" class="food-gauge-bar"></div>
+                </div>
+                <div class="food-time-remaining" id="foodTimeRemaining">0:00</div>
+            </div>
+        </div>
+
+        <div class="log-container">
+            <div class="log-texture"></div>
+            <div class="mushroom-field" id="mushroomField"></div>
+        </div>
+
+        <div class="controls">
+            <a href="shop.html" class="btn btn-shop">🏪 상점</a>
+            <button class="btn" onclick="harvestAll()">🌾 전부 수확</button>
+            <a href="collection.html" class="btn btn-secondary">📚 도감 보기</a>
+        </div>
+
+        <div class="info">
+            💡 먹이를 주면 버섯이 자랍니다! 아기 버섯을 클릭하면 말랑말랑 흔들려요!
+        </div>
+    </div>
+
+    <script src="utils.js"></script>
+    <script src="game.js"></script>
+</body>
+
+</html>

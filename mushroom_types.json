@@ -1,0 +1,44 @@
+{
+  "mushrooms": [
+    {
+      "emoji": "🍄",
+      "value": 10,
+      "rarity": "common",
+      "weight": 50,
+      "description": "일반 버섯"
+    },
+    {
+      "emoji": "🍄‍🟫",
+      "value": 15,
+      "rarity": "common",
+      "weight": 30,
+      "description": "갈색 버섯"
+    },
+    {
+      "emoji": "🌰",
+      "value": 25,
+      "rarity": "rare",
+      "weight": 15,
+      "description": "밤"
+    },
+    {
+      "emoji": "🌻",
+      "value": 50,
+      "rarity": "epic",
+      "weight": 4,
+      "description": "해바라기"
+    },
+    {
+      "emoji": "🌟",
+      "value": 100,
+      "rarity": "legendary",
+      "weight": 1,
+      "description": "별"
+    }
+  ],
+  "settings": {
+    "totalSlots": 24,
+    "baseGrowthInterval": 3000,
+    "growthProbability": 0.3
+  }
+}
