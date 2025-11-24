@@ -521,3 +521,21 @@ h1 {
     opacity: 0.5;
     cursor: not-allowed;
 }
+/* Mythic ?�급 ?�니메이??*/
+.rarity-mythic {
+    filter: brightness(1.8) saturate(2);
+    animation: rainbow 3s infinite, pulse 1.5s infinite;
+}
+
+@keyframes rainbow {
+    0% { filter: hue-rotate(0deg) brightness(1.8) saturate(2); }
+    25% { filter: hue-rotate(90deg) brightness(1.9) saturate(2.2); }
+    50% { filter: hue-rotate(180deg) brightness(2) saturate(2.5); }
+    75% { filter: hue-rotate(270deg) brightness(1.9) saturate(2.2); }
+    100% { filter: hue-rotate(360deg) brightness(1.8) saturate(2); }
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
