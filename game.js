@@ -356,16 +356,19 @@ function harvestMushroom(slotIndex) {
         }, 500);
     }
 
-    gold += mushroom.value;
+    // 인벤토리에 추가 (골드 대신)
+    addToInventory(mushroom.emoji, mushroom.value, mushroom.rarity, mushroom.description);
     harvested++;
     mushrooms[slotIndex] = null;
     saveMushrooms();
 
-    // 도감에 기록
+    //  도감에 기록
     recordHarvest(mushroom.emoji, mushroom.value);
-    updateGold(gold);
 
     updateStats();
+
+    // 인벤토리 추가 알림
+    showNotification('인벤토리에 추가됨!');
 }
 
 function harvestAll() {
@@ -374,6 +377,29 @@ function harvestAll() {
             setTimeout(() => harvestMushroom(i), i * 50);
         }
     }
+}
+
+function showNotification(message) {
+    // 간단한 알림 토스트
+    const toast = document.createElement('div');
+    toast.style.position = 'fixed';
+    toast.style.top = '20px';
+    toast.style.right = '20px';
+    toast.style.background = '#6c5ce7';
+    toast.style.color = 'white';
+    toast.style.padding = '15px 20px';
+    toast.style.borderRadius = '10px';
+    toast.style.boxShadow = '0 4px 15px rgba(0, 0, 0, 0.2)';
+    toast.style.zIndex = '10000';
+    toast.style.animation = 'fadeIn 0.3s';
+    toast.textContent = message;
+
+    document.body.appendChild(toast);
+
+    setTimeout(() => {
+        toast.style.animation = 'fadeOut 0.3s';
+        setTimeout(() => toast.remove(), 300);
+    }, 2000);
 }
 
 function updateStats() {
@@ -459,6 +485,27 @@ function updateFoodGauge() {
     const seconds = Math.floor((remaining % 60000) / 1000);
     document.getElementById('foodTimeRemaining').textContent =
         `${minutes}:${seconds.toString().padStart(2, '0')}`;
+}
+
+// 먹이 취소 (환불 없음)
+function cancelFood() {
+    if (!foodActive) return;
+
+    // 먹이 비활성화
+    foodActive = false;
+    foodGrowthMultiplier = 1.0;
+    currentFoodType = null;
+
+    // 먹이 상태 제거
+    localStorage.removeItem('foodState');
+
+    // UI 업데이트
+    clearInterval(foodGaugeInterval);
+    document.getElementById('foodStatus').textContent = '먹이 없음';
+    document.getElementById('feedButtons').style.display = 'flex';
+    document.getElementById('foodGaugeContainer').style.display = 'none';
+
+    alert('먹이를 취소했습니다 (환불 없음)');
 }
 
 

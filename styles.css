@@ -232,6 +232,7 @@ body {
     justify-content: center;
     align-items: center;
     position: relative;
+    overflow: hidden;
 }
 
 .mushroom {
@@ -531,4 +532,5 @@ body {
     opacity: 0.5;
     cursor: not-allowed;
 }
+
 

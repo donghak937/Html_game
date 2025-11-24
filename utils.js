@@ -99,3 +99,61 @@ function getRarityColor(rarity) {
     };
     return colors[rarity] || '#95a5a6';
 }
+
+// ===== 인벤토리 시스템 =====
+
+// 인벤토리 데이터 가져오기
+function getInventory() {
+    const data = localStorage.getItem('plantInventory');
+    return data ? JSON.parse(data) : {};
+}
+
+// 인벤토리 데이터 저장
+function saveInventory(inventory) {
+    localStorage.setItem('plantInventory', JSON.stringify(inventory));
+}
+
+// 인벤토리에 식물 추가 (스택)
+function addToInventory(emoji, value, rarity, description) {
+    const inventory = getInventory();
+
+    if (!inventory[emoji]) {
+        inventory[emoji] = {
+            emoji,
+            value,
+            rarity,
+            description,
+            count: 0
+        };
+    }
+    inventory[emoji].count++;
+
+    saveInventory(inventory);
+}
+
+// 인벤토리에서 식물 판매
+function sellFromInventory(emoji, quantity) {
+    const inventory = getInventory();
+
+    if (!inventory[emoji] || inventory[emoji].count < quantity) {
+        alert('판매할 수 있는 수량이 부족합니다!');
+        return false;
+    }
+
+    const totalValue = inventory[emoji].value * quantity;
+
+    // 인벤토리에서 차감
+    inventory[emoji].count -= quantity;
+    if (inventory[emoji].count === 0) {
+        delete inventory[emoji];
+    }
+
+    saveInventory(inventory);
+
+    // 골드 추가
+    const stats = getStats();
+    stats.totalGold += totalValue;
+    saveStats(stats);
+
+    return totalValue;
+}

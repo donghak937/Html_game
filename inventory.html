@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎒 인벤토리 - 식물 키우기</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="inventory-styles.css">
+</head>
+
+<body>
+    <div class="game-container">
+        <div class="header">
+            <h1>🎒 인벤토리</h1>
+        </div>
+
+        <div class="stats">
+            <div class="stat-box">
+                <div class="stat-label">💰 골드</div>
+                <div class="stat-value" id="gold">0</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">🌱 보유 식물 종류</div>
+                <div class="stat-value" id="itemTypes">0</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">📦 총 수량</div>
+                <div class="stat-value" id="totalCount">0</div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button class="btn" onclick="sellAll()">💰 전부 판매</button>
+            <a href="index.html" class="btn btn-secondary">🏠 게임으로</a>
+            <a href="collection.html" class="btn btn-secondary">📚 도감</a>
+            <a href="shop.html" class="btn btn-shop">🏪 상점</a>
+        </div>
+
+        <div class="inventory-grid" id="inventoryGrid">
+            <!-- 인벤토리 아이템이 여기에 표시됩니다 -->
+        </div>
+
+        <div class="info">
+            💡 식물을 클릭하면 판매할 수 있습니다!
+        </div>
+    </div>
+
+    <!-- 판매 팝업 모달 -->
+    <div id="sellModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="sellModalTitle">식물 판매</h2>
+                <button class="modal-close" onclick="closeSellModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="sell-item-display">
+                    <div class="sell-item-icon" id="sellItemIcon"></div>
+                    <div class="sell-item-info">
+                        <div class="sell-item-name" id="sellItemName"></div>
+                        <div class="sell-item-value">가치: <span id="sellItemValue"></span>💰</div>
+                        <div class="sell-item-stock">보유: <span id="sellItemStock"></span>개</div>
+                    </div>
+                </div>
+                <div class="quantity-selector">
+                    <label for="sellQuantity">판매 수량:</label>
+                    <div class="quantity-input">
+                        <button onclick="changeQuantity(-1)">-</button>
+                        <input type="number" id="sellQuantity" value="1" min="1">
+                        <button onclick="changeQuantity(1)">+</button>
+                    </div>
+                </div>
+                <div class="sell-total">
+                    총 판매가: <span id="sellTotalValue">0</span>💰
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeSellModal()">취소</button>
+                <button class="btn" onclick="confirmSell()">판매</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="utils.js"></script>
+    <script src="inventory.js"></script>
+</body>
+
+</html>
