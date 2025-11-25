@@ -148,7 +148,7 @@ export function useGame() {
           // Base: 60s, reduces by 3s per upgrade level, min 5s
           const baseGrowthTime = Math.max(60000 - (currentLevel * 3000), 5000);
           let duration = baseGrowthTime;
-          if (currentFood.active) duration /= currentFood.multiplier;
+          // Fertilizer only affects spawn chance, not growth speed
 
           newPlants[randomIndex] = {
             ...selectedType,

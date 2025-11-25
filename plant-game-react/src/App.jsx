@@ -51,30 +51,6 @@ function App() {
       rarityGroups[m.rarity] += m.effectiveWeight;
     });
 
-    return Object.entries(rarityGroups).map(([rarity, weight]) => ({
-      rarity,
-      probability: ((weight / totalWeight) * 100).toFixed(2)
-    }));
-  };
-
-  const getExpectedSpawnTime = () => {
-    if (!foodState.active) return '비활성';
-    const baseChance = 0.05 * foodState.multiplier;
-    const pityBonus = (pityCounter || 0) * 0.05;
-    const totalChance = baseChance + pityBonus;
-    const expectedTicks = totalChance > 0 ? 1 / totalChance : 999;
-    const seconds = Math.round(expectedTicks);
-
-    if (seconds > 60) {
-      return `약 ${Math.floor(seconds / 60)}분`;
-    }
-    return `약 ${seconds}초`;
-  };
-
-  const getGrowthTime = () => {
-    const baseTime = Math.max(60000 - (upgradeLevel * 3000), 5000);
-    const withFood = baseTime / (foodState.multiplier || 1);
-    const seconds = (withFood / 1000).toFixed(1);
     return `${seconds}초`;
   };
 
@@ -133,7 +109,7 @@ function App() {
               boxShadow: '0 2px 5px rgba(0,0,0,0.1)'
             }}>
               <div style={{ marginBottom: '5px', color: '#2d3436' }}>
-                ⏱️ 다음 스폰 예상: <strong>{getExpectedSpawnTime()}</strong>
+                🎲 현재 스폰 확률: <strong>{getSpawnProbability()}</strong>
               </div>
               <div style={{ color: '#2d3436' }}>
                 🌱 성장 시간: <strong>{getGrowthTime()}</strong>
@@ -233,7 +209,7 @@ function App() {
         color: '#b2bec3',
         textAlign: 'center'
       }}>
-        v1.2.1
+        v1.2.2
       </div>
     </div>
   );
