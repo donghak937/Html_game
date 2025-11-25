@@ -356,6 +356,14 @@ export function useGame() {
     return false;
   }, [gold, unlocks]);
 
+  const buyRarityUpgrade = useCallback(() => {
+    const cost = 1000 * rarityLevel;
+    if (gold >= cost) {
+      setGold(g => g - cost);
+      setRarityLevel(l => l + 1);
+    }
+  }, [gold, rarityLevel]);
+
   const buyFertilizerUpgrade = useCallback(() => {
     const cost = 1000 + (fertilizerLevel * 500);
     if (gold >= cost) {
