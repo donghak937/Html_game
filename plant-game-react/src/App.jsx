@@ -17,6 +17,8 @@ function App() {
     upgradeLevel,
     unlocks,
     rarityLevel,
+    fertilizerLevel,
+    consumables,
     foodState,
     pityCounter,
     harvest,
@@ -25,6 +27,9 @@ function App() {
     buyUpgrade,
     buyUnlock,
     buyRarityUpgrade,
+    buyFertilizerUpgrade,
+    buyConsumable,
+    useConsumable,
     harvestAll,
     activateFood,
     cancelFood
@@ -168,7 +173,13 @@ function App() {
       )}
 
       {view === 'inventory' && (
-        <Inventory inventory={inventory} onSell={sell} onSellAll={sellAll} />
+        <Inventory
+          inventory={inventory}
+          consumables={consumables}
+          onSell={sell}
+          onSellAll={sellAll}
+          onUseConsumable={useConsumable}
+        />
       )}
 
       {view === 'shop' && (
@@ -177,9 +188,12 @@ function App() {
           upgradeLevel={upgradeLevel}
           unlocks={unlocks}
           rarityLevel={rarityLevel}
+          fertilizerLevel={fertilizerLevel}
           onBuyUpgrade={buyUpgrade}
           onBuyUnlock={buyUnlock}
           onBuyRarityUpgrade={buyRarityUpgrade}
+          onBuyFertilizerUpgrade={buyFertilizerUpgrade}
+          onBuyConsumable={buyConsumable}
         />
       )}
 
@@ -227,7 +241,7 @@ function App() {
         color: '#b2bec3',
         textAlign: 'center'
       }}>
-        v1.1.0
+        v1.3.0
       </div>
     </div>
   );

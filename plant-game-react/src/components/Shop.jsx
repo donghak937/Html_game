@@ -1,7 +1,18 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 
-export function Shop({ gold, upgradeLevel, unlocks, rarityLevel, onBuyUpgrade, onBuyUnlock, onBuyRarityUpgrade }) {
+export function Shop({
+    gold,
+    upgradeLevel,
+    unlocks,
+    rarityLevel,
+    fertilizerLevel,
+    onBuyUpgrade,
+    onBuyUnlock,
+    onBuyRarityUpgrade,
+    onBuyFertilizerUpgrade,
+    onBuyConsumable
+}) {
     const upgradeCost = 100 + (upgradeLevel * 50);
     const rarityCost = Math.floor(100 * (1 + rarityLevel * 0.5));
     const statsCost = 500;
