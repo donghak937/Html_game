@@ -28,7 +28,7 @@ export function Shop({ gold, upgradeLevel, unlocks, rarityLevel, onBuyUpgrade, o
                 >
                     <div style={{ fontSize: '3em' }}>⚡</div>
                     <div style={{ flex: 1 }}>
-                        <div style={{ fontSize: '1.2em', fontWeight: 'bold' }}>성장 속도 업그레이드</div>
+                        <div style={{ color: '#000000ff', fontSize: '1.2em', fontWeight: 'bold' }}>성장 속도 업그레이드</div>
                         <div style={{ color: '#636e72', fontSize: '0.9em' }}>성장 속도가 10% 증가합니다 (영구)</div>
                         <div style={{ color: '#6c5ce7', fontWeight: 'bold', fontSize: '0.9em' }}>레벨: {upgradeLevel}</div>
                     </div>

@@ -33,7 +33,7 @@ export function Inventory({ inventory, onSell, onSellAll }) {
                             whileHover={{ y: -5 }}
                         >
                             <div className="item-icon">{item.emoji}</div>
-                            <div style={{ fontWeight: 'bold', fontSize: '0.9em', color: 'black' }}>{item.description}</div>
+                            <div style={{ fontWeight: 'bold', fontSize: '0.9em', color: '#000000' }}>{item.description}</div>
                             <div style={{ fontSize: '0.8em', color: '#636e72' }}>💰 {item.value}</div>
                             <div className="item-count">x{item.count}</div>
                         </motion.div>
