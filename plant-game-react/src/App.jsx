@@ -51,6 +51,24 @@ function App() {
       rarityGroups[m.rarity] += m.effectiveWeight;
     });
 
+    return Object.entries(rarityGroups).map(([rarity, weight]) => ({
+      rarity,
+      probability: ((weight / totalWeight) * 100).toFixed(2)
+    }));
+  };
+
+  const getSpawnProbability = () => {
+    if (!foodState.active) return '0% (비활성)';
+    const baseChance = 0.05 * foodState.multiplier;
+    const pityBonus = (pityCounter || 0) * 0.05;
+    const totalChance = Math.min(baseChance + pityBonus, 1.0);
+    return `${(totalChance * 100).toFixed(0)}%`;
+  };
+
+  const getGrowthTime = () => {
+    const baseTime = Math.max(60000 - (upgradeLevel * 3000), 5000);
+    const withFood = baseTime / (foodState.multiplier || 1);
+    const seconds = (withFood / 1000).toFixed(1);
     return `${seconds}초`;
   };
 
