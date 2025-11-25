@@ -72,7 +72,7 @@ function App() {
   };
 
   const getGrowthTime = () => {
-    const baseTime = 8000;
+    const baseTime = Math.max(60000 - (upgradeLevel * 3000), 5000);
     const withFood = baseTime / (foodState.multiplier || 1);
     const seconds = (withFood / 1000).toFixed(1);
     return `${seconds}초`;
@@ -233,7 +233,7 @@ function App() {
         color: '#b2bec3',
         textAlign: 'center'
       }}>
-        v1.2.0
+        v1.2.1
       </div>
     </div>
   );

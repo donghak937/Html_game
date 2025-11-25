@@ -145,7 +145,9 @@ export function useGame() {
           }
 
           // Growth Duration Calculation
-          let duration = 8000; // Base 8s to grow
+          // Base: 60s, reduces by 3s per upgrade level, min 5s
+          const baseGrowthTime = Math.max(60000 - (currentLevel * 3000), 5000);
+          let duration = baseGrowthTime;
           if (currentFood.active) duration /= currentFood.multiplier;
 
           newPlants[randomIndex] = {
@@ -253,7 +255,7 @@ export function useGame() {
   }, [inventory]);
 
   const buyUpgrade = useCallback(() => {
-    const cost = 50 + (upgradeLevel * 30);
+    const cost = 100 + (upgradeLevel * 50);
     if (gold >= cost) {
       setGold(g => g - cost);
       setUpgradeLevel(l => l + 1);
