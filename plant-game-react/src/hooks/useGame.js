@@ -74,7 +74,13 @@ export function useGame() {
 
   const [cookingState, setCookingState] = useState(() => {
     const saved = localStorage.getItem('plant_game_cookingState');
-    return saved ? JSON.parse(saved) : { active: false, startTime: 0, duration: 0, ingredients: [], result: null };
+    let parsed = saved ? JSON.parse(saved) : { active: false, startTime: 0, duration: 0, ingredients: [], result: null };
+
+    // Data Migration/Safety: Ensure result has ingredients if it exists
+    if (parsed.result && !parsed.result.ingredients) {
+      parsed.result.ingredients = ['❓', '❓', '❓']; // Fallback
+    }
+    return parsed;
   });
 
   const [discoveredRecipes, setDiscoveredRecipes] = useState(() => {

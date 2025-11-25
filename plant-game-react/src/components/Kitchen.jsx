@@ -137,7 +137,7 @@ export function Kitchen({ inventory, cookedItems, useCookedItem, cookingState, d
                                     <div style={{ marginBottom: '10px' }}>
                                         <span style={{ fontWeight: 'bold', color: '#2d3436' }}>필요 재료:</span>
                                         <div style={{ display: 'flex', gap: '10px', marginTop: '5px' }}>
-                                            {completedDish.ingredients.map((ing, i) => (
+                                            {(completedDish.ingredients || ['❓', '❓', '❓']).map((ing, i) => (
                                                 <div key={i} style={{ fontSize: '1.5em', background: 'white', borderRadius: '8px', padding: '5px', boxShadow: '0 2px 5px rgba(0,0,0,0.05)' }}>
                                                     {ing}
                                                 </div>
