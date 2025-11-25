@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export function Inventory({ inventory, consumables, onSell, onSellAll, onUseConsumable }) {
@@ -144,10 +144,18 @@ export function Inventory({ inventory, consumables, onSell, onSellAll, onUseCons
                                                     fontSize: '0.9em',
                                                     color: '#636e72',
                                                     display: 'flex',
-                                                    gap: '10px'
+                                                    gap: '10px',
+                                                     alignItems: 'center'
                                                 }}>
                                                     <span>💰 {item.value}</span>
-                                                    <span>x{item.count}</span>
+                                                     <span style={{
+                                                       background: '#00b894',
+                                                       color: 'white',
+                                                       padding: '4px 10px',
+                                                       borderRadius: '12px',
+                                                       fontSize: '0.95em',
+                                                       fontWeight: 'bold'
+                                                     }}>✕ {item.count}</span>
                                                 </div>
                                             </div>
                                         </div>
