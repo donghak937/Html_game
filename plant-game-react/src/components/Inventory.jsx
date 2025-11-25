@@ -39,7 +39,7 @@ export function Inventory({ inventory, consumables, onSell, onSellAll, onUseCons
                 alignItems: 'center',
                 marginBottom: '20px'
             }}>
-                <h2 style={{ color: '#2d3436', margin: 0 }}>🎒 인벤토리</h2>
+                <h2 style={{ color: '#2d3436', margin: 0 }}>?�� ?�벤?�리</h2>
                 {activeTab === 'items' && !isEmpty && (
                     <button
                         onClick={onSellAll}
@@ -54,13 +54,14 @@ export function Inventory({ inventory, consumables, onSell, onSellAll, onUseCons
                             cursor: 'pointer'
                         }}
                     >
-                        전체 판매 (💰 {calculateTotalValue()})
+                        ?�체 ?�매 (?�� {calculateTotalValue()})
                     </button>
                 )}
             </div>
 
             {/* Tabs */}
-            <div style={{ display: 'flex', gap: '10px', marginBottom: '20px' }}>
+            <div style={{ display: 'flex', gap: '10px',
+                                                     alignItems: 'center', marginBottom: '20px' }}>
                 <button
                     onClick={() => setActiveTab('items')}
                     style={{
@@ -76,7 +77,7 @@ export function Inventory({ inventory, consumables, onSell, onSellAll, onUseCons
                         transition: 'all 0.2s'
                     }}
                 >
-                    🌱 식물 ({Object.values(inventory).reduce((sum, i) => sum + i.count, 0)})
+                    ?�� ?�물 ({Object.values(inventory).reduce((sum, i) => sum + i.count, 0)})
                 </button>
                 <button
                     onClick={() => setActiveTab('consumables')}
@@ -93,7 +94,11 @@ export function Inventory({ inventory, consumables, onSell, onSellAll, onUseCons
                         transition: 'all 0.2s'
                     }}
                 >
+<<<<<<< HEAD
                     🎒 소모품 ({(consumables?.seedBomb || 0) + (consumables?.growthPotion || 0) + Object.values(cookedItems).reduce((sum, i) => sum + i.count, 0)})
+=======
+                    ?�� ?�모??({(consumables?.seedBomb || 0) + (consumables?.growthPotion || 0)})
+>>>>>>> d6f7c2d7903bf175162d87138c2c3f22818edad0
                 </button>
             </div>
 
@@ -124,9 +129,9 @@ export function Inventory({ inventory, consumables, onSell, onSellAll, onUseCons
                                     padding: '60px 20px',
                                     color: '#636e72'
                                 }}>
-                                    <div style={{ fontSize: '4em', marginBottom: '10px' }}>🌾</div>
-                                    <p style={{ fontSize: '1.1em', margin: 0 }}>수확한 식물이 없습니다</p>
-                                    <p style={{ fontSize: '0.9em', color: '#b2bec3' }}>식물을 키워서 수확해보세요!</p>
+                                    <div style={{ fontSize: '4em', marginBottom: '10px' }}>?��</div>
+                                    <p style={{ fontSize: '1.1em', margin: 0 }}>?�확???�물???�습?�다</p>
+                                    <p style={{ fontSize: '0.9em', color: '#b2bec3' }}>?�물???�워???�확?�보?�요!</p>
                                 </div>
                             ) : (
                                 Object.values(inventory).map((item) => (
@@ -161,6 +166,7 @@ export function Inventory({ inventory, consumables, onSell, onSellAll, onUseCons
                                                     color: '#636e72',
                                                     display: 'flex',
                                                     gap: '10px',
+<<<<<<< HEAD
                                                     alignItems: 'center'
                                                 }}>
                                                     <span>💰 {item.value}</span>
@@ -173,6 +179,19 @@ export function Inventory({ inventory, consumables, onSell, onSellAll, onUseCons
                                                         fontWeight: 'bold',
                                                         whiteSpace: 'nowrap'
                                                     }}>{item.name} 총 {item.count} 개</span>
+=======
+                                                     alignItems: 'center'
+                                                }}>
+                                                    <span>?�� {item.value}</span>
+                                                    <span style={{
+                                                       background: '#00b894',
+                                                       color: 'white',
+                                                       padding: '4px 10px',
+                                                       borderRadius: '12px',
+                                                       fontSize: '0.95em',
+                                                       fontWeight: 'bold'
+                                                     }}>? {item.count}</span>
+>>>>>>> d6f7c2d7903bf175162d87138c2c3f22818edad0
                                                 </div>
                                             </div>
                                         </div>
@@ -185,10 +204,11 @@ export function Inventory({ inventory, consumables, onSell, onSellAll, onUseCons
                                                 display: 'flex',
                                                 alignItems: 'center',
                                                 gap: '10px',
+                                                     alignItems: 'center',
                                                 marginBottom: '8px'
                                             }}>
                                                 <span style={{ fontSize: '0.9em', color: '#636e72', minWidth: '60px', flexShrink: 0 }}>
-                                                    {selectedItems[item.emoji] || 1}개 선택
+                                                    {selectedItems[item.emoji] || 1}�??�택
                                                 </span>
                                                 <input
                                                     type="range"
@@ -218,7 +238,7 @@ export function Inventory({ inventory, consumables, onSell, onSellAll, onUseCons
                                                     cursor: 'pointer'
                                                 }}
                                             >
-                                                판매 (💰 {item.value * (selectedItems[item.emoji] || 1)})
+                                                ?�매 (?�� {item.value * (selectedItems[item.emoji] || 1)})
                                             </button>
                                         </div>
                                     </motion.div>
@@ -239,9 +259,9 @@ export function Inventory({ inventory, consumables, onSell, onSellAll, onUseCons
                                 padding: '60px 20px',
                                 color: '#636e72'
                             }}>
-                                <div style={{ fontSize: '4em', marginBottom: '10px' }}>🎒</div>
-                                <p style={{ fontSize: '1.1em', margin: 0 }}>보유한 소모품이 없습니다</p>
-                                <p style={{ fontSize: '0.9em', color: '#b2bec3' }}>상점에서 구매해보세요!</p>
+                                <div style={{ fontSize: '4em', marginBottom: '10px' }}>?��</div>
+                                <p style={{ fontSize: '1.1em', margin: 0 }}>보유???�모?�이 ?�습?�다</p>
+                                <p style={{ fontSize: '0.9em', color: '#b2bec3' }}>?�점?�서 구매?�보?�요!</p>
                             </div>
                         ) : (
                             <>
@@ -258,7 +278,7 @@ export function Inventory({ inventory, consumables, onSell, onSellAll, onUseCons
                                         }}
                                     >
                                         <div style={{ display: 'flex', alignItems: 'center', gap: '15px', marginBottom: '15px' }}>
-                                            <div style={{ fontSize: '3em' }}>💣</div>
+                                            <div style={{ fontSize: '3em' }}>?��</div>
                                             <div style={{ flex: 1 }}>
                                                 <div style={{
                                                     fontSize: '1.1em',
@@ -267,7 +287,7 @@ export function Inventory({ inventory, consumables, onSell, onSellAll, onUseCons
                                                     color: '#2d3436',
                                                     marginBottom: '4px'
                                                 }}>
-                                                    씨앗 폭탄
+                                                    ?�앗 ??��
                                                 </div>
                                                 <div style={{ fontSize: '0.9em', color: '#636e72' }}>
                                                     x{consumables.seedBomb}
@@ -276,7 +296,11 @@ export function Inventory({ inventory, consumables, onSell, onSellAll, onUseCons
                                         </div>
                                         <div style={{ borderTop: '1px solid #dfe6e9', paddingTop: '15px' }}>
                                             <p style={{ fontSize: '0.85em', color: '#636e72', margin: '0 0 10px 0' }}>
+<<<<<<< HEAD
                                                 빈 땅에 다 자란 식물을 가득 채웁니다
+=======
+                                                �??�에 ?�물??가??채웁?�다
+>>>>>>> d6f7c2d7903bf175162d87138c2c3f22818edad0
                                             </p>
                                             <button
                                                 onClick={() => onUseConsumable('seedBomb')}
@@ -292,7 +316,7 @@ export function Inventory({ inventory, consumables, onSell, onSellAll, onUseCons
                                                     cursor: 'pointer'
                                                 }}
                                             >
-                                                사용하기
+                                                ?�용?�기
                                             </button>
                                         </div>
                                     </motion.div>
@@ -310,7 +334,7 @@ export function Inventory({ inventory, consumables, onSell, onSellAll, onUseCons
                                         }}
                                     >
                                         <div style={{ display: 'flex', alignItems: 'center', gap: '15px', marginBottom: '15px' }}>
-                                            <div style={{ fontSize: '3em' }}>🧪</div>
+                                            <div style={{ fontSize: '3em' }}>?��</div>
                                             <div style={{ flex: 1 }}>
                                                 <div style={{
                                                     fontSize: '1.1em',
@@ -319,7 +343,7 @@ export function Inventory({ inventory, consumables, onSell, onSellAll, onUseCons
                                                     color: '#2d3436',
                                                     marginBottom: '4px'
                                                 }}>
-                                                    성장 물약
+                                                    ?�장 물약
                                                 </div>
                                                 <div style={{ fontSize: '0.9em', color: '#636e72' }}>
                                                     x{consumables.growthPotion}
@@ -328,7 +352,7 @@ export function Inventory({ inventory, consumables, onSell, onSellAll, onUseCons
                                         </div>
                                         <div style={{ borderTop: '1px solid #dfe6e9', paddingTop: '15px' }}>
                                             <p style={{ fontSize: '0.85em', color: '#636e72', margin: '0 0 10px 0' }}>
-                                                모든 식물을 즉시 성장시킵니다
+                                                모든 ?�물??즉시 ?�장?�킵?�다
                                             </p>
                                             <button
                                                 onClick={() => onUseConsumable('growthPotion')}
@@ -344,7 +368,7 @@ export function Inventory({ inventory, consumables, onSell, onSellAll, onUseCons
                                                     cursor: 'pointer'
                                                 }}
                                             >
-                                                사용하기
+                                                ?�용?�기
                                             </button>
                                         </div>
                                     </motion.div>
