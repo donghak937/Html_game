@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { BuffTimer } from './components/BuffTimer';
 import { useGame } from './hooks/useGame';
 import { GameField } from './components/GameField';
 import { Inventory } from './components/Inventory';
@@ -140,10 +141,6 @@ function App() {
               <div style={{ fontSize: '1.2em' }}>
                 {buff.type === 'speed' ? '⚡' : buff.type === 'gold' ? '💰' : '🎲'}
               </div>
-              import {BuffTimer} from './components/BuffTimer';
-
-              // ... (inside App function render)
-
               <div>
                 <div style={{ fontWeight: 'bold', color: '#2d3436' }}>
                   {buff.name}
