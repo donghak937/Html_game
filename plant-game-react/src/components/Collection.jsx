@@ -154,7 +154,7 @@ export function Collection({ collection }) {
                                     </div>
                                 )}
                             </div>
-                            <div style={{ fontSize: '0.8em', fontWeight: 'bold', color: '#2d3436' }}>
+                            <div className="text-black" style={{ fontSize: '0.8em', fontWeight: 'bold' }}>
                                 {isDiscovered ? mushroom.description : '???'}
                             </div>
                             {isDiscovered && (
@@ -197,7 +197,7 @@ export function Collection({ collection }) {
                         <div style={{ fontSize: '4em', textAlign: 'center', marginBottom: '15px' }}>
                             {selectedPlant.emoji}
                         </div>
-                        <div style={{ fontSize: '1.5em', fontWeight: 'bold', textAlign: 'center', marginBottom: '10px', wordBreak: 'keep-all' }}>
+                        <div className="text-black" style={{ fontSize: '1.5em', fontWeight: 'bold', textAlign: 'center', marginBottom: '10px', wordBreak: 'keep-all' }}>
                             {selectedPlant.description}
                         </div>
                         <div style={{
@@ -211,7 +211,7 @@ export function Collection({ collection }) {
                         }}>
                             {getRarityName(selectedPlant.rarity)}
                         </div>
-                        <div style={{ color: '#000000', marginBottom: '15px', lineHeight: '1.6', fontSize: '0.95em' }}>
+                        <div className="text-black" style={{ marginBottom: '15px', lineHeight: '1.6', fontSize: '0.95em' }}>
                             {selectedPlant.flavorText}
                         </div>
                         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '10px', marginTop: '20px', padding: '15px', background: '#f8f9fa', borderRadius: '10px' }}>
