@@ -177,6 +177,9 @@ export function useGame() {
           // Increase weight of non-common items based on rarityLevel
           // Formula: weight * (1 + (rarityLevel - 1) * 0.1) for non-common
           // Epic+ only appears at certain rarity levels
+
+          const rarityBuffs = currentBuffs.filter(b => b.type === 'rarity_boost');
+
           const weightedMushrooms = mushroomData.mushrooms
             .filter(m => {
               // Filter out Epic+ if rarity level is too low
@@ -185,12 +188,25 @@ export function useGame() {
               if (m.rarity === 'mythic' && currentRarity < 15) return false;
               return true;
             })
-            .map(m => ({
-              ...m,
-              effectiveWeight: m.rarity === 'common'
-                ? m.weight
-                : m.weight * (1 + (currentRarity - 1) * 0.1) // 10% increase per level for rare+
-            }));
+            .map(m => {
+              let weightMultiplier = 1;
+
+              // Apply Rarity Buffs
+              rarityBuffs.forEach(buff => {
+                if (buff.target === 'all' && m.rarity !== 'common') {
+                  weightMultiplier *= buff.value;
+                } else if (buff.target === m.rarity) {
+                  weightMultiplier *= buff.value;
+                }
+              });
+
+              return {
+                ...m,
+                effectiveWeight: m.rarity === 'common'
+                  ? m.weight
+                  : m.weight * (1 + (currentRarity - 1) * 0.1) * weightMultiplier
+              };
+            });
 
           const totalWeight = weightedMushrooms.reduce((sum, type) => sum + type.effectiveWeight, 0);
           let random = Math.random() * totalWeight;
@@ -386,6 +402,8 @@ export function useGame() {
 
   // Helper to get random mushroom type (duplicated logic for seed bomb)
   const getRandomMushroom = (currentRarity) => {
+    const rarityBuffs = activeBuffs.filter(b => b.type === 'rarity_boost');
+
     const weightedMushrooms = mushroomData.mushrooms
       .filter(m => {
         if (m.rarity === 'epic' && currentRarity < 5) return false;
@@ -393,12 +411,25 @@ export function useGame() {
         if (m.rarity === 'mythic' && currentRarity < 15) return false;
         return true;
       })
-      .map(m => ({
-        ...m,
-        effectiveWeight: m.rarity === 'common'
-          ? m.weight
-          : m.weight * (1 + (currentRarity - 1) * 0.1)
-      }));
+      .map(m => {
+        let weightMultiplier = 1;
+
+        // Apply Rarity Buffs
+        rarityBuffs.forEach(buff => {
+          if (buff.target === 'all' && m.rarity !== 'common') {
+            weightMultiplier *= buff.value;
+          } else if (buff.target === m.rarity) {
+            weightMultiplier *= buff.value;
+          }
+        });
+
+        return {
+          ...m,
+          effectiveWeight: m.rarity === 'common'
+            ? m.weight
+            : m.weight * (1 + (currentRarity - 1) * 0.1) * weightMultiplier
+        };
+      });
 
     const totalWeight = weightedMushrooms.reduce((sum, type) => sum + type.effectiveWeight, 0);
     let random = Math.random() * totalWeight;
@@ -727,11 +758,12 @@ export function useGame() {
         return changed ? newPlants : prev;
       });
     } else {
-      // Buffs (speed, gold, spawn_rate)
+      // Buffs (speed, gold, spawn_rate, rarity_boost)
       setActiveBuffs(prev => [
-        ...prev.filter(b => b.type !== effect.type), // Overwrite same type buff
+        ...prev.filter(b => b.type !== effect.type || b.target !== effect.target), // Allow stacking different targets
         {
           type: effect.type,
+          target: effect.target, // Add target (e.g., 'epic', 'all')
           value: effect.value,
           endTime: Date.now() + effect.duration,
           name: item.name

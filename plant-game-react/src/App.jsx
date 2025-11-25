@@ -224,6 +224,16 @@ function App() {
                   {((foodState.active ? foodState.multiplier : 0) * (1 + activeBuffs.filter(b => b.type === 'speed').reduce((sum, b) => sum + b.value, 0))).toFixed(1)}x
                 </strong>
               </div>
+              {activeBuffs.some(b => b.type === 'rarity_boost') && (
+                <div style={{ marginTop: '5px', color: '#9b59b6', fontSize: '0.9em' }}>
+                  ✨ 레어도 보정:
+                  {activeBuffs.filter(b => b.type === 'rarity_boost').map((b, i) => (
+                    <span key={i} style={{ marginLeft: '5px', fontWeight: 'bold' }}>
+                      [{b.target === 'all' ? '전체' : b.target} x{b.value}]
+                    </span>
+                  ))}
+                </div>
+              )}
             </div>
           )}
 
