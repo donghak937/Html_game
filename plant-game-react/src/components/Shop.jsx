@@ -218,6 +218,7 @@ export function Shop({
                     >
                         💰 2000
                     </button>
+                </motion.div>
 
             </div>
         </div>
