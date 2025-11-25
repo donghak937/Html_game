@@ -103,13 +103,22 @@ export function useGame() {
 
           // Random Type with Rarity Logic
           // Increase weight of non-common items based on rarityLevel
-          // Formula: weight * (1 + (rarityLevel - 1) * 0.5) for non-common
-          const weightedMushrooms = mushroomData.mushrooms.map(m => ({
-            ...m,
-            effectiveWeight: m.rarity === 'common'
-              ? m.weight
-              : m.weight * (1 + (currentRarity - 1) * 0.1) // 10% increase per level for rare+
-          }));
+          // Formula: weight * (1 + (rarityLevel - 1) * 0.1) for non-common
+          // Epic+ only appears at certain rarity levels
+          const weightedMushrooms = mushroomData.mushrooms
+            .filter(m => {
+              // Filter out Epic+ if rarity level is too low
+              if (m.rarity === 'epic' && currentRarity < 5) return false;
+              if (m.rarity === 'legendary' && currentRarity < 10) return false;
+              if (m.rarity === 'mythic' && currentRarity < 15) return false;
+              return true;
+            })
+            .map(m => ({
+              ...m,
+              effectiveWeight: m.rarity === 'common'
+                ? m.weight
+                : m.weight * (1 + (currentRarity - 1) * 0.1) // 10% increase per level for rare+
+            }));
 
           const totalWeight = weightedMushrooms.reduce((sum, type) => sum + type.effectiveWeight, 0);
           let random = Math.random() * totalWeight;
@@ -239,7 +248,7 @@ export function useGame() {
   }, [gold, upgradeLevel]);
 
   const buyUnlock = useCallback((type) => {
-    const cost = 2000;
+    const cost = 500;
     if (gold >= cost && !unlocks[type]) {
       setGold(g => g - cost);
       setUnlocks(u => ({ ...u, [type]: true }));

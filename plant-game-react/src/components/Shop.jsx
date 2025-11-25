@@ -2,10 +2,10 @@ import React from 'react';
 import { motion } from 'framer-motion';
 
 export function Shop({ gold, upgradeLevel, unlocks, rarityLevel, onBuyUpgrade, onBuyUnlock, onBuyRarityUpgrade }) {
-    const upgradeCost = 100 + (upgradeLevel * 50);
-    const rarityCost = 1000 * Math.pow(2, rarityLevel - 1);
-    const statsCost = 2000;
-    const harvestAllCost = 2000;
+    const upgradeCost = 50 + (upgradeLevel * 30);
+    const rarityCost = Math.floor(100 * (1 + rarityLevel * 0.5));
+    const statsCost = 500;
+    const harvestAllCost = 500;
 
     return (
         <div className="shop-container">
