@@ -18,6 +18,7 @@ function App() {
     unlocks,
     rarityLevel,
     foodState,
+    pityCounter,
     harvest,
     sell,
     sellAll,
@@ -54,6 +55,27 @@ function App() {
       rarity,
       probability: ((weight / totalWeight) * 100).toFixed(2)
     }));
+  };
+
+  const getExpectedSpawnTime = () => {
+    if (!foodState.active) return '비활성';
+    const baseChance = 0.05 * foodState.multiplier;
+    const pityBonus = (pityCounter || 0) * 0.05;
+    const totalChance = baseChance + pityBonus;
+    const expectedTicks = totalChance > 0 ? 1 / totalChance : 999;
+    const seconds = Math.round(expectedTicks);
+
+    if (seconds > 60) {
+      return `약 ${Math.floor(seconds / 60)}분`;
+    }
+    return `약 ${seconds}초`;
+  };
+
+  const getGrowthTime = () => {
+    const baseTime = 8000;
+    const withFood = baseTime / (foodState.multiplier || 1);
+    const seconds = (withFood / 1000).toFixed(1);
+    return `${seconds}초`;
   };
 
   return (
@@ -97,6 +119,25 @@ function App() {
                   <div style={{ color: '#2d3436' }}>{probability}%</div>
                 </div>
               ))}
+            </div>
+          )}
+
+          {/* Time Statistics */}
+          {unlocks.statistics && (
+            <div style={{
+              background: 'rgba(255, 255, 255, 0.9)',
+              padding: '10px',
+              borderRadius: '10px',
+              marginBottom: '10px',
+              fontSize: '0.85em',
+              boxShadow: '0 2px 5px rgba(0,0,0,0.1)'
+            }}>
+              <div style={{ marginBottom: '5px', color: '#2d3436' }}>
+                ⏱️ 다음 스폰 예상: <strong>{getExpectedSpawnTime()}</strong>
+              </div>
+              <div style={{ color: '#2d3436' }}>
+                🌱 성장 시간: <strong>{getGrowthTime()}</strong>
+              </div>
             </div>
           )}
 
@@ -192,7 +233,7 @@ function App() {
         color: '#b2bec3',
         textAlign: 'center'
       }}>
-        v1.1.0
+        v1.2.0
       </div>
     </div>
   );

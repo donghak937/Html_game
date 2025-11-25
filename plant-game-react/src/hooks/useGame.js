@@ -46,6 +46,11 @@ export function useGame() {
     return saved ? JSON.parse(saved) : { active: false, endTime: 0, type: null, multiplier: 1 };
   });
 
+  const [pityCounter, setPityCounter] = useState(() => {
+    const saved = localStorage.getItem('plant_game_pityCounter');
+    return saved ? parseInt(saved) : 0;
+  });
+
   // --- Persistence ---
   useEffect(() => {
     localStorage.setItem('plant_game_gold', gold);
@@ -56,24 +61,26 @@ export function useGame() {
     localStorage.setItem('plant_game_unlocks', JSON.stringify(unlocks));
     localStorage.setItem('plant_game_rarityLevel', rarityLevel);
     localStorage.setItem('plant_game_foodState', JSON.stringify(foodState));
-  }, [gold, plants, inventory, collection, upgradeLevel, unlocks, rarityLevel, foodState]);
+    localStorage.setItem('plant_game_pityCounter', pityCounter);
+  }, [gold, plants, inventory, collection, upgradeLevel, unlocks, rarityLevel, foodState, pityCounter]);
 
   // --- Refs for Loop ---
   const stateRef = useRef({
     plants,
     foodState,
     upgradeLevel,
-    rarityLevel
+    rarityLevel,
+    pityCounter
   });
 
   useEffect(() => {
-    stateRef.current = { plants, foodState, upgradeLevel, rarityLevel };
-  }, [plants, foodState, upgradeLevel, rarityLevel]);
+    stateRef.current = { plants, foodState, upgradeLevel, rarityLevel, pityCounter };
+  }, [plants, foodState, upgradeLevel, rarityLevel, pityCounter]);
 
   // --- Game Loop ---
   useEffect(() => {
     const intervalId = setInterval(() => {
-      const { plants: currentPlants, foodState: currentFood, upgradeLevel: currentLevel, rarityLevel: currentRarity } = stateRef.current;
+      const { plants: currentPlants, foodState: currentFood, upgradeLevel: currentLevel, rarityLevel: currentRarity, pityCounter: currentPity } = stateRef.current;
 
       // Check food expiration
       if (currentFood.active && Date.now() > currentFood.endTime) {
@@ -96,9 +103,14 @@ export function useGame() {
         // Only spawn if food is active
         if (!currentFood.active) return prevPlants;
 
-        const spawnChance = GROWTH_PROBABILITY * currentFood.multiplier;
+        // Pity System: increase spawn chance with each failure
+        const baseChance = GROWTH_PROBABILITY * currentFood.multiplier;
+        const pityBonus = currentPity * 0.05; // +5% per failure
+        const totalChance = Math.min(baseChance + pityBonus, 1.0); // Cap at 100%
 
-        if (emptyIndices.length > 0 && Math.random() < spawnChance) {
+        if (emptyIndices.length > 0 && Math.random() < totalChance) {
+          // Spawn success - reset pity counter
+          setPityCounter(0);
           const randomIndex = emptyIndices[Math.floor(Math.random() * emptyIndices.length)];
 
           // Random Type with Rarity Logic
@@ -145,6 +157,9 @@ export function useGame() {
           };
 
           changed = true;
+        } else if (emptyIndices.length > 0) {
+          // Spawn failure - increment pity counter
+          setPityCounter(prev => prev + 1);
         }
 
         // 2. Growing
@@ -361,6 +376,7 @@ export function useGame() {
     unlocks,
     rarityLevel,
     foodState,
+    pityCounter,
     harvest,
     sell,
     sellAll,
