@@ -346,7 +346,9 @@ export function useGame() {
       setGold(g => g - cost);
       setUnlocks(u => ({ ...u, [type]: true }));
       return true;
-    }, [gold, rarityLevel]);
+    }
+    return false;
+  }, [gold, unlocks]);
 
   const buyFertilizerUpgrade = useCallback(() => {
     const cost = 1000 + (fertilizerLevel * 500);
