@@ -125,11 +125,48 @@ export function Kitchen({ inventory, cookedItems, useCookedItem, cookingState, d
                                 {completedDish.emoji}
                             </div>
                             <h2 style={{ margin: '0 0 10px 0', color: '#2d3436' }}>
-                                {completedDish.name} 완성!
+                                {completedDish.name} {completedDish.isRecipeInfo ? '' : '완성!'}
                             </h2>
                             <p style={{ color: '#636e72', marginBottom: '20px' }}>
                                 {completedDish.description}
                             </p>
+
+                            {/* Recipe Info Section */}
+                            {completedDish.isRecipeInfo && (
+                                <div style={{ background: '#f1f2f6', padding: '15px', borderRadius: '12px', marginBottom: '20px', textAlign: 'left' }}>
+                                    <div style={{ marginBottom: '10px' }}>
+                                        <span style={{ fontWeight: 'bold', color: '#2d3436' }}>필요 재료:</span>
+                                        <div style={{ display: 'flex', gap: '10px', marginTop: '5px' }}>
+                                            {completedDish.ingredients.map((ing, i) => (
+                                                <div key={i} style={{ fontSize: '1.5em', background: 'white', borderRadius: '8px', padding: '5px', boxShadow: '0 2px 5px rgba(0,0,0,0.05)' }}>
+                                                    {ing}
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                    {completedDish.effect && (
+                                        <div style={{ marginBottom: '10px' }}>
+                                            <span style={{ fontWeight: 'bold', color: '#2d3436' }}>효과:</span>
+                                            <div style={{ color: '#0984e3' }}>
+                                                {completedDish.effect.type === 'speed' && '⚡ 성장 속도 증가'}
+                                                {completedDish.effect.type === 'gold' && '💰 골드 획득 증가'}
+                                                {completedDish.effect.type === 'spawn_rate' && '🎲 식물 등장 확률 증가'}
+                                                {completedDish.effect.type === 'add_consumable' && '💣 아이템 획득'}
+                                                {completedDish.effect.type === 'instant_growth' && '✨ 즉시 성장'}
+                                                {' '}
+                                                ({completedDish.effect.duration > 0 ? `${completedDish.effect.duration / 60000}분` : '즉시'})
+                                            </div>
+                                        </div>
+                                    )}
+                                    <div>
+                                        <span style={{ fontWeight: 'bold', color: '#2d3436' }}>판매 가격:</span>
+                                        <span style={{ fontWeight: 'bold', color: '#f1c40f', marginLeft: '5px' }}>
+                                            💰 {completedDish.value}
+                                        </span>
+                                    </div>
+                                </div>
+                            )}
+
                             <button
                                 onClick={() => setShowPopup(false)}
                                 style={{
@@ -350,53 +387,79 @@ export function Kitchen({ inventory, cookedItems, useCookedItem, cookingState, d
                     ))}
                 </div>
             ) : (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+                <div style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(3, 1fr)',
+                    gap: '10px',
+                    maxHeight: '400px',
+                    overflowY: 'auto',
+                    padding: '5px'
+                }}>
+                    {/* Mixed Stew Entry (Always visible) */}
+                    <div
+                        onClick={() => {
+                            setCompletedDish({
+                                id: 'mixed_stew',
+                                name: '잡탕 스튜',
+                                emoji: '🍲',
+                                description: '아무 재료나 넣고 끓인 스튜. 맛은 보장할 수 없습니다.',
+                                ingredients: ['❓', '❓', '❓'],
+                                value: '???',
+                                effect: null,
+                                isRecipeInfo: true // Flag to distinguish from cooking completion
+                            });
+                            setShowPopup(true);
+                        }}
+                        style={{
+                            background: 'white',
+                            borderRadius: '16px',
+                            padding: '15px',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            cursor: 'pointer',
+                            boxShadow: '0 4px 10px rgba(0,0,0,0.05)',
+                            transition: 'transform 0.2s',
+                            aspectRatio: '0.8',
+                            border: '2px solid #b2bec3'
+                        }}
+                    >
+                        <div style={{ fontSize: '3em', marginBottom: '10px' }}>🍲</div>
+                        <div style={{ fontWeight: 'bold', fontSize: '0.9em', color: '#2d3436' }}>잡탕 스튜</div>
+                    </div>
+
                     {recipeData.recipes.map(recipe => {
                         const isDiscovered = discoveredRecipes.includes(recipe.id);
-
                         return (
                             <div
                                 key={recipe.id}
+                                onClick={() => {
+                                    if (isDiscovered) {
+                                        setCompletedDish({ ...recipe, isRecipeInfo: true });
+                                        setShowPopup(true);
+                                    }
+                                }}
                                 style={{
-                                    background: 'white',
-                                    borderRadius: '12px',
+                                    background: isDiscovered ? 'white' : '#dfe6e9',
+                                    borderRadius: '16px',
                                     padding: '15px',
                                     display: 'flex',
+                                    flexDirection: 'column',
                                     alignItems: 'center',
-                                    gap: '15px',
-                                    opacity: isDiscovered ? 1 : 0.8
+                                    justifyContent: 'center',
+                                    cursor: isDiscovered ? 'pointer' : 'default',
+                                    boxShadow: isDiscovered ? '0 4px 10px rgba(0,0,0,0.05)' : 'none',
+                                    transition: 'transform 0.2s',
+                                    aspectRatio: '0.8',
+                                    border: isDiscovered ? '2px solid #fdcb6e' : '2px dashed #b2bec3'
                                 }}
                             >
-                                <div style={{ fontSize: '2.5em' }}>
+                                <div style={{ fontSize: '3em', marginBottom: '10px', filter: isDiscovered ? 'none' : 'grayscale(100%) opacity(0.5)' }}>
                                     {isDiscovered ? recipe.emoji : '❓'}
                                 </div>
-                                <div style={{ flex: 1 }}>
-                                    <div style={{ fontWeight: 'bold', color: '#2d3436', marginBottom: '5px' }}>
-                                        {isDiscovered ? recipe.name : '???'}
-                                    </div>
-                                    {isDiscovered ? (
-                                        <div style={{ fontSize: '0.9em', color: '#636e72' }}>{recipe.description}</div>
-                                    ) : (
-                                        <div style={{ display: 'flex', gap: '5px' }}>
-                                            {recipe.ingredients.map((ing, idx) => {
-                                                // Find rarity of ingredient
-                                                const itemData = mushroomData.mushrooms.find(m => m.emoji === ing);
-                                                const color = getRarityColor(itemData?.rarity);
-                                                return (
-                                                    <div
-                                                        key={idx}
-                                                        style={{
-                                                            width: '20px',
-                                                            height: '20px',
-                                                            borderRadius: '50%',
-                                                            border: `3px solid ${color}`,
-                                                            background: '#f1f2f6'
-                                                        }}
-                                                    />
-                                                );
-                                            })}
-                                        </div>
-                                    )}
+                                <div style={{ fontWeight: 'bold', fontSize: '0.9em', color: isDiscovered ? '#2d3436' : '#636e72' }}>
+                                    {isDiscovered ? recipe.name : '???'}
                                 </div>
                             </div>
                         );
