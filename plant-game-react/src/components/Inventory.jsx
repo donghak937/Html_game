@@ -155,7 +155,7 @@ export function Inventory({ inventory, consumables, onSell, onSellAll, onUseCons
                                                        borderRadius: '12px',
                                                        fontSize: '0.95em',
                                                        fontWeight: 'bold'
-                                                     }}>✕ {item.count}</span>
+                                                     }}>{item.name} 총 {item.count} 개</span>
                                                 </div>
                                             </div>
                                         </div>
@@ -335,3 +335,4 @@ export function Inventory({ inventory, consumables, onSell, onSellAll, onUseCons
         </div>
     );
 }
+
