@@ -72,28 +72,36 @@ export function Kitchen({ inventory, cookedItems, useCookedItem, cookingState, d
 
     return (
         <div className="kitchen-container" style={{ paddingBottom: '80px', position: 'relative' }}>
-            {/* Completion Popup Overlay */}
+            {/* Completion Popup Overlay - Using Portal for true centering */}
             <AnimatePresence>
                 {showPopup && completedDish && (
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        style={{
-                            position: 'fixed',
-                            top: 0,
-                            left: 0,
-                            right: 0,
-                            bottom: 0,
-                            background: 'rgba(0,0,0,0.5)',
-                            zIndex: 1000,
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            padding: '20px'
-                        }}
-                        onClick={() => setShowPopup(false)}
-                    >
+                    <div style={{
+                        position: 'fixed',
+                        top: 0,
+                        left: 0,
+                        width: '100vw',
+                        height: '100vh',
+                        zIndex: 9999,
+                        pointerEvents: 'none', // Allow clicks to pass through wrapper
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center'
+                    }}>
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            style={{
+                                position: 'absolute',
+                                top: 0,
+                                left: 0,
+                                width: '100%',
+                                height: '100%',
+                                background: 'rgba(0,0,0,0.5)',
+                                pointerEvents: 'auto' // Re-enable clicks for overlay
+                            }}
+                            onClick={() => setShowPopup(false)}
+                        />
                         <motion.div
                             initial={{ scale: 0.8, y: 50 }}
                             animate={{ scale: 1, y: 0 }}
@@ -107,7 +115,10 @@ export function Kitchen({ inventory, cookedItems, useCookedItem, cookingState, d
                                 textAlign: 'center',
                                 minWidth: '300px',
                                 maxWidth: '90%',
-                                border: `4px solid ${completedDish.effect ? '#fdcb6e' : '#b2bec3'}`
+                                border: `4px solid ${completedDish.effect ? '#fdcb6e' : '#b2bec3'}`,
+                                zIndex: 10000,
+                                pointerEvents: 'auto',
+                                position: 'relative'
                             }}
                         >
                             <div style={{ fontSize: '5em', marginBottom: '10px' }}>
@@ -135,7 +146,7 @@ export function Kitchen({ inventory, cookedItems, useCookedItem, cookingState, d
                                 확인
                             </button>
                         </motion.div>
-                    </motion.div>
+                    </div>
                 )}
             </AnimatePresence>
 

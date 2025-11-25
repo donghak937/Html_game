@@ -114,12 +114,44 @@ function App() {
           <div className="stat-label">아이템</div>
           <div className="stat-value">📦 {inventoryCount}</div>
         </div>
-        {activeBuffs.length > 0 && (
-          <div className="stat-box" style={{ background: '#e8f5e9', border: '1px solid #00b894' }}>
-            <div className="stat-label" style={{ color: '#00b894' }}>버프</div>
-            <div className="stat-value" style={{ fontSize: '0.9em' }}>✨ {activeBuffs.length}개</div>
+      </div>
+
+      {/* Side Buff Container */}
+      <div style={{
+        position: 'fixed',
+        right: '20px',
+        top: '50%',
+        transform: 'translateY(-50%)',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '10px',
+        zIndex: 100
+      }}>
+        {activeBuffs.map((buff, index) => (
+          <div key={index} style={{
+            background: 'rgba(255, 255, 255, 0.9)',
+            padding: '10px 15px',
+            borderRadius: '12px',
+            boxShadow: '0 4px 15px rgba(0,0,0,0.1)',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '10px',
+            borderLeft: '4px solid #00b894',
+            animation: 'slideIn 0.3s ease-out'
+          }}>
+            <div style={{ fontSize: '1.5em' }}>
+              {buff.type === 'speed' ? '⚡' : buff.type === 'gold' ? '💰' : '🎲'}
+            </div>
+            <div>
+              <div style={{ fontWeight: 'bold', fontSize: '0.9em', color: '#2d3436' }}>
+                {buff.name}
+              </div>
+              <div style={{ fontSize: '0.8em', color: '#636e72' }}>
+                {Math.ceil((buff.endTime - Date.now()) / 1000)}초 남음
+              </div>
+            </div>
           </div>
-        )}
+        ))}
       </div>
 
       {view === 'game' && (
@@ -167,6 +199,7 @@ function App() {
           <FoodControls
             gold={gold}
             foodState={foodState}
+            fertilizerLevel={fertilizerLevel}
             onActivateFood={activateFood}
             onCancelFood={cancelFood}
           />
