@@ -241,7 +241,7 @@ function App() {
         color: '#b2bec3',
         textAlign: 'center'
       }}>
-        v1.3.0
+        v1.3.1
       </div>
     </div>
   );
