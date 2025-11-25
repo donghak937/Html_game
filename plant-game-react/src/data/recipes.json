@@ -25,8 +25,8 @@
             "description": "다양한 과일의 조화! 빈 땅에 식물을 가득 채웁니다.",
             "ingredients": [
                 "🍓",
-                "�",
-                "�"
+                "🍑",
+                "🍋"
             ],
             "time": 30000,
             "value": 150,
@@ -161,100 +161,120 @@
                 "type": "spawn_rate",
                 "value": 1.0,
                 "duration": 120000
+            }
+        },
         {
-                    "id": "lucky_stew",
-                    "name": "행운의 스튜",
-                    "emoji": "🍲",
-                    "description": "좋은 일이 생길 것 같습니다. 3분 동안 모든 희귀 식물 등장 확률이 2배 증가합니다.",
-                    "ingredients": [
-                        "🍄",
-                        "🍀",
-                        "🍄"
-                    ],
-                    "time": 20000,
-                    "value": 50,
-                    "effect": {
-                        "type": "rarity_boost",
-                        "target": "all",
-                        "value": 2.0,
-                        "duration": 180000
-                    }
-                },
-                {
-                    "id": "green_smoothie",
-                    "name": "그린 스무디",
-                    "emoji": "🥤",
-                    "description": "신선함이 가득! 3분 동안 '희귀(Rare)' 등급 식물 등장 확률이 3배 증가합니다.",
-                    "ingredients": [
-                        "🍃",
-                        "🍀",
-                        "🌿"
-                    ],
-                    "time": 25000,
-                    "value": 60,
-                    "effect": {
-                        "type": "rarity_boost",
-                        "target": "rare",
-                        "value": 3.0,
-                        "duration": 180000
-                    }
-                },
-                {
-                    "id": "purple_tart",
-                    "name": "퍼플 타르트",
-                    "emoji": "🥧",
-                    "description": "달콤한 유혹. 3분 동안 '영웅(Epic)' 등급 식물 등장 확률이 3배 증가합니다.",
-                    "ingredients": [
-                        "🍇",
-                        "🥝",
-                        "🥥"
-                    ],
-                    "time": 40000,
-                    "value": 150,
-                    "effect": {
-                        "type": "rarity_boost",
-                        "target": "epic",
-                        "value": 3.0,
-                        "duration": 180000
-                    }
-                },
-                {
-                    "id": "royal_cake",
-                    "name": "로얄 케이크",
-                    "emoji": "🍰",
-                    "description": "왕실의 품격. 3분 동안 '전설(Legendary)' 등급 식물 등장 확률이 3배 증가합니다.",
-                    "ingredients": [
-                        "🌹",
-                        "🌷",
-                        "🪻"
-                    ],
-                    "time": 60000,
-                    "value": 300,
-                    "effect": {
-                        "type": "rarity_boost",
-                        "target": "legendary",
-                        "value": 3.0,
-                        "duration": 180000
-                    }
-                },
-                {
-                    "id": "starlight_pudding",
-                    "name": "별빛 푸딩",
-                    "emoji": "🍮",
-                    "description": "우주의 신비. 3분 동안 '신화(Mythic)' 등급 식물 등장 확률이 3배 증가합니다.",
-                    "ingredients": [
-                        "🌟",
-                        "✨",
-                        "💎"
-                    ],
-                    "time": 100000,
-                    "value": 1000,
-                    "effect": {
-                        "type": "rarity_boost",
-                        "target": "mythic",
-                        "value": 3.0,
-                        "duration": 180000
-                    }
-                }
-            ]
+            "id": "lucky_charm",
+            "name": "행운의 부적",
+            "emoji": "🧧",
+            "description": "행운을 불러옵니다. 5분 동안 식물 등장 확률이 50% 증가합니다.",
+            "ingredients": [
+                "🍀",
+                "�",
+                "🍀"
+            ],
+            "time": 35000,
+            "value": 100,
+            "effect": {
+                "type": "spawn_rate",
+                "value": 0.5,
+                "duration": 300000
+            }
+        },
+        {
+            "id": "lucky_stew",
+            "name": "행운의 스튜",
+            "emoji": "🍲",
+            "description": "좋은 일이 생길 것 같습니다. 3분 동안 모든 희귀 식물 등장 확률이 2배 증가합니다.",
+            "ingredients": [
+                "🍀",
+                "🌻",
+                "🌟"
+            ],
+            "time": 20000,
+            "value": 50,
+            "effect": {
+                "type": "rarity_boost",
+                "target": "all",
+                "value": 2.0,
+                "duration": 180000
+            }
+        },
+        {
+            "id": "green_smoothie",
+            "name": "그린 스무디",
+            "emoji": "🥤",
+            "description": "신선함이 가득! 3분 동안 '희귀(Rare)' 등급 식물 등장 확률이 3배 증가합니다.",
+            "ingredients": [
+                "🍃",
+                "🍀",
+                "🌿"
+            ],
+            "time": 25000,
+            "value": 60,
+            "effect": {
+                "type": "rarity_boost",
+                "target": "rare",
+                "value": 3.0,
+                "duration": 180000
+            }
+        },
+        {
+            "id": "purple_tart",
+            "name": "퍼플 타르트",
+            "emoji": "🥧",
+            "description": "달콤한 유혹. 3분 동안 '영웅(Epic)' 등급 식물 등장 확률이 3배 증가합니다.",
+            "ingredients": [
+                "🍇",
+                "🥝",
+                "🥥"
+            ],
+            "time": 40000,
+            "value": 150,
+            "effect": {
+                "type": "rarity_boost",
+                "target": "epic",
+                "value": 3.0,
+                "duration": 180000
+            }
+        },
+        {
+            "id": "royal_cake",
+            "name": "로얄 케이크",
+            "emoji": "🍰",
+            "description": "왕실의 품격. 3분 동안 '전설(Legendary)' 등급 식물 등장 확률이 3배 증가합니다.",
+            "ingredients": [
+                "🌹",
+                "🌷",
+                "🪻"
+            ],
+            "time": 60000,
+            "value": 300,
+            "effect": {
+                "type": "rarity_boost",
+                "target": "legendary",
+                "value": 3.0,
+                "duration": 180000
+            }
+        },
+        {
+            "id": "starlight_pudding",
+            "name": "별빛 푸딩",
+            "emoji": "🍮",
+            "description": "우주의 신비. 3분 동안 '신화(Mythic)' 등급 식물 등장 확률이 3배 증가합니다.",
+            "ingredients": [
+                "🌟",
+                "✨",
+                "💎"
+            ],
+            "time": 100000,
+            "value": 1000,
+            "effect": {
+                "type": "rarity_boost",
+                "target": "mythic",
+                "value": 3.0,
+                "duration": 180000
+            }
         }
+    ]
+}
