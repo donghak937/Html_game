@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useGame } from './hooks/useGame';
 import { GameField } from './components/GameField';
 import { Inventory } from './components/Inventory';
@@ -34,50 +34,233 @@ function App() {
     activateFood,
     cancelFood
   } = useGame();
-
-  const [view, setView] = useState('game');
-
-  const adultsCount = plants.filter(p => p && p.stage === 'adult').length;
-  const inventoryCount = Object.values(inventory).reduce((sum, item) => sum + item.count, 0);
-
-  // Calculate Statistics
-  const getRarityProbabilities = () => {
-    const weightedMushrooms = mushroomData.mushrooms.map(m => ({
-      ...m,
-      effectiveWeight: m.rarity === 'common'
-        ? m.weight
         : m.weight * (1 + (rarityLevel - 1) * 0.5)
-    }));
-    const totalWeight = weightedMushrooms.reduce((sum, m) => sum + m.effectiveWeight, 0);
+}));
+const totalWeight = weightedMushrooms.reduce((sum, m) => sum + m.effectiveWeight, 0);
 
-    const rarityGroups = {};
-    weightedMushrooms.forEach(m => {
-      if (!rarityGroups[m.rarity]) rarityGroups[m.rarity] = 0;
-      rarityGroups[m.rarity] += m.effectiveWeight;
-    });
+const rarityGroups = {};
+weightedMushrooms.forEach(m => {
+  if (!rarityGroups[m.rarity]) rarityGroups[m.rarity] = 0;
+  rarityGroups[m.rarity] += m.effectiveWeight;
+});
 
-    return Object.entries(rarityGroups).map(([rarity, weight]) => ({
-      rarity,
-      probability: ((weight / totalWeight) * 100).toFixed(2)
-    }));
+return Object.entries(rarityGroups).map(([rarity, weight]) => ({
+  rarity,
+  probability: ((weight / totalWeight) * 100).toFixed(2)
+}));
   };
 
-  const getSpawnProbability = () => {
-    if (!foodState.active) return '0% (비활성)';
+const getSpawnProbability = () => {
+  if (!foodState.active) return '0% (비활성)';
+  const baseChance = 0.01 * foodState.multiplier;
+  const pityBonus = (pityCounter || 0) * 0.01;
+  const totalChance = Math.min(baseChance + pityBonus, 1.0);
+  return `${(totalChance * 100).toFixed(0)}%`;
+};
+
+const getGrowthTime = () => {
+  const baseTime = Math.max(60000 - (upgradeLevel * 3000), 5000);
+  const withFood = baseTime / (foodState.multiplier || 1);
+  const seconds = (withFood / 1000).toFixed(1);
+  return `${seconds}초`;
+};
+
+return (
+  <div className="game-container">
+    <div className="header">
+      <h1>🌱 Plant Tycoon</h1>
+    </div>
+
+    <div className="stats">
+      <div className="stat-box">
+        <div className="stat-label">골드</div>
+        <div className="stat-value">💰 {gold}</div>
+      </div>
+      <div className="stat-box">
+        <div className="stat-label">식물</div>
+        <div className="stat-value">🌱 {adultsCount}</div>
+      </div>
+      <div className="stat-box">
+        <div className="stat-label">아이템</div>
+        <div className="stat-value">📦 {inventoryCount}</div>
+      </div>
+    </div>
+
+    {view === 'game' && (
+      <>
+        {/* Statistics Panel */}
+        {unlocks.statistics && (
+          <div style={{
+            background: 'rgba(255, 255, 255, 0.9)',
+            padding: '10px',
+            borderRadius: '10px',
+            marginBottom: '10px',
+            fontSize: '0.8em',
+            display: 'flex',
+            justifyContent: 'space-around',
+            boxShadow: '0 2px 5px rgba(0,0,0,0.1)'
+          }}>
+            {getRarityProbabilities().map(({ rarity, probability }) => (
+              <div key={rarity} style={{ textAlign: 'center' }}>
+                <div style={{ fontWeight: 'bold', textTransform: 'capitalize', color: '#2d3436' }}>{rarity}</div>
+                <div style={{ color: '#2d3436' }}>{probability}%</div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Time Statistics */}
+        {unlocks.statistics && (
+          <div style={{
+            background: 'rgba(255, 255, 255, 0.9)',
+            padding: '10px',
+            borderRadius: '10px',
+            marginBottom: '10px',
+            fontSize: '0.85em',
+            boxShadow: '0 2px 5px rgba(0,0,0,0.1)'
+          }}>
+            <div style={{ marginBottom: '5px', color: '#2d3436' }}>
+              🎲 현재 스폰 확률: <strong>{getSpawnProbability()}</strong>
+            </div>
+            <div style={{ color: '#2d3436' }}>
+              🌱 성장 시간: <strong>{getGrowthTime()}</strong>
+            </div>
+          </div>
+        )}
+
+        <FoodControls
+          gold={gold}
+          foodState={foodState}
+          onActivateFood={activateFood}
+          onCancelFood={cancelFood}
+        />
+
+        {/* Harvest All Button */}
+        {unlocks.harvestAll && adultsCount > 0 && (
+          <button
+            onClick={harvestAll}
+            style={{
+              width: '100%',
+              padding: '10px',
+              marginBottom: '10px',
+              background: '#fdcb6e',
+              border: 'none',
+              borderRadius: '10px',
+              color: '#d35400',
+              fontWeight: 'bold',
+              cursor: 'pointer',
+              boxShadow: '0 4px 0 #e17055'
+            }}
+          >
+            🚜 전체 수확하기 ({adultsCount})
+          </button>
+        )}
+
+        <GameField plants={plants} onHarvest={harvest} />
+      </>
+    )}
+
+    {view === 'inventory' && (
+      <Inventory
+        inventory={inventory}
+        consumables={consumables}
+        onSell={sell}
+        onSellAll={sellAll}
+        onUseConsumable={useConsumable}
+      />
+    )}
+
+    {view === 'shop' && (
+      <Shop
+        gold={gold}
+        upgradeLevel={upgradeLevel}
+        unlocks={unlocks}
+        rarityLevel={rarityLevel}
+        fertilizerLevel={fertilizerLevel}
+        onBuyUpgrade={buyUpgrade}
+        onBuyUnlock={buyUnlock}
+        onBuyRarityUpgrade={buyRarityUpgrade}
+        onBuyFertilizerUpgrade={buyFertilizerUpgrade}
+        onBuyConsumable={buyConsumable}
+      />
+    )}
+
+    {view === 'collection' && (
+      <Collection collection={collection} />
+    )}
+
+    <div className="controls">
+      <button
+        className={`btn ${view === 'game' ? '' : 'btn-secondary'}`}
+        onClick={() => setView('game')}
+      >
+        🏠 홈
+      </button>
+      <button
+        className={`btn ${view === 'inventory' ? '' : 'btn-secondary'}`}
+        onClick={() => setView('inventory')}
+      >
+        🎒 인벤토리
+      </button>
+      <button
+        className={`btn ${view === 'shop' ? '' : 'btn-secondary'}`}
+        onClick={() => setView('shop')}
+      >
+        🏪 상점
+      </button>
+      <button
+        className={`btn ${view === 'collection' ? '' : 'btn-secondary'}`}
+        onClick={() => setView('collection')}
+      >
+        📚 도감
+      </button>
+    </div>
+
+    <div className="info" style={{ marginTop: '20px', fontSize: '0.9em', color: '#8b4513' }}>
+      {view === 'game' && '💡 먹이를 주면 식물이 자랍니다!'}
+      {view === 'inventory' && '💡 아이템을 클릭하면 판매할 수 있습니다!'}
+      {view === 'shop' && '💡 업그레이드를 구매하여 더 빠르게 성장시키세요!'}
+      {view === 'collection' && '💡 수확하여 새로운 식물을 발견하세요!'}
+    </div>
+
+    <div style={{
+      useConsumable,
+      harvestAll,
+      activateFood,
+      cancelFood
+    } = useGame();
+    : m.weight * (1 + (rarityLevel - 1) * 0.5)
+}));
+const totalWeight = weightedMushrooms.reduce((sum, m) => sum + m.effectiveWeight, 0);
+
+    const rarityGroups = { };
+weightedMushrooms.forEach(m => {
+  if (!rarityGroups[m.rarity]) rarityGroups[m.rarity] = 0;
+    rarityGroups[m.rarity] += m.effectiveWeight;
+});
+
+return Object.entries(rarityGroups).map(([rarity, weight]) => ({
+      rarity,
+      probability: ((weight / totalWeight) * 100).toFixed(2)
+}));
+  };
+
+const getSpawnProbability = () => {
+  if (!foodState.active) return '0% (비활성)';
     const baseChance = 0.01 * foodState.multiplier;
     const pityBonus = (pityCounter || 0) * 0.01;
     const totalChance = Math.min(baseChance + pityBonus, 1.0);
     return `${(totalChance * 100).toFixed(0)}%`;
-  };
+};
 
-  const getGrowthTime = () => {
-    const baseTime = Math.max(60000 - (upgradeLevel * 3000), 5000);
+const getGrowthTime = () => {
+  const baseTime = Math.max(60000 - (upgradeLevel * 3000), 5000);
     const withFood = baseTime / (foodState.multiplier || 1);
     const seconds = (withFood / 1000).toFixed(1);
     return `${seconds}초`;
-  };
+};
 
-  return (
+    return (
     <div className="game-container">
       <div className="header">
         <h1>🌱 Plant Tycoon</h1>
@@ -241,10 +424,10 @@ function App() {
         color: '#b2bec3',
         textAlign: 'center'
       }}>
-        v1.3.1
+        v1.3.2
       </div>
     </div>
-  );
+    );
 }
 
-export default App;
+    export default App;

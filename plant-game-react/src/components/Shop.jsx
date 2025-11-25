@@ -218,39 +218,6 @@ export function Shop({
                     >
                         💰 2000
                     </button>
-                </motion.div>
-
-                {/* Growth Potion */}
-                <motion.div
-                    className="shop-item"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.6 }}
-                    style={{
-                        background: 'white',
-                        borderRadius: '16px',
-                        padding: '20px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '20px',
-                        boxShadow: '0 4px 15px rgba(0,0,0,0.05)',
-                        border: '2px solid #6c5ce7'
-                    }}
-                >
-                    <div style={{ fontSize: '3em' }}>🧪</div>
-                    <div style={{ flex: 1 }}>
-                        <div className="text-black" style={{ fontSize: '1.2em', fontWeight: 'bold' }}>성장 물약</div>
-                        <div style={{ color: '#636e72', fontSize: '0.9em' }}>모든 식물을 즉시 성장시킵니다!</div>
-                    </div>
-                    <button
-                        className="btn"
-                        onClick={() => onBuyConsumable('growthPotion', 1000)}
-                        disabled={gold < 1000}
-                        style={{ opacity: gold < 1000 ? 0.5 : 1, background: '#6c5ce7' }}
-                    >
-                        💰 1000
-                    </button>
-                </motion.div>
 
             </div>
         </div>
