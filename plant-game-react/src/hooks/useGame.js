@@ -636,18 +636,13 @@ export function useGame() {
       // To support stacking, we'd need to group by value or just have one "Mixed Stew" type.
       // Let's use the ID from the result. If it's a recipe, ID is constant.
 
-      const itemId = result.id.startsWith('mixed_stew') ? 'mixed_stew' : result.id;
+      // Group Mixed Stews by value so they don't merge into a single price
+      const itemId = result.id.startsWith('mixed_stew')
+        ? `mixed_stew_${result.value}`
+        : result.id;
 
       if (!newItems[itemId]) {
         newItems[itemId] = { ...result, id: itemId, count: 0 };
-        // If mixed stew, update value to average or keep last? 
-        // Let's just keep the value of the *current* stew for simplicity, or make it unstackable?
-        // Making it unstackable might be annoying.
-        // Let's make Mixed Stew a fixed item in recipes.json? No, dynamic value.
-        // Okay, for now, let's just add it. If ID is unique, it won't stack.
-        // If we want to stack Mixed Stews, they need same value.
-        // Let's just let them be unique for now if they have different values.
-        // Actually, let's use the exact ID from the result.
       } else {
         newItems[itemId] = { ...newItems[itemId] };
       }

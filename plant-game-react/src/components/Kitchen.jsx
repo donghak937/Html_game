@@ -69,7 +69,8 @@ export function Kitchen({ inventory, cookedItems, useCookedItem, cookingState, d
     };
 
     const isCooking = cookingState.active && timeLeft > 0;
-    const isDone = cookingState.active && timeLeft === 0;
+    // Fix: Ensure isDone only triggers if time has actually passed, preventing flash on start
+    const isDone = cookingState.active && timeLeft === 0 && (Date.now() - cookingState.startTime >= cookingState.duration);
 
     return (
         <div className="kitchen-container" style={{ paddingBottom: '80px', position: 'relative' }}>

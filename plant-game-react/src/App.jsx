@@ -140,12 +140,16 @@ function App() {
               <div style={{ fontSize: '1.2em' }}>
                 {buff.type === 'speed' ? '⚡' : buff.type === 'gold' ? '💰' : '🎲'}
               </div>
+              import {BuffTimer} from './components/BuffTimer';
+
+              // ... (inside App function render)
+
               <div>
                 <div style={{ fontWeight: 'bold', color: '#2d3436' }}>
                   {buff.name}
                 </div>
                 <div style={{ fontSize: '0.8em', color: '#636e72' }}>
-                  {Math.ceil((buff.endTime - Date.now()) / 1000)}s
+                  <BuffTimer endTime={buff.endTime} />
                 </div>
               </div>
             </div>
@@ -187,10 +191,10 @@ function App() {
               boxShadow: '0 2px 5px rgba(0,0,0,0.1)'
             }}>
               <div style={{ marginBottom: '5px', color: '#2d3436' }}>
-                🎲 현재 스폰 확률: <strong>{getSpawnProbability()}</strong>
+                🎲 현재 스폰 확률: <strong style={{ color: activeBuffs.some(b => b.type === 'spawn_rate') ? '#2ecc71' : 'inherit' }}>{getSpawnProbability()}</strong>
               </div>
               <div style={{ color: '#2d3436' }}>
-                🌱 성장 시간: <strong>{getGrowthTime()}</strong>
+                🌱 성장 시간: <strong style={{ color: activeBuffs.some(b => b.type === 'speed') ? '#2ecc71' : 'inherit' }}>{getGrowthTime()}</strong>
               </div>
             </div>
           )}
