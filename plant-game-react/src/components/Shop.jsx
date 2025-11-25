@@ -208,7 +208,7 @@ export function Shop({
                     <div style={{ fontSize: '3em' }}>💣</div>
                     <div style={{ flex: 1 }}>
                         <div className="text-black" style={{ fontSize: '1.2em', fontWeight: 'bold' }}>씨앗 폭탄</div>
-                        <div style={{ color: '#636e72', fontSize: '0.9em' }}>빈 땅에 식물을 가득 채웁니다!</div>
+                        <div style={{ color: '#636e72', fontSize: '0.9em' }}>빈 땅에 다 자란 식물을 가득 채웁니다!</div>
                     </div>
                     <button
                         className="btn"

@@ -276,7 +276,7 @@ export function Inventory({ inventory, consumables, onSell, onSellAll, onUseCons
                                         </div>
                                         <div style={{ borderTop: '1px solid #dfe6e9', paddingTop: '15px' }}>
                                             <p style={{ fontSize: '0.85em', color: '#636e72', margin: '0 0 10px 0' }}>
-                                                빈 땅에 식물을 가득 채웁니다
+                                                빈 땅에 다 자란 식물을 가득 채웁니다
                                             </p>
                                             <button
                                                 onClick={() => onUseConsumable('seedBomb')}

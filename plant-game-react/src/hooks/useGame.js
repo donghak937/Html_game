@@ -370,9 +370,9 @@ export function useGame() {
             newPlants[i] = {
               ...selectedType,
               id: Date.now() + Math.random() + i,
-              stage: 'baby',
+              stage: 'adult',
               plantedAt: Date.now(),
-              growthProgress: 0,
+              growthProgress: baseGrowthTime,
               growthDuration: baseGrowthTime
             };
             changed = true;
