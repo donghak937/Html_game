@@ -63,7 +63,7 @@ export function Inventory({ inventory, consumables, onSell, onSellAll, onUseCons
                     }}
                 >
                     🌱 식물 ({Object.values(inventory).reduce((sum, i) => sum + i.count, 0)})
-                </button >
+                </button>
                 <button
                     onClick={() => setActiveTab('consumables')}
                     style={{
@@ -162,7 +162,7 @@ export function Inventory({ inventory, consumables, onSell, onSellAll, onUseCons
                                                 gap: '10px',
                                                 marginBottom: '8px'
                                             }}>
-                                                <span style={{ fontSize: '0.9em', color: '#636e72', minWidth: '60px' }}>
+                                                <span style={{ fontSize: '0.9em', color: '#636e72', minWidth: '60px', flexShrink: 0 }}>
                                                     {selectedItems[item.emoji] || 1}개 선택
                                                 </span>
                                                 <input
@@ -171,7 +171,7 @@ export function Inventory({ inventory, consumables, onSell, onSellAll, onUseCons
                                                     max={item.count}
                                                     value={selectedItems[item.emoji] || 1}
                                                     onChange={(e) => handleSliderChange(item.emoji, e.target.value)}
-                                                    style={{ flex: 1 }}
+                                                    style={{ flex: 1, minWidth: 0, maxWidth: '100%' }}
                                                 />
                                             </div>
                                             <button
