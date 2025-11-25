@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 export function Inventory({ inventory, onSell, onSellAll }) {
     const items = Object.values(inventory);
 
+
     return (
         <div className="inventory-container">
             <div className="controls" style={{ marginBottom: '15px' }}>
@@ -32,7 +33,7 @@ export function Inventory({ inventory, onSell, onSellAll }) {
                             whileHover={{ y: -5 }}
                         >
                             <div className="item-icon">{item.emoji}</div>
-                            <div style={{ fontWeight: 'bold', fontSize: '0.9em' }}>{item.description}</div>
+                            <div style={{ fontWeight: 'bold', fontSize: '0.9em', color: 'black' }}>{item.description}</div>
                             <div style={{ fontSize: '0.8em', color: '#636e72' }}>💰 {item.value}</div>
                             <div className="item-count">x{item.count}</div>
                         </motion.div>
