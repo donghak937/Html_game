@@ -597,7 +597,7 @@ export function useGame() {
         startTime: Date.now(),
         duration: 10000, // 10 seconds default
         ingredients: selectedIngredients,
-        result: mixedStew
+        result: { ...mixedStew, ingredients: selectedIngredients }
       });
     }
   }, [inventory]);
