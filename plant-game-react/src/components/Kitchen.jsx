@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import recipeData from '../data/recipes.json';
 import mushroomData from '../data/mushroom_types.json';
@@ -74,7 +75,7 @@ export function Kitchen({ inventory, cookedItems, useCookedItem, cookingState, d
         <div className="kitchen-container" style={{ paddingBottom: '80px', position: 'relative' }}>
             {/* Completion Popup Overlay - Using Portal for true centering */}
             <AnimatePresence>
-                {showPopup && completedDish && (
+                {showPopup && completedDish && createPortal(
                     <div style={{
                         position: 'fixed',
                         top: 0,
@@ -183,7 +184,8 @@ export function Kitchen({ inventory, cookedItems, useCookedItem, cookingState, d
                                 확인
                             </button>
                         </motion.div>
-                    </div>
+                    </div>,
+                    document.body
                 )}
             </AnimatePresence>
 
