@@ -91,8 +91,20 @@ function App() {
 
   const getGrowthTime = () => {
     const baseTime = Math.max(60000 - (upgradeLevel * 3000), 5000);
-    const withFood = baseTime / (foodState.multiplier || 1);
-    const seconds = (withFood / 1000).toFixed(1);
+
+    // Calculate total multiplier including food and buffs
+    const speedBuffValue = activeBuffs
+      .filter(b => b.type === 'speed')
+      .reduce((sum, b) => sum + b.value, 0);
+
+    // Total Speed = Food Multiplier * (1 + Buff %)
+    // Example: Free Food (0.5) * Red Stew (1.5) = 0.75x Speed
+    const totalMultiplier = (foodState.multiplier || 1) * (1 + speedBuffValue);
+
+    // Effective Time = Base Time / Total Multiplier
+    const effectiveTime = baseTime / totalMultiplier;
+
+    const seconds = (effectiveTime / 1000).toFixed(1);
     return `${seconds}초`;
   };
 

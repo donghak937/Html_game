@@ -516,296 +516,284 @@ export function useGame() {
       });
 
       return newPlants;
-    });
-  }, [unlocks.harvestAll]);
+      if (!food) return;
 
-  const activateFood = useCallback((type) => {
-    const foodTypes = {
-      '3min-free': { duration: 180000, multiplier: 0.8, cost: 0, name: '3min Free' }, // Buffed from 0.5
-      '1min': { duration: 60000, multiplier: 2.5, cost: 200, name: '1min Speed' }, // Buffed from 2.0
-      '5min': { duration: 300000, multiplier: 1.0, cost: 150, name: '5min Normal' },
-      '10min': { duration: 600000, multiplier: 0.7, cost: 350, name: '10min Slow' }
-    };
+      if (gold >= food.cost) {
+        setGold(g => g - food.cost);
 
-    const food = foodTypes[type];
-    if (!food) return;
+        // Fertilizer Upgrade Effect: +10% duration per level
+        const bonusMultiplier = 1 + (fertilizerLevel * 0.1);
+        const totalDuration = food.duration * bonusMultiplier;
 
-    if (gold >= food.cost) {
-      setGold(g => g - food.cost);
+        setFoodState({
+          active: true,
+          endTime: Date.now() + totalDuration,
+          type: type,
+          multiplier: food.multiplier
+        });
+      }
+    }, [gold, fertilizerLevel]);
 
-      // Fertilizer Upgrade Effect: +10% duration per level
-      const bonusMultiplier = 1 + (fertilizerLevel * 0.1);
-      const totalDuration = food.duration * bonusMultiplier;
+    const cancelFood = useCallback(() => {
+      setFoodState({ active: false, endTime: 0, type: null, multiplier: 1 });
+    }, []);
 
-      setFoodState({
-        active: true,
-        endTime: Date.now() + totalDuration,
-        type: type,
-        multiplier: food.multiplier
-      });
-    }
-  }, [gold, fertilizerLevel]);
+    const startCooking = useCallback((selectedIngredients) => {
+      if (selectedIngredients.length !== 3) return;
 
-  const cancelFood = useCallback(() => {
-    setFoodState({ active: false, endTime: 0, type: null, multiplier: 1 });
-  }, []);
-
-  const startCooking = useCallback((selectedIngredients) => {
-    if (selectedIngredients.length !== 3) return;
-
-    // Check if user has ingredients
-    const ingredientCounts = {};
-    selectedIngredients.forEach(emoji => {
-      ingredientCounts[emoji] = (ingredientCounts[emoji] || 0) + 1;
-    });
-
-    for (const [emoji, count] of Object.entries(ingredientCounts)) {
-      if (!inventory[emoji] || inventory[emoji].count < count) return;
-    }
-
-    // Consume ingredients
-    setInventory(curr => {
-      const newInv = { ...curr };
+      // Check if user has ingredients
+      const ingredientCounts = {};
       selectedIngredients.forEach(emoji => {
-        if (newInv[emoji]) {
-          newInv[emoji] = { ...newInv[emoji] };
-          newInv[emoji].count -= 1;
-          if (newInv[emoji].count <= 0) delete newInv[emoji];
-        }
+        ingredientCounts[emoji] = (ingredientCounts[emoji] || 0) + 1;
       });
-      return newInv;
-    });
 
-    // Find Recipe
-    const sortedIngredients = [...selectedIngredients].sort();
-    const recipe = recipeData.recipes.find(r => {
-      const rIngredients = [...r.ingredients].sort();
-      return JSON.stringify(rIngredients) === JSON.stringify(sortedIngredients);
-    });
-
-    if (recipe) {
-      setCookingState({
-        active: true,
-        startTime: Date.now(),
-        duration: recipe.time,
-        ingredients: selectedIngredients,
-        result: recipe
-      });
-    } else {
-      // Mixed Stew (Failure)
-      const totalValue = selectedIngredients.reduce((sum, emoji) => {
-        const item = mushroomData.mushrooms.find(m => m.emoji === emoji);
-        return sum + (item ? item.value : 0);
-      }, 0);
-
-      const mixedStew = {
-        id: `mixed_stew_${Date.now()}`,
-        name: "잡탕 스튜",
-        emoji: "🍲",
-        description: "알 수 없는 재료들이 뒤섞인 스튜. 맛은 보장할 수 없습니다.",
-        value: Math.floor(totalValue * 1.1), // 1.1x Bonus
-        count: 1,
-        effect: null // No effect
-      };
-
-      setCookingState({
-        active: true,
-        startTime: Date.now(),
-        duration: 10000, // 10 seconds default
-        ingredients: selectedIngredients,
-        result: { ...mixedStew, ingredients: selectedIngredients }
-      });
-    }
-  }, [inventory]);
-
-  const claimDish = useCallback(() => {
-    if (!cookingState.active) return;
-
-    const now = Date.now();
-    const elapsed = now - cookingState.startTime;
-    if (elapsed < cookingState.duration) return;
-
-    const result = cookingState.result;
-
-    // Add to Cooked Items
-    setCookedItems(curr => {
-      const newItems = { ...curr };
-      // If it's a mixed stew (unique ID), add as new entry or stack?
-      // Mixed stews have unique IDs, so they might clutter. 
-      // Let's make a generic "mixed_stew" ID for stacking if possible, but values differ.
-      // For simplicity, let's treat Mixed Stew as a generic item with average value? 
-      // User asked for "total price of ingredients", so value varies.
-      // To support stacking, we'd need to group by value or just have one "Mixed Stew" type.
-      // Let's use the ID from the result. If it's a recipe, ID is constant.
-
-      // Group Mixed Stews by value so they don't merge into a single price
-      const itemId = result.id.startsWith('mixed_stew')
-        ? `mixed_stew_${result.value}`
-        : result.id;
-
-      if (!newItems[itemId]) {
-        newItems[itemId] = { ...result, id: itemId, count: 0 };
-      } else {
-        newItems[itemId] = { ...newItems[itemId] };
+      for (const [emoji, count] of Object.entries(ingredientCounts)) {
+        if (!inventory[emoji] || inventory[emoji].count < count) return;
       }
 
-      // If it's mixed stew, we might want to average the value or something?
-      // Let's just overwrite value for now if it stacks, or keep unique IDs.
-      // Unique IDs for mixed stew means inventory clutter.
-      // Let's try to make Mixed Stew have a consistent ID 'mixed_stew' but maybe fixed value?
-      // User said: "Total price of ingredients".
-      // Let's stick to unique IDs for Mixed Stews for now to preserve value.
-
-      if (newItems[itemId].count === undefined) newItems[itemId].count = 0;
-      newItems[itemId].count += 1;
-      return newItems;
-    });
-
-    // Unlock Recipe
-    if (!result.id.startsWith('mixed_stew')) {
-      setDiscoveredRecipes(prev => {
-        if (!prev.includes(result.id)) {
-          return [...prev, result.id];
-        }
-        return prev;
-      });
-    }
-
-    setCookingState({ active: false, startTime: 0, duration: 0, ingredients: [], result: null });
-  }, [cookingState]);
-
-  const useCookedItem = useCallback((recipeId) => {
-    if (!cookedItems[recipeId] || cookedItems[recipeId].count <= 0) return;
-
-    const item = cookedItems[recipeId];
-    const effect = item.effect;
-
-    // Apply Effect
-    if (effect.type === 'instant_growth') {
-      setPlants(prev => {
-        const newPlants = [...prev];
-        let count = effect.value;
-        // Find random non-adult plants
-        const candidates = newPlants
-          .map((p, i) => ({ p, i }))
-          .filter(({ p }) => p && p.stage === 'baby');
-
-        // Shuffle candidates
-        for (let i = candidates.length - 1; i > 0; i--) {
-          const j = Math.floor(Math.random() * (i + 1));
-          [candidates[i], candidates[j]] = [candidates[j], candidates[i]];
-        }
-
-        candidates.slice(0, count).forEach(({ i }) => {
-          newPlants[i] = { ...newPlants[i], stage: 'adult', growthProgress: newPlants[i].growthDuration };
+      // Consume ingredients
+      setInventory(curr => {
+        const newInv = { ...curr };
+        selectedIngredients.forEach(emoji => {
+          if (newInv[emoji]) {
+            newInv[emoji] = { ...newInv[emoji] };
+            newInv[emoji].count -= 1;
+            if (newInv[emoji].count <= 0) delete newInv[emoji];
+          }
         });
-
-        return newPlants;
+        return newInv;
       });
-    } else {
-      // Buffs (speed, gold, spawn_rate)
-      setActiveBuffs(prev => [
-        ...prev.filter(b => b.type !== effect.type), // Overwrite same type buff
-        {
-          type: effect.type,
-          value: effect.value,
-          endTime: Date.now() + effect.duration,
-          name: item.name
+
+      // Find Recipe
+      const sortedIngredients = [...selectedIngredients].sort();
+      const recipe = recipeData.recipes.find(r => {
+        const rIngredients = [...r.ingredients].sort();
+        return JSON.stringify(rIngredients) === JSON.stringify(sortedIngredients);
+      });
+
+      if (recipe) {
+        setCookingState({
+          active: true,
+          startTime: Date.now(),
+          duration: recipe.time,
+          ingredients: selectedIngredients,
+          result: recipe
+        });
+      } else {
+        // Mixed Stew (Failure)
+        const totalValue = selectedIngredients.reduce((sum, emoji) => {
+          const item = mushroomData.mushrooms.find(m => m.emoji === emoji);
+          return sum + (item ? item.value : 0);
+        }, 0);
+
+        const mixedStew = {
+          id: `mixed_stew_${Date.now()}`,
+          name: "잡탕 스튜",
+          emoji: "🍲",
+          description: "알 수 없는 재료들이 뒤섞인 스튜. 맛은 보장할 수 없습니다.",
+          value: Math.floor(totalValue * 1.1), // 1.1x Bonus
+          count: 1,
+          effect: null // No effect
+        };
+
+        setCookingState({
+          active: true,
+          startTime: Date.now(),
+          duration: 10000, // 10 seconds default
+          ingredients: selectedIngredients,
+          result: { ...mixedStew, ingredients: selectedIngredients }
+        });
+      }
+    }, [inventory]);
+
+    const claimDish = useCallback(() => {
+      if (!cookingState.active) return;
+
+      const now = Date.now();
+      const elapsed = now - cookingState.startTime;
+      if (elapsed < cookingState.duration) return;
+
+      const result = cookingState.result;
+
+      // Add to Cooked Items
+      setCookedItems(curr => {
+        const newItems = { ...curr };
+        // If it's a mixed stew (unique ID), add as new entry or stack?
+        // Mixed stews have unique IDs, so they might clutter. 
+        // Let's make a generic "mixed_stew" ID for stacking if possible, but values differ.
+        // For simplicity, let's treat Mixed Stew as a generic item with average value? 
+        // User asked for "total price of ingredients", so value varies.
+        // To support stacking, we'd need to group by value or just have one "Mixed Stew" type.
+        // Let's use the ID from the result. If it's a recipe, ID is constant.
+
+        // Group Mixed Stews by value so they don't merge into a single price
+        const itemId = result.id.startsWith('mixed_stew')
+          ? `mixed_stew_${result.value}`
+          : result.id;
+
+        if (!newItems[itemId]) {
+          newItems[itemId] = { ...result, id: itemId, count: 0 };
+        } else {
+          newItems[itemId] = { ...newItems[itemId] };
         }
-      ]);
-    }
 
-    // Consume Item
-    setCookedItems(curr => {
-      const newItems = { ...curr };
-      newItems[recipeId] = { ...newItems[recipeId] };
-      newItems[recipeId].count -= 1;
-      if (newItems[recipeId].count <= 0) delete newItems[recipeId];
-      return newItems;
-    });
+        // If it's mixed stew, we might want to average the value or something?
+        // Let's just overwrite value for now if it stacks, or keep unique IDs.
+        // Unique IDs for mixed stew means inventory clutter.
+        // Let's try to make Mixed Stew have a consistent ID 'mixed_stew' but maybe fixed value?
+        // User said: "Total price of ingredients".
+        // Let's stick to unique IDs for Mixed Stews for now to preserve value.
 
-  }, [cookedItems]);
+        if (newItems[itemId].count === undefined) newItems[itemId].count = 0;
+        newItems[itemId].count += 1;
+        return newItems;
+      });
 
-  const sellCookedItem = useCallback((itemId, amount = 1) => {
-    const item = cookedItems[itemId];
-    if (!item || item.count < amount) return;
+      // Unlock Recipe
+      if (!result.id.startsWith('mixed_stew')) {
+        setDiscoveredRecipes(prev => {
+          if (!prev.includes(result.id)) {
+            return [...prev, result.id];
+          }
+          return prev;
+        });
+      }
 
-    setCookedItems(curr => {
-      const newItems = { ...curr };
-      newItems[itemId] = { ...newItems[itemId] };
-      newItems[itemId].count -= amount;
-      if (newItems[itemId].count <= 0) delete newItems[itemId];
-      return newItems;
-    });
+      setCookingState({ active: false, startTime: 0, duration: 0, ingredients: [], result: null });
+    }, [cookingState]);
 
-    setGold(g => {
-      // Apply Gold Buff
-      const goldBuff = activeBuffs.find(b => b.type === 'gold');
-      const multiplier = goldBuff ? (1 + goldBuff.value) : 1;
-      // Mixed Stew value is already calculated with 1.1x, but let's apply gold buff too?
-      // Why not.
-      return g + Math.floor(item.value * amount * multiplier);
-    });
-  }, [cookedItems, activeBuffs]);
+    const useCookedItem = useCallback((recipeId) => {
+      if (!cookedItems[recipeId] || cookedItems[recipeId].count <= 0) return;
 
-  // Developer Commands
-  const resetGame = useCallback(() => {
-    if (window.confirm('정말 초기화하시겠습니까? 모든 데이터가 삭제됩니다.')) {
-      localStorage.clear();
-      window.location.reload();
-    }
-  }, []);
+      const item = cookedItems[recipeId];
+      const effect = item.effect;
 
-  const activateGodMode = useCallback(() => {
-    setGold(100000);
+      // Apply Effect
+      if (effect.type === 'instant_growth') {
+        setPlants(prev => {
+          const newPlants = [...prev];
+          let count = effect.value;
+          // Find random non-adult plants
+          const candidates = newPlants
+            .map((p, i) => ({ p, i }))
+            .filter(({ p }) => p && p.stage === 'baby');
 
-    const allMushrooms = mushroomData.mushrooms;
-    const newInventory = {};
+          // Shuffle candidates
+          for (let i = candidates.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [candidates[i], candidates[j]] = [candidates[j], candidates[i]];
+          }
 
-    allMushrooms.forEach(m => {
-      newInventory[m.emoji] = {
-        ...m,
-        count: 99
-      };
-    });
+          candidates.slice(0, count).forEach(({ i }) => {
+            newPlants[i] = { ...newPlants[i], stage: 'adult', growthProgress: newPlants[i].growthDuration };
+          });
 
-    setInventory(newInventory);
-    alert('God Mode Activated! ⚡');
-  }, []);
+          return newPlants;
+        });
+      } else {
+        // Buffs (speed, gold, spawn_rate)
+        setActiveBuffs(prev => [
+          ...prev.filter(b => b.type !== effect.type), // Overwrite same type buff
+          {
+            type: effect.type,
+            value: effect.value,
+            endTime: Date.now() + effect.duration,
+            name: item.name
+          }
+        ]);
+      }
 
-  return {
-    gold,
-    plants,
-    inventory,
-    collection,
-    upgradeLevel,
-    unlocks,
-    rarityLevel,
-    fertilizerLevel,
-    consumables,
-    foodState,
-    pityCounter,
-    harvest,
-    sell,
-    sellAll,
-    buyUpgrade,
-    buyUnlock,
-    buyRarityUpgrade,
-    buyFertilizerUpgrade,
-    buyConsumable,
-    useConsumable,
-    harvestAll,
-    activateFood,
-    cancelFood,
-    cookedItems,
-    activeBuffs,
-    useCookedItem,
-    cookingState,
-    discoveredRecipes,
-    startCooking,
-    claimDish,
-    sellCookedItem,
-    resetGame,
-    activateGodMode
-  };
-}
+      // Consume Item
+      setCookedItems(curr => {
+        const newItems = { ...curr };
+        newItems[recipeId] = { ...newItems[recipeId] };
+        newItems[recipeId].count -= 1;
+        if (newItems[recipeId].count <= 0) delete newItems[recipeId];
+        return newItems;
+      });
+
+    }, [cookedItems]);
+
+    const sellCookedItem = useCallback((itemId, amount = 1) => {
+      const item = cookedItems[itemId];
+      if (!item || item.count < amount) return;
+
+      setCookedItems(curr => {
+        const newItems = { ...curr };
+        newItems[itemId] = { ...newItems[itemId] };
+        newItems[itemId].count -= amount;
+        if (newItems[itemId].count <= 0) delete newItems[itemId];
+        return newItems;
+      });
+
+      setGold(g => {
+        // Apply Gold Buff
+        const goldBuff = activeBuffs.find(b => b.type === 'gold');
+        const multiplier = goldBuff ? (1 + goldBuff.value) : 1;
+        // Mixed Stew value is already calculated with 1.1x, but let's apply gold buff too?
+        // Why not.
+        return g + Math.floor(item.value * amount * multiplier);
+      });
+    }, [cookedItems, activeBuffs]);
+
+    // Developer Commands
+    const resetGame = useCallback(() => {
+      if (window.confirm('정말 초기화하시겠습니까? 모든 데이터가 삭제됩니다.')) {
+        localStorage.clear();
+        window.location.reload();
+      }
+    }, []);
+
+    const activateGodMode = useCallback(() => {
+      setGold(100000);
+
+      const allMushrooms = mushroomData.mushrooms;
+      const newInventory = {};
+
+      allMushrooms.forEach(m => {
+        newInventory[m.emoji] = {
+          ...m,
+          count: 99
+        };
+      });
+
+      setInventory(newInventory);
+      alert('God Mode Activated! ⚡');
+    }, []);
+
+    return {
+      gold,
+      plants,
+      inventory,
+      collection,
+      upgradeLevel,
+      unlocks,
+      rarityLevel,
+      fertilizerLevel,
+      consumables,
+      foodState,
+      pityCounter,
+      harvest,
+      sell,
+      sellAll,
+      buyUpgrade,
+      buyUnlock,
+      buyRarityUpgrade,
+      buyFertilizerUpgrade,
+      buyConsumable,
+      useConsumable,
+      harvestAll,
+      activateFood,
+      cancelFood,
+      cookedItems,
+      activeBuffs,
+      useCookedItem,
+      cookingState,
+      discoveredRecipes,
+      startCooking,
+      claimDish,
+      sellCookedItem,
+      resetGame,
+      activateGodMode
+    };
+  }
