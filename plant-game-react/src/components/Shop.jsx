@@ -14,8 +14,8 @@ export function Shop({
     onBuyConsumable
 }) {
     const upgradeCost = 100 + (upgradeLevel * 50);
-    // Fix: Match useGame.js formula: Math.floor(1000 * Math.pow(2, rarityLevel - 1))
-    const rarityCost = Math.floor(1000 * Math.pow(2, rarityLevel - 1));
+    // Fix: Match useGame.js formula: Linear (1000 * Level)
+    const rarityCost = 1000 * rarityLevel;
     const statsCost = 500;
     const harvestAllCost = 500;
 
