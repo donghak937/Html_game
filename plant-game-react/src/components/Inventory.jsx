@@ -38,6 +38,7 @@ export function Inventory({ inventory, consumables, onSell, onSellAll, onUseCons
                             border: 'none',
                             borderRadius: '8px',
                             fontWeight: 'bold',
+                                                       whiteSpace: 'nowrap',
                             cursor: 'pointer'
                         }}
                     >
@@ -58,6 +59,7 @@ export function Inventory({ inventory, consumables, onSell, onSellAll, onUseCons
                         background: activeTab === 'items' ? '#00b894' : '#dfe6e9',
                         color: activeTab === 'items' ? 'white' : '#636e72',
                         fontWeight: 'bold',
+                                                       whiteSpace: 'nowrap',
                         cursor: 'pointer',
                         transition: 'all 0.2s'
                     }}
@@ -74,6 +76,7 @@ export function Inventory({ inventory, consumables, onSell, onSellAll, onUseCons
                         background: activeTab === 'consumables' ? '#e17055' : '#dfe6e9',
                         color: activeTab === 'consumables' ? 'white' : '#636e72',
                         fontWeight: 'bold',
+                                                       whiteSpace: 'nowrap',
                         cursor: 'pointer',
                         transition: 'all 0.2s'
                     }}
@@ -135,6 +138,7 @@ export function Inventory({ inventory, consumables, onSell, onSellAll, onUseCons
                                                 <div style={{
                                                     fontSize: '1.1em',
                                                     fontWeight: 'bold',
+                                                       whiteSpace: 'nowrap',
                                                     color: '#2d3436',
                                                     marginBottom: '4px'
                                                 }}>
@@ -154,7 +158,8 @@ export function Inventory({ inventory, consumables, onSell, onSellAll, onUseCons
                                                        padding: '4px 10px',
                                                        borderRadius: '12px',
                                                        fontSize: '0.95em',
-                                                       fontWeight: 'bold'
+                                                       fontWeight: 'bold',
+                                                       whiteSpace: 'nowrap'
                                                      }}>{item.name} 총 {item.count} 개</span>
                                                 </div>
                                             </div>
@@ -197,6 +202,7 @@ export function Inventory({ inventory, consumables, onSell, onSellAll, onUseCons
                                                     border: 'none',
                                                     borderRadius: '8px',
                                                     fontWeight: 'bold',
+                                                       whiteSpace: 'nowrap',
                                                     cursor: 'pointer'
                                                 }}
                                             >
@@ -245,6 +251,7 @@ export function Inventory({ inventory, consumables, onSell, onSellAll, onUseCons
                                                 <div style={{
                                                     fontSize: '1.1em',
                                                     fontWeight: 'bold',
+                                                       whiteSpace: 'nowrap',
                                                     color: '#2d3436',
                                                     marginBottom: '4px'
                                                 }}>
@@ -269,6 +276,7 @@ export function Inventory({ inventory, consumables, onSell, onSellAll, onUseCons
                                                     border: 'none',
                                                     borderRadius: '8px',
                                                     fontWeight: 'bold',
+                                                       whiteSpace: 'nowrap',
                                                     cursor: 'pointer'
                                                 }}
                                             >
@@ -295,6 +303,7 @@ export function Inventory({ inventory, consumables, onSell, onSellAll, onUseCons
                                                 <div style={{
                                                     fontSize: '1.1em',
                                                     fontWeight: 'bold',
+                                                       whiteSpace: 'nowrap',
                                                     color: '#2d3436',
                                                     marginBottom: '4px'
                                                 }}>
@@ -319,6 +328,7 @@ export function Inventory({ inventory, consumables, onSell, onSellAll, onUseCons
                                                     border: 'none',
                                                     borderRadius: '8px',
                                                     fontWeight: 'bold',
+                                                       whiteSpace: 'nowrap',
                                                     cursor: 'pointer'
                                                 }}
                                             >
@@ -335,4 +345,5 @@ export function Inventory({ inventory, consumables, onSell, onSellAll, onUseCons
         </div>
     );
 }
+
 
