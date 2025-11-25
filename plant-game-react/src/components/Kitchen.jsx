@@ -74,120 +74,122 @@ export function Kitchen({ inventory, cookedItems, useCookedItem, cookingState, d
     return (
         <div className="kitchen-container" style={{ paddingBottom: '80px', position: 'relative' }}>
             {/* Completion Popup Overlay - Using Portal for true centering */}
-            <AnimatePresence>
-                {showPopup && completedDish && createPortal(
-                    <div style={{
-                        position: 'fixed',
-                        top: 0,
-                        left: 0,
-                        width: '100vw',
-                        height: '100vh',
-                        zIndex: 9999,
-                        pointerEvents: 'none', // Allow clicks to pass through wrapper
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center'
-                    }}>
-                        <motion.div
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                            style={{
-                                position: 'absolute',
-                                top: 0,
-                                left: 0,
-                                width: '100%',
-                                height: '100%',
-                                background: 'rgba(0,0,0,0.5)',
-                                pointerEvents: 'auto' // Re-enable clicks for overlay
-                            }}
-                            onClick={() => setShowPopup(false)}
-                        />
-                        <motion.div
-                            initial={{ scale: 0.8, y: 50 }}
-                            animate={{ scale: 1, y: 0 }}
-                            exit={{ scale: 0.8, y: 50 }}
-                            onClick={e => e.stopPropagation()}
-                            style={{
-                                background: 'white',
-                                padding: '30px',
-                                borderRadius: '20px',
-                                boxShadow: '0 10px 30px rgba(0,0,0,0.2)',
-                                textAlign: 'center',
-                                minWidth: '300px',
-                                maxWidth: '90%',
-                                border: `4px solid ${completedDish.effect ? '#fdcb6e' : '#b2bec3'}`,
-                                zIndex: 10000,
-                                pointerEvents: 'auto',
-                                position: 'relative'
-                            }}
-                        >
-                            <div style={{ fontSize: '5em', marginBottom: '10px' }}>
-                                {completedDish.emoji}
-                            </div>
-                            <h2 style={{ margin: '0 0 10px 0', color: '#2d3436' }}>
-                                {completedDish.name} {completedDish.isRecipeInfo ? '' : '완성!'}
-                            </h2>
-                            <p style={{ color: '#636e72', marginBottom: '20px' }}>
-                                {completedDish.description}
-                            </p>
-
-                            {/* Recipe Info Section */}
-                            {completedDish.isRecipeInfo && (
-                                <div style={{ background: '#f1f2f6', padding: '15px', borderRadius: '12px', marginBottom: '20px', textAlign: 'left' }}>
-                                    <div style={{ marginBottom: '10px' }}>
-                                        <span style={{ fontWeight: 'bold', color: '#2d3436' }}>필요 재료:</span>
-                                        <div style={{ display: 'flex', gap: '10px', marginTop: '5px' }}>
-                                            {(completedDish.ingredients || ['❓', '❓', '❓']).map((ing, i) => (
-                                                <div key={i} style={{ fontSize: '1.5em', background: 'white', borderRadius: '8px', padding: '5px', boxShadow: '0 2px 5px rgba(0,0,0,0.05)' }}>
-                                                    {ing}
-                                                </div>
-                                            ))}
-                                        </div>
-                                    </div>
-                                    {completedDish.effect && (
-                                        <div style={{ marginBottom: '10px' }}>
-                                            <span style={{ fontWeight: 'bold', color: '#2d3436' }}>효과:</span>
-                                            <div style={{ color: '#0984e3' }}>
-                                                {completedDish.effect.type === 'speed' && '⚡ 성장 속도 증가'}
-                                                {completedDish.effect.type === 'gold' && '💰 골드 획득 증가'}
-                                                {completedDish.effect.type === 'spawn_rate' && '🎲 식물 등장 확률 증가'}
-                                                {completedDish.effect.type === 'add_consumable' && '💣 아이템 획득'}
-                                                {completedDish.effect.type === 'instant_growth' && '✨ 즉시 성장'}
-                                                {' '}
-                                                ({completedDish.effect.duration > 0 ? `${completedDish.effect.duration / 60000}분` : '즉시'})
-                                            </div>
-                                        </div>
-                                    )}
-                                    <div>
-                                        <span style={{ fontWeight: 'bold', color: '#2d3436' }}>판매 가격:</span>
-                                        <span style={{ fontWeight: 'bold', color: '#f1c40f', marginLeft: '5px' }}>
-                                            💰 {completedDish.value}
-                                        </span>
-                                    </div>
-                                </div>
-                            )}
-
-                            <button
-                                onClick={() => setShowPopup(false)}
+            {createPortal(
+                <AnimatePresence>
+                    {showPopup && completedDish && (
+                        <div style={{
+                            position: 'fixed',
+                            top: 0,
+                            left: 0,
+                            width: '100vw',
+                            height: '100vh',
+                            zIndex: 9999,
+                            pointerEvents: 'none', // Allow clicks to pass through wrapper
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center'
+                        }} key="popup-overlay">
+                            <motion.div
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
                                 style={{
-                                    padding: '10px 30px',
-                                    background: '#00b894',
-                                    color: 'white',
-                                    border: 'none',
-                                    borderRadius: '10px',
-                                    fontWeight: 'bold',
-                                    cursor: 'pointer',
-                                    fontSize: '1.1em'
+                                    position: 'absolute',
+                                    top: 0,
+                                    left: 0,
+                                    width: '100%',
+                                    height: '100%',
+                                    background: 'rgba(0,0,0,0.5)',
+                                    pointerEvents: 'auto' // Re-enable clicks for overlay
+                                }}
+                                onClick={() => setShowPopup(false)}
+                            />
+                            <motion.div
+                                initial={{ scale: 0.8, y: 50 }}
+                                animate={{ scale: 1, y: 0 }}
+                                exit={{ scale: 0.8, y: 50 }}
+                                onClick={e => e.stopPropagation()}
+                                style={{
+                                    background: 'white',
+                                    padding: '30px',
+                                    borderRadius: '20px',
+                                    boxShadow: '0 10px 30px rgba(0,0,0,0.2)',
+                                    textAlign: 'center',
+                                    minWidth: '300px',
+                                    maxWidth: '90%',
+                                    border: `4px solid ${completedDish.effect ? '#fdcb6e' : '#b2bec3'}`,
+                                    zIndex: 10000,
+                                    pointerEvents: 'auto',
+                                    position: 'relative'
                                 }}
                             >
-                                확인
-                            </button>
-                        </motion.div>
-                    </div>,
-                    document.body
-                )}
-            </AnimatePresence>
+                                <div style={{ fontSize: '5em', marginBottom: '10px' }}>
+                                    {completedDish.emoji}
+                                </div>
+                                <h2 style={{ margin: '0 0 10px 0', color: '#2d3436' }}>
+                                    {completedDish.name} {completedDish.isRecipeInfo ? '' : '완성!'}
+                                </h2>
+                                <p style={{ color: '#636e72', marginBottom: '20px' }}>
+                                    {completedDish.description}
+                                </p>
+
+                                {/* Recipe Info Section */}
+                                {completedDish.isRecipeInfo && (
+                                    <div style={{ background: '#f1f2f6', padding: '15px', borderRadius: '12px', marginBottom: '20px', textAlign: 'left' }}>
+                                        <div style={{ marginBottom: '10px' }}>
+                                            <span style={{ fontWeight: 'bold', color: '#2d3436' }}>필요 재료:</span>
+                                            <div style={{ display: 'flex', gap: '10px', marginTop: '5px' }}>
+                                                {(completedDish.ingredients || ['❓', '❓', '❓']).map((ing, i) => (
+                                                    <div key={i} style={{ fontSize: '1.5em', background: 'white', borderRadius: '8px', padding: '5px', boxShadow: '0 2px 5px rgba(0,0,0,0.05)' }}>
+                                                        {ing}
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                        {completedDish.effect && (
+                                            <div style={{ marginBottom: '10px' }}>
+                                                <span style={{ fontWeight: 'bold', color: '#2d3436' }}>효과:</span>
+                                                <div style={{ color: '#0984e3' }}>
+                                                    {completedDish.effect.type === 'speed' && '⚡ 성장 속도 증가'}
+                                                    {completedDish.effect.type === 'gold' && '💰 골드 획득 증가'}
+                                                    {completedDish.effect.type === 'spawn_rate' && '🎲 식물 등장 확률 증가'}
+                                                    {completedDish.effect.type === 'add_consumable' && '💣 아이템 획득'}
+                                                    {completedDish.effect.type === 'instant_growth' && '✨ 즉시 성장'}
+                                                    {' '}
+                                                    ({completedDish.effect.duration > 0 ? `${completedDish.effect.duration / 60000}분` : '즉시'})
+                                                </div>
+                                            </div>
+                                        )}
+                                        <div>
+                                            <span style={{ fontWeight: 'bold', color: '#2d3436' }}>판매 가격:</span>
+                                            <span style={{ fontWeight: 'bold', color: '#f1c40f', marginLeft: '5px' }}>
+                                                💰 {completedDish.value}
+                                            </span>
+                                        </div>
+                                    </div>
+                                )}
+
+                                <button
+                                    onClick={() => setShowPopup(false)}
+                                    style={{
+                                        padding: '10px 30px',
+                                        background: '#00b894',
+                                        color: 'white',
+                                        border: 'none',
+                                        borderRadius: '10px',
+                                        fontWeight: 'bold',
+                                        cursor: 'pointer',
+                                        fontSize: '1.1em'
+                                    }}
+                                >
+                                    확인
+                                </button>
+                            </motion.div>
+                        </div>
+                    )}
+                </AnimatePresence>,
+                document.body
+            )}
 
             {/* Remove separate overlay div since it's integrated now */}
 

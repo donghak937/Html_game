@@ -116,43 +116,42 @@ function App() {
         </div>
       </div>
 
-      {/* Side Buff Container */}
-      <div style={{
-        position: 'fixed',
-        right: '20px',
-        top: '50%',
-        transform: 'translateY(-50%)',
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '10px',
-        zIndex: 100
-      }}>
-        {activeBuffs.map((buff, index) => (
-          <div key={index} style={{
-            background: 'rgba(255, 255, 255, 0.9)',
-            padding: '10px 15px',
-            borderRadius: '12px',
-            boxShadow: '0 4px 15px rgba(0,0,0,0.1)',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '10px',
-            borderLeft: '4px solid #00b894',
-            animation: 'slideIn 0.3s ease-out'
-          }}>
-            <div style={{ fontSize: '1.5em' }}>
-              {buff.type === 'speed' ? '⚡' : buff.type === 'gold' ? '💰' : '🎲'}
-            </div>
-            <div>
-              <div style={{ fontWeight: 'bold', fontSize: '0.9em', color: '#2d3436' }}>
-                {buff.name}
+      {/* Buff List - Moved inside flow to avoid overlap */}
+      {activeBuffs.length > 0 && (
+        <div style={{
+          display: 'flex',
+          flexWrap: 'wrap',
+          gap: '10px',
+          marginBottom: '15px',
+          justifyContent: 'center'
+        }}>
+          {activeBuffs.map((buff, index) => (
+            <div key={index} style={{
+              background: 'rgba(255, 255, 255, 0.9)',
+              padding: '8px 12px',
+              borderRadius: '12px',
+              boxShadow: '0 2px 5px rgba(0,0,0,0.1)',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              borderLeft: '4px solid #00b894',
+              fontSize: '0.9em'
+            }}>
+              <div style={{ fontSize: '1.2em' }}>
+                {buff.type === 'speed' ? '⚡' : buff.type === 'gold' ? '💰' : '🎲'}
               </div>
-              <div style={{ fontSize: '0.8em', color: '#636e72' }}>
-                {Math.ceil((buff.endTime - Date.now()) / 1000)}초 남음
+              <div>
+                <div style={{ fontWeight: 'bold', color: '#2d3436' }}>
+                  {buff.name}
+                </div>
+                <div style={{ fontSize: '0.8em', color: '#636e72' }}>
+                  {Math.ceil((buff.endTime - Date.now()) / 1000)}s
+                </div>
               </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
 
       {view === 'game' && (
         <>
