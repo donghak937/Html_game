@@ -150,10 +150,8 @@ export function useGame() {
         return; // Skip this tick to update state
       }
 
-      // Calculate Growth Interval
-      // Base: 3000ms. Upgrade: -10% per level (max 50%). Food: / multiplier. Buffs: / speedMultiplier
-      let baseInterval = (3000 * Math.pow(0.95, currentLevel)) / speedMultiplier;
-      if (baseInterval < 1000) baseInterval = 1000; // Cap speed
+      // Calculate Growth Interval - DEPRECATED logic removed
+      // Growth speed is now handled in the Growing section by modifying growthAmount
 
       setPlants(prevPlants => {
         let newPlants = [...prevPlants];
@@ -234,7 +232,11 @@ export function useGame() {
             if (plant && plant.stage === 'baby') {
               // Initialize growthProgress if missing (migration for existing plants)
               const currentProgress = plant.growthProgress || 0;
-              const newProgress = currentProgress + 1000; // Add 1 second per tick
+
+              // Apply Speed Buffs and Food Multiplier
+              // 1 real second = (1 * foodMultiplier * speedMultiplier) growth seconds
+              const growthAmount = 1000 * (currentFood.multiplier || 1) * speedMultiplier;
+              const newProgress = currentProgress + growthAmount;
 
               if (newProgress >= plant.growthDuration) {
                 changed = true;

@@ -4,7 +4,7 @@
             "id": "red_stew",
             "name": "빨간 스튜",
             "emoji": "🥘",
-            "description": "붉은 버섯으로 만든 진한 스튜. 성장 속도가 빨라집니다.",
+            "description": "붉은 버섯으로 만든 진한 스튜. 성장 속도가 20% 빨라집니다.",
             "ingredients": [
                 "🍄",
                 "🍄",
@@ -22,7 +22,7 @@
             "id": "fruit_salad",
             "name": "과일 샐러드",
             "emoji": "🥗",
-            "description": "신선한 과일이 듬뿍! 판매 수익이 증가합니다.",
+            "description": "신선한 과일이 듬뿍! 판매 수익이 50% 증가합니다.",
             "ingredients": [
                 "🍓",
                 "🍒",
@@ -59,7 +59,7 @@
             "id": "golden_tea",
             "name": "황금 차",
             "emoji": "🍵",
-            "description": "귀한 재료를 우려낸 차. 식물 등장 확률이 대폭 증가합니다.",
+            "description": "귀한 재료를 우려낸 차. 식물 등장 확률이 50% 증가합니다.",
             "ingredients": [
                 "🌾",
                 "🌿",

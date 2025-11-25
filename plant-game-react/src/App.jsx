@@ -188,10 +188,24 @@ function App() {
               boxShadow: '0 2px 5px rgba(0,0,0,0.1)'
             }}>
               <div style={{ marginBottom: '5px', color: '#2d3436' }}>
-                🎲 현재 스폰 확률: <strong style={{ color: activeBuffs.some(b => b.type === 'spawn_rate') ? '#2ecc71' : 'inherit' }}>{getSpawnProbability()}</strong>
+                🎲 현재 스폰 확률: <strong style={{ color: activeBuffs.some(b => b.type === 'spawn_rate') ? '#2ecc71' : 'inherit' }}>
+                  {getSpawnProbability()}
+                  {activeBuffs.some(b => b.type === 'spawn_rate') && (
+                    <span style={{ fontSize: '0.8em', marginLeft: '5px' }}>
+                      (+{(activeBuffs.filter(b => b.type === 'spawn_rate').reduce((sum, b) => sum + b.value, 0) * 100).toFixed(0)}%)
+                    </span>
+                  )}
+                </strong>
               </div>
               <div style={{ color: '#2d3436' }}>
-                🌱 성장 시간: <strong style={{ color: activeBuffs.some(b => b.type === 'speed') ? '#2ecc71' : 'inherit' }}>{getGrowthTime()}</strong>
+                🌱 성장 시간: <strong style={{ color: activeBuffs.some(b => b.type === 'speed') ? '#2ecc71' : 'inherit' }}>
+                  {getGrowthTime()}
+                  {activeBuffs.some(b => b.type === 'speed') && (
+                    <span style={{ fontSize: '0.8em', marginLeft: '5px' }}>
+                      (+{(activeBuffs.filter(b => b.type === 'speed').reduce((sum, b) => sum + b.value, 0) * 100).toFixed(0)}%)
+                    </span>
+                  )}
+                </strong>
               </div>
             </div>
           )}
