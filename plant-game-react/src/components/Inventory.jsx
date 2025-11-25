@@ -1,5 +1,17 @@
 ﻿import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import mushroomData from '../data/mushroom_types.json';
+
+const getRarityColor = (rarity) => {
+    const colors = {
+        'common': '#95a5a6',
+        'rare': '#3498db',
+        'epic': '#9b59b6',
+        'legendary': '#f39c12',
+        'mythic': '#e74c3c'
+    };
+    return colors[rarity] || '#95a5a6';
+};
 
 export function Inventory({ inventory, consumables, onSell, onSellAll, onUseConsumable }) {
     const [selectedItems, setSelectedItems] = useState({});
@@ -38,7 +50,7 @@ export function Inventory({ inventory, consumables, onSell, onSellAll, onUseCons
                             border: 'none',
                             borderRadius: '8px',
                             fontWeight: 'bold',
-                                                       whiteSpace: 'nowrap',
+                            whiteSpace: 'nowrap',
                             cursor: 'pointer'
                         }}
                     >
@@ -59,7 +71,7 @@ export function Inventory({ inventory, consumables, onSell, onSellAll, onUseCons
                         background: activeTab === 'items' ? '#00b894' : '#dfe6e9',
                         color: activeTab === 'items' ? 'white' : '#636e72',
                         fontWeight: 'bold',
-                                                       whiteSpace: 'nowrap',
+                        whiteSpace: 'nowrap',
                         cursor: 'pointer',
                         transition: 'all 0.2s'
                     }}
@@ -76,7 +88,7 @@ export function Inventory({ inventory, consumables, onSell, onSellAll, onUseCons
                         background: activeTab === 'consumables' ? '#e17055' : '#dfe6e9',
                         color: activeTab === 'consumables' ? 'white' : '#636e72',
                         fontWeight: 'bold',
-                                                       whiteSpace: 'nowrap',
+                        whiteSpace: 'nowrap',
                         cursor: 'pointer',
                         transition: 'all 0.2s'
                     }}
@@ -129,7 +141,7 @@ export function Inventory({ inventory, consumables, onSell, onSellAll, onUseCons
                                             borderRadius: '12px',
                                             padding: '20px',
                                             boxShadow: '0 2px 10px rgba(0,0,0,0.08)',
-                                            border: '2px solid #dfe6e9'
+                                            border: `2px solid ${getRarityColor(mushroomData.mushrooms.find(m => m.emoji === item.emoji)?.rarity)}`
                                         }}
                                     >
                                         <div style={{ display: 'flex', alignItems: 'center', gap: '15px', marginBottom: '15px' }}>
@@ -138,7 +150,7 @@ export function Inventory({ inventory, consumables, onSell, onSellAll, onUseCons
                                                 <div style={{
                                                     fontSize: '1.1em',
                                                     fontWeight: 'bold',
-                                                       whiteSpace: 'nowrap',
+                                                    whiteSpace: 'nowrap',
                                                     color: '#2d3436',
                                                     marginBottom: '4px'
                                                 }}>
@@ -149,18 +161,18 @@ export function Inventory({ inventory, consumables, onSell, onSellAll, onUseCons
                                                     color: '#636e72',
                                                     display: 'flex',
                                                     gap: '10px',
-                                                     alignItems: 'center'
+                                                    alignItems: 'center'
                                                 }}>
                                                     <span>💰 {item.value}</span>
-                                                     <span style={{
-                                                       background: '#00b894',
-                                                       color: 'white',
-                                                       padding: '4px 10px',
-                                                       borderRadius: '12px',
-                                                       fontSize: '0.95em',
-                                                       fontWeight: 'bold',
-                                                       whiteSpace: 'nowrap'
-                                                     }}>{item.name} 총 {item.count} 개</span>
+                                                    <span style={{
+                                                        background: '#00b894',
+                                                        color: 'white',
+                                                        padding: '4px 10px',
+                                                        borderRadius: '12px',
+                                                        fontSize: '0.95em',
+                                                        fontWeight: 'bold',
+                                                        whiteSpace: 'nowrap'
+                                                    }}>{item.name} 총 {item.count} 개</span>
                                                 </div>
                                             </div>
                                         </div>
@@ -202,7 +214,7 @@ export function Inventory({ inventory, consumables, onSell, onSellAll, onUseCons
                                                     border: 'none',
                                                     borderRadius: '8px',
                                                     fontWeight: 'bold',
-                                                       whiteSpace: 'nowrap',
+                                                    whiteSpace: 'nowrap',
                                                     cursor: 'pointer'
                                                 }}
                                             >
@@ -251,7 +263,7 @@ export function Inventory({ inventory, consumables, onSell, onSellAll, onUseCons
                                                 <div style={{
                                                     fontSize: '1.1em',
                                                     fontWeight: 'bold',
-                                                       whiteSpace: 'nowrap',
+                                                    whiteSpace: 'nowrap',
                                                     color: '#2d3436',
                                                     marginBottom: '4px'
                                                 }}>
@@ -276,7 +288,7 @@ export function Inventory({ inventory, consumables, onSell, onSellAll, onUseCons
                                                     border: 'none',
                                                     borderRadius: '8px',
                                                     fontWeight: 'bold',
-                                                       whiteSpace: 'nowrap',
+                                                    whiteSpace: 'nowrap',
                                                     cursor: 'pointer'
                                                 }}
                                             >
@@ -303,7 +315,7 @@ export function Inventory({ inventory, consumables, onSell, onSellAll, onUseCons
                                                 <div style={{
                                                     fontSize: '1.1em',
                                                     fontWeight: 'bold',
-                                                       whiteSpace: 'nowrap',
+                                                    whiteSpace: 'nowrap',
                                                     color: '#2d3436',
                                                     marginBottom: '4px'
                                                 }}>
@@ -328,7 +340,7 @@ export function Inventory({ inventory, consumables, onSell, onSellAll, onUseCons
                                                     border: 'none',
                                                     borderRadius: '8px',
                                                     fontWeight: 'bold',
-                                                       whiteSpace: 'nowrap',
+                                                    whiteSpace: 'nowrap',
                                                     cursor: 'pointer'
                                                 }}
                                             >
