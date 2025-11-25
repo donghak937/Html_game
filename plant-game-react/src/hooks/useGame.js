@@ -2,13 +2,13 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import mushroomData from '../data/mushroom_types.json';
 
 const TOTAL_SLOTS = 25;
-const GROWTH_PROBABILITY = 0.1;
+const GROWTH_PROBABILITY = 0.05;
 
 export function useGame() {
   // --- State ---
   const [gold, setGold] = useState(() => {
     const saved = localStorage.getItem('plant_game_gold');
-    return saved ? parseInt(saved) : 200;
+    return saved ? parseInt(saved) : 50;
   });
 
   const [plants, setPlants] = useState(() => {
@@ -83,7 +83,7 @@ export function useGame() {
 
       // Calculate Growth Interval
       // Base: 3000ms. Upgrade: -10% per level (max 50%). Food: / multiplier.
-      let baseInterval = 3000 * Math.pow(0.9, currentLevel);
+      let baseInterval = 3000 * Math.pow(0.95, currentLevel);
       if (baseInterval < 1000) baseInterval = 1000; // Cap speed
 
       setPlants(prevPlants => {
@@ -108,7 +108,7 @@ export function useGame() {
             ...m,
             effectiveWeight: m.rarity === 'common'
               ? m.weight
-              : m.weight * (1 + (currentRarity - 1) * 0.5) // 50% increase per level for rare+
+              : m.weight * (1 + (currentRarity - 1) * 0.1) // 10% increase per level for rare+
           }));
 
           const totalWeight = weightedMushrooms.reduce((sum, type) => sum + type.effectiveWeight, 0);
@@ -124,7 +124,7 @@ export function useGame() {
           }
 
           // Growth Duration Calculation
-          let duration = 5000; // Base 5s to grow
+          let duration = 8000; // Base 8s to grow
           if (currentFood.active) duration /= currentFood.multiplier;
 
           newPlants[randomIndex] = {
@@ -229,7 +229,7 @@ export function useGame() {
   }, [inventory]);
 
   const buyUpgrade = useCallback(() => {
-    const cost = 100 + (upgradeLevel * 50);
+    const cost = 50 + (upgradeLevel * 30);
     if (gold >= cost) {
       setGold(g => g - cost);
       setUpgradeLevel(l => l + 1);
@@ -249,7 +249,7 @@ export function useGame() {
   }, [gold, unlocks]);
 
   const buyRarityUpgrade = useCallback(() => {
-    const cost = 1000 * Math.pow(2, rarityLevel - 1);
+    const cost = Math.floor(100 * (1 + rarityLevel * 0.5));
     if (gold >= cost) {
       setGold(g => g - cost);
       setRarityLevel(l => l + 1);
