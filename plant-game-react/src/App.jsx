@@ -114,6 +114,45 @@ function App() {
         <h1>🌱 Plant Tycoon</h1>
       </div>
 
+      <div className="controls" style={{ marginBottom: '20px' }}>
+        <button
+          className={`btn ${view === 'game' ? '' : 'btn-secondary'}`}
+          onClick={() => setView('game')}
+        >
+          🏠 홈
+        </button>
+        <button
+          className={`btn ${view === 'inventory' ? '' : 'btn-secondary'}`}
+          onClick={() => setView('inventory')}
+        >
+          🎒 인벤토리
+        </button>
+        <button
+          className={`btn ${view === 'shop' ? '' : 'btn-secondary'}`}
+          onClick={() => setView('shop')}
+        >
+          🏪 상점
+        </button>
+        <button
+          className={`btn ${view === 'collection' ? '' : 'btn-secondary'}`}
+          onClick={() => setView('collection')}
+        >
+          📚 도감
+        </button>
+        <button
+          className={`btn ${view === 'kitchen' ? '' : 'btn-secondary'}`}
+          onClick={() => setView('kitchen')}
+        >
+          🍳 요리
+        </button>
+        <button
+          className={`btn ${view === 'settings' ? '' : 'btn-secondary'}`}
+          onClick={() => setView('settings')}
+        >
+          ⚙️ 설정
+        </button>
+      </div>
+
       <div className="stats">
         <div className="stat-box">
           <div className="stat-label">골드</div>
@@ -321,44 +360,7 @@ function App() {
         />
       )}
 
-      <div className="controls">
-        <button
-          className={`btn ${view === 'game' ? '' : 'btn-secondary'}`}
-          onClick={() => setView('game')}
-        >
-          🏠 홈
-        </button>
-        <button
-          className={`btn ${view === 'inventory' ? '' : 'btn-secondary'}`}
-          onClick={() => setView('inventory')}
-        >
-          🎒 인벤토리
-        </button>
-        <button
-          className={`btn ${view === 'shop' ? '' : 'btn-secondary'}`}
-          onClick={() => setView('shop')}
-        >
-          🏪 상점
-        </button>
-        <button
-          className={`btn ${view === 'collection' ? '' : 'btn-secondary'}`}
-          onClick={() => setView('collection')}
-        >
-          📚 도감
-        </button>
-        <button
-          className={`btn ${view === 'kitchen' ? '' : 'btn-secondary'}`}
-          onClick={() => setView('kitchen')}
-        >
-          🍳 요리
-        </button>
-        <button
-          className={`btn ${view === 'settings' ? '' : 'btn-secondary'}`}
-          onClick={() => setView('settings')}
-        >
-          ⚙️ 설정
-        </button>
-      </div >
+
 
       <div className="info" style={{ marginTop: '20px', fontSize: '0.9em', color: '#8b4513' }}>
         {view === 'game' && '💡 먹이를 주면 식물이 자랍니다!'}
@@ -375,7 +377,7 @@ function App() {
         color: '#b2bec3',
         textAlign: 'center'
       }}>
-        v1.6.0
+        v1.7.0
       </div>
     </div >
   );
