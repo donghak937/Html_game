@@ -185,6 +185,15 @@ function App() {
         {view === 'shop' && '💡 업그레이드를 구매하여 더 빠르게 성장시키세요!'}
         {view === 'collection' && '💡 수확하여 새로운 식물을 발견하세요!'}
       </div>
+
+      <div style={{
+        marginTop: '15px',
+        fontSize: '0.7em',
+        color: '#b2bec3',
+        textAlign: 'center'
+      }}>
+        v1.0.1
+      </div>
     </div>
   );
 }

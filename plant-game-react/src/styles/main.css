@@ -7,6 +7,10 @@
     --secondary-text: #636e72;
 }
 
+.text-black {
+    color: #000000 !important;
+}
+
 body {
     font-family: 'Outfit', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background-color: var(--bg-color);
@@ -295,9 +299,13 @@ h1 {
 
 .pop-in {
     animation: pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-}  
-/* Hide scrollbar for collection grid */  
-.collection-grid::-webkit-scrollbar {  
-    display: none;  
-} 
-.rarity-filter::-webkit-scrollbar { display: none; } 
+}
+
+/* Hide scrollbar for collection grid */
+.collection-grid::-webkit-scrollbar {
+    display: none;
+}
+
+.rarity-filter::-webkit-scrollbar {
+    display: none;
+}

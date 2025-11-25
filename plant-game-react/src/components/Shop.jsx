@@ -28,7 +28,7 @@ export function Shop({ gold, upgradeLevel, unlocks, rarityLevel, onBuyUpgrade, o
                 >
                     <div style={{ fontSize: '3em' }}>⚡</div>
                     <div style={{ flex: 1 }}>
-                        <div style={{ color: 'black', fontSize: '1.2em', fontWeight: 'bold' }}>성장 속도 업그레이드</div>
+                        <div className="text-black" style={{ fontSize: '1.2em', fontWeight: 'bold' }}>성장 속도 업그레이드</div>
                         <div style={{ color: '#636e72', fontSize: '0.9em' }}>성장 속도가 10% 증가합니다 (영구)</div>
                         <div style={{ color: '#6c5ce7', fontWeight: 'bold', fontSize: '0.9em' }}>레벨: {upgradeLevel}</div>
                     </div>
@@ -60,7 +60,7 @@ export function Shop({ gold, upgradeLevel, unlocks, rarityLevel, onBuyUpgrade, o
                 >
                     <div style={{ fontSize: '3em' }}>💎</div>
                     <div style={{ flex: 1 }}>
-                        <div style={{ color: 'black', fontSize: '1.2em', fontWeight: 'bold' }}>레어도 증가</div>
+                        <div className="text-black" style={{ fontSize: '1.2em', fontWeight: 'bold' }}>레어도 증가</div>
                         <div style={{ color: '#636e72', fontSize: '0.9em' }}>희귀한 식물이 등장할 확률이 증가합니다</div>
                         <div style={{ color: '#6c5ce7', fontWeight: 'bold', fontSize: '0.9em' }}>레벨: {rarityLevel}</div>
                     </div>
@@ -92,7 +92,7 @@ export function Shop({ gold, upgradeLevel, unlocks, rarityLevel, onBuyUpgrade, o
                 >
                     <div style={{ fontSize: '3em' }}>📊</div>
                     <div style={{ flex: 1 }}>
-                        <div style={{ color: 'black', fontSize: '1.2em', fontWeight: 'bold' }}>통계 기능 해금</div>
+                        <div className="text-black" style={{ fontSize: '1.2em', fontWeight: 'bold' }}>통계 기능 해금</div>
                         <div style={{ color: '#636e72', fontSize: '0.9em' }}>등급별 등장 확률을 확인할 수 있습니다</div>
                     </div>
                     <button
@@ -123,7 +123,7 @@ export function Shop({ gold, upgradeLevel, unlocks, rarityLevel, onBuyUpgrade, o
                 >
                     <div style={{ fontSize: '3em' }}>🚜</div>
                     <div style={{ flex: 1 }}>
-                        <div style={{ color: 'black', fontSize: '1.2em', fontWeight: 'bold' }}>전체 수확 기능 해금</div>
+                        <div className="text-black" style={{ fontSize: '1.2em', fontWeight: 'bold' }}>전체 수확 기능 해금</div>
                         <div style={{ color: '#636e72', fontSize: '0.9em' }}>다 자란 식물을 한 번에 수확할 수 있습니다</div>
                     </div>
                     <button
