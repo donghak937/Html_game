@@ -207,6 +207,11 @@ function App() {
                   )}
                 </strong>
               </div>
+              <div style={{ marginTop: '5px', color: '#636e72', fontSize: '0.9em' }}>
+                ⚡ 현재 속도: <strong>
+                  {((foodState.active ? foodState.multiplier : 0) * (1 + activeBuffs.filter(b => b.type === 'speed').reduce((sum, b) => sum + b.value, 0))).toFixed(1)}x
+                </strong>
+              </div>
             </div>
           )}
 

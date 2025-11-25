@@ -521,8 +521,8 @@ export function useGame() {
 
   const activateFood = useCallback((type) => {
     const foodTypes = {
-      '3min-free': { duration: 180000, multiplier: 0.5, cost: 0, name: '3min Free' },
-      '1min': { duration: 60000, multiplier: 2.0, cost: 200, name: '1min Speed' },
+      '3min-free': { duration: 180000, multiplier: 0.8, cost: 0, name: '3min Free' }, // Buffed from 0.5
+      '1min': { duration: 60000, multiplier: 2.5, cost: 200, name: '1min Speed' }, // Buffed from 2.0
       '5min': { duration: 300000, multiplier: 1.0, cost: 150, name: '5min Normal' },
       '10min': { duration: 600000, multiplier: 0.7, cost: 350, name: '10min Slow' }
     };
