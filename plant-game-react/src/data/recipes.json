@@ -1,0 +1,95 @@
+{
+    "recipes": [
+        {
+            "id": "red_stew",
+            "name": "빨간 스튜",
+            "emoji": "🥘",
+            "description": "붉은 버섯으로 만든 진한 스튜. 성장 속도가 빨라집니다.",
+            "ingredients": [
+                "🍄",
+                "🍄",
+                "🍄"
+            ],
+            "time": 10000,
+            "value": 20,
+            "effect": {
+                "type": "speed",
+                "value": 0.2,
+                "duration": 120000
+            }
+        },
+        {
+            "id": "fruit_salad",
+            "name": "과일 샐러드",
+            "emoji": "🥗",
+            "description": "신선한 과일이 듬뿍! 판매 수익이 증가합니다.",
+            "ingredients": [
+                "🍓",
+                "🍒",
+                "🍑"
+            ],
+            "time": 30000,
+            "value": 70,
+            "effect": {
+                "type": "gold",
+                "value": 0.5,
+                "duration": 120000
+            }
+        },
+        {
+            "id": "nut_bomb",
+            "name": "견과류 폭탄",
+            "emoji": "💣",
+            "description": "단단한 껍질을 뭉쳤습니다. 씨앗 폭탄 1개를 획득합니다.",
+            "ingredients": [
+                "🌰",
+                "🥜",
+                "🥥"
+            ],
+            "time": 45000,
+            "value": 80,
+            "effect": {
+                "type": "add_consumable",
+                "value": "seedBomb",
+                "count": 1,
+                "duration": 0
+            }
+        },
+        {
+            "id": "golden_tea",
+            "name": "황금 차",
+            "emoji": "🍵",
+            "description": "귀한 재료를 우려낸 차. 식물 등장 확률이 대폭 증가합니다.",
+            "ingredients": [
+                "🌾",
+                "🌿",
+                "🌻"
+            ],
+            "time": 60000,
+            "value": 130,
+            "effect": {
+                "type": "spawn_rate",
+                "value": 0.5,
+                "duration": 120000
+            }
+        },
+        {
+            "id": "mystic_potion",
+            "name": "신비한 물약",
+            "emoji": "🧪",
+            "description": "신화적인 힘이 담긴 물약. 5개의 식물을 즉시 성장시킵니다.",
+            "ingredients": [
+                "💎",
+                "🌟",
+                "✨"
+            ],
+            "time": 120000,
+            "value": 1000,
+            "effect": {
+                "type": "instant_growth",
+                "value": 5,
+                "duration": 0
+            }
+        }
+    ]
+}

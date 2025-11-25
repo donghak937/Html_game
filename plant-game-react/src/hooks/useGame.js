@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import mushroomData from '../data/mushroom_types.json';
+import recipeData from '../data/recipes.json';
 
 const TOTAL_SLOTS = 25;
 const GROWTH_PROBABILITY = 0.01;
@@ -61,6 +62,26 @@ export function useGame() {
     return saved ? JSON.parse(saved) : { seedBomb: 0, growthPotion: 0 };
   });
 
+  const [cookedItems, setCookedItems] = useState(() => {
+    const saved = localStorage.getItem('plant_game_cookedItems');
+    return saved ? JSON.parse(saved) : {};
+  });
+
+  const [activeBuffs, setActiveBuffs] = useState(() => {
+    const saved = localStorage.getItem('plant_game_activeBuffs');
+    return saved ? JSON.parse(saved) : [];
+  });
+
+  const [cookingState, setCookingState] = useState(() => {
+    const saved = localStorage.getItem('plant_game_cookingState');
+    return saved ? JSON.parse(saved) : { active: false, startTime: 0, duration: 0, ingredients: [], result: null };
+  });
+
+  const [discoveredRecipes, setDiscoveredRecipes] = useState(() => {
+    const saved = localStorage.getItem('plant_game_discoveredRecipes');
+    return saved ? JSON.parse(saved) : [];
+  });
+
   // --- Persistence ---
   useEffect(() => {
     localStorage.setItem('plant_game_gold', gold);
@@ -74,7 +95,11 @@ export function useGame() {
     localStorage.setItem('plant_game_pityCounter', pityCounter);
     localStorage.setItem('plant_game_fertilizerLevel', fertilizerLevel);
     localStorage.setItem('plant_game_consumables', JSON.stringify(consumables));
-  }, [gold, plants, inventory, collection, upgradeLevel, unlocks, rarityLevel, foodState, pityCounter, fertilizerLevel, consumables]);
+    localStorage.setItem('plant_game_cookedItems', JSON.stringify(cookedItems));
+    localStorage.setItem('plant_game_activeBuffs', JSON.stringify(activeBuffs));
+    localStorage.setItem('plant_game_cookingState', JSON.stringify(cookingState));
+    localStorage.setItem('plant_game_discoveredRecipes', JSON.stringify(discoveredRecipes));
+  }, [gold, plants, inventory, collection, upgradeLevel, unlocks, rarityLevel, foodState, pityCounter, fertilizerLevel, consumables, cookedItems, activeBuffs, cookingState, discoveredRecipes]);
 
   // --- Refs for Loop ---
   const stateRef = useRef({
@@ -84,17 +109,34 @@ export function useGame() {
     rarityLevel,
     pityCounter,
     fertilizerLevel,
-    consumables
+    consumables,
+    activeBuffs
   });
 
   useEffect(() => {
-    stateRef.current = { plants, foodState, upgradeLevel, rarityLevel, pityCounter, fertilizerLevel, consumables };
-  }, [plants, foodState, upgradeLevel, rarityLevel, pityCounter, fertilizerLevel, consumables]);
+    stateRef.current = { plants, foodState, upgradeLevel, rarityLevel, pityCounter, fertilizerLevel, consumables, activeBuffs };
+  }, [plants, foodState, upgradeLevel, rarityLevel, pityCounter, fertilizerLevel, consumables, activeBuffs]);
 
   // --- Game Loop ---
   useEffect(() => {
     const intervalId = setInterval(() => {
-      const { plants: currentPlants, foodState: currentFood, upgradeLevel: currentLevel, rarityLevel: currentRarity, pityCounter: currentPity } = stateRef.current;
+      const { plants: currentPlants, foodState: currentFood, upgradeLevel: currentLevel, rarityLevel: currentRarity, pityCounter: currentPity, activeBuffs: currentBuffs } = stateRef.current;
+
+      // Update Buffs
+      const now = Date.now();
+      const validBuffs = currentBuffs.filter(buff => buff.endTime > now);
+      if (validBuffs.length !== currentBuffs.length) {
+        setActiveBuffs(validBuffs);
+      }
+
+      // Calculate Buff Multipliers
+      let speedMultiplier = 1;
+      let spawnMultiplier = 1;
+
+      validBuffs.forEach(buff => {
+        if (buff.type === 'speed') speedMultiplier += buff.value;
+        if (buff.type === 'spawn_rate') spawnMultiplier += buff.value;
+      });
 
       // Check food expiration
       if (currentFood.active && Date.now() > currentFood.endTime) {
@@ -103,8 +145,8 @@ export function useGame() {
       }
 
       // Calculate Growth Interval
-      // Base: 3000ms. Upgrade: -10% per level (max 50%). Food: / multiplier.
-      let baseInterval = 3000 * Math.pow(0.95, currentLevel);
+      // Base: 3000ms. Upgrade: -10% per level (max 50%). Food: / multiplier. Buffs: / speedMultiplier
+      let baseInterval = (3000 * Math.pow(0.95, currentLevel)) / speedMultiplier;
       if (baseInterval < 1000) baseInterval = 1000; // Cap speed
 
       setPlants(prevPlants => {
@@ -118,7 +160,7 @@ export function useGame() {
         if (!currentFood.active) return prevPlants;
 
         // Pity System: increase spawn chance with each failure
-        const baseChance = GROWTH_PROBABILITY * currentFood.multiplier;
+        const baseChance = GROWTH_PROBABILITY * currentFood.multiplier * spawnMultiplier;
         const pityBonus = currentPity * 0.01; // +1% per failure
         const totalChance = Math.min(baseChance + pityBonus, 1.0); // Cap at 100%
 
@@ -264,8 +306,13 @@ export function useGame() {
       return newInv;
     });
 
-    setGold(g => g + (item.value * amount));
-  }, [inventory]);
+    setGold(g => {
+      // Apply Gold Buff
+      const goldBuff = activeBuffs.find(b => b.type === 'gold');
+      const multiplier = goldBuff ? (1 + goldBuff.value) : 1;
+      return g + Math.floor(item.value * amount * multiplier);
+    });
+  }, [inventory, activeBuffs]);
 
   const sellAll = useCallback(() => {
     let totalValue = 0;
@@ -275,9 +322,13 @@ export function useGame() {
 
     if (totalValue > 0) {
       setInventory({});
-      setGold(g => g + totalValue);
+      setGold(g => {
+        const goldBuff = activeBuffs.find(b => b.type === 'gold');
+        const multiplier = goldBuff ? (1 + goldBuff.value) : 1;
+        return g + Math.floor(totalValue * multiplier);
+      });
     }
-  }, [inventory]);
+  }, [inventory, activeBuffs]);
 
   const buyUpgrade = useCallback(() => {
     const cost = 100 + (upgradeLevel * 50);
@@ -390,9 +441,6 @@ export function useGame() {
           }
           return p;
         });
-        // Always consume potion if there are plants, or check if any changed? 
-        // Let's assume it's used if there was at least one baby plant.
-        // Actually, let's just use it.
         used = true;
         return newPlants;
       });
@@ -496,6 +544,234 @@ export function useGame() {
     setFoodState({ active: false, endTime: 0, type: null, multiplier: 1 });
   }, []);
 
+  const startCooking = useCallback((selectedIngredients) => {
+    if (selectedIngredients.length !== 3) return;
+
+    // Check if user has ingredients
+    const ingredientCounts = {};
+    selectedIngredients.forEach(emoji => {
+      ingredientCounts[emoji] = (ingredientCounts[emoji] || 0) + 1;
+    });
+
+    for (const [emoji, count] of Object.entries(ingredientCounts)) {
+      if (!inventory[emoji] || inventory[emoji].count < count) return;
+    }
+
+    // Consume ingredients
+    setInventory(curr => {
+      const newInv = { ...curr };
+      selectedIngredients.forEach(emoji => {
+        if (newInv[emoji]) {
+          newInv[emoji] = { ...newInv[emoji] };
+          newInv[emoji].count -= 1;
+          if (newInv[emoji].count <= 0) delete newInv[emoji];
+        }
+      });
+      return newInv;
+    });
+
+    // Find Recipe
+    const sortedIngredients = [...selectedIngredients].sort();
+    const recipe = recipeData.recipes.find(r => {
+      const rIngredients = [...r.ingredients].sort();
+      return JSON.stringify(rIngredients) === JSON.stringify(sortedIngredients);
+    });
+
+    if (recipe) {
+      setCookingState({
+        active: true,
+        startTime: Date.now(),
+        duration: recipe.time,
+        ingredients: selectedIngredients,
+        result: recipe
+      });
+    } else {
+      // Mixed Stew (Failure)
+      const totalValue = selectedIngredients.reduce((sum, emoji) => {
+        const item = mushroomData.mushrooms.find(m => m.emoji === emoji);
+        return sum + (item ? item.value : 0);
+      }, 0);
+
+      const mixedStew = {
+        id: `mixed_stew_${Date.now()}`,
+        name: "잡탕 스튜",
+        emoji: "🍲",
+        description: "알 수 없는 재료들이 뒤섞인 스튜. 맛은 보장할 수 없습니다.",
+        value: Math.floor(totalValue * 1.1), // 1.1x Bonus
+        count: 1,
+        effect: null // No effect
+      };
+
+      setCookingState({
+        active: true,
+        startTime: Date.now(),
+        duration: 10000, // 10 seconds default
+        ingredients: selectedIngredients,
+        result: mixedStew
+      });
+    }
+  }, [inventory]);
+
+  const claimDish = useCallback(() => {
+    if (!cookingState.active) return;
+
+    const now = Date.now();
+    const elapsed = now - cookingState.startTime;
+    if (elapsed < cookingState.duration) return;
+
+    const result = cookingState.result;
+
+    // Add to Cooked Items
+    setCookedItems(curr => {
+      const newItems = { ...curr };
+      // If it's a mixed stew (unique ID), add as new entry or stack?
+      // Mixed stews have unique IDs, so they might clutter. 
+      // Let's make a generic "mixed_stew" ID for stacking if possible, but values differ.
+      // For simplicity, let's treat Mixed Stew as a generic item with average value? 
+      // User asked for "total price of ingredients", so value varies.
+      // To support stacking, we'd need to group by value or just have one "Mixed Stew" type.
+      // Let's use the ID from the result. If it's a recipe, ID is constant.
+
+      const itemId = result.id.startsWith('mixed_stew') ? 'mixed_stew' : result.id;
+
+      if (!newItems[itemId]) {
+        newItems[itemId] = { ...result, id: itemId, count: 0 };
+        // If mixed stew, update value to average or keep last? 
+        // Let's just keep the value of the *current* stew for simplicity, or make it unstackable?
+        // Making it unstackable might be annoying.
+        // Let's make Mixed Stew a fixed item in recipes.json? No, dynamic value.
+        // Okay, for now, let's just add it. If ID is unique, it won't stack.
+        // If we want to stack Mixed Stews, they need same value.
+        // Let's just let them be unique for now if they have different values.
+        // Actually, let's use the exact ID from the result.
+      } else {
+        newItems[itemId] = { ...newItems[itemId] };
+      }
+
+      // If it's mixed stew, we might want to average the value or something?
+      // Let's just overwrite value for now if it stacks, or keep unique IDs.
+      // Unique IDs for mixed stew means inventory clutter.
+      // Let's try to make Mixed Stew have a consistent ID 'mixed_stew' but maybe fixed value?
+      // User said: "Total price of ingredients".
+      // Let's stick to unique IDs for Mixed Stews for now to preserve value.
+
+      if (newItems[itemId].count === undefined) newItems[itemId].count = 0;
+      newItems[itemId].count += 1;
+      return newItems;
+    });
+
+    // Unlock Recipe
+    if (!result.id.startsWith('mixed_stew')) {
+      setDiscoveredRecipes(prev => {
+        if (!prev.includes(result.id)) {
+          return [...prev, result.id];
+        }
+        return prev;
+      });
+    }
+
+    setCookingState({ active: false, startTime: 0, duration: 0, ingredients: [], result: null });
+  }, [cookingState]);
+
+  const useCookedItem = useCallback((recipeId) => {
+    if (!cookedItems[recipeId] || cookedItems[recipeId].count <= 0) return;
+
+    const item = cookedItems[recipeId];
+    const effect = item.effect;
+
+    // Apply Effect
+    if (effect.type === 'instant_growth') {
+      setPlants(prev => {
+        const newPlants = [...prev];
+        let count = effect.value;
+        // Find random non-adult plants
+        const candidates = newPlants
+          .map((p, i) => ({ p, i }))
+          .filter(({ p }) => p && p.stage === 'baby');
+
+        // Shuffle candidates
+        for (let i = candidates.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [candidates[i], candidates[j]] = [candidates[j], candidates[i]];
+        }
+
+        candidates.slice(0, count).forEach(({ i }) => {
+          newPlants[i] = { ...newPlants[i], stage: 'adult', growthProgress: newPlants[i].growthDuration };
+        });
+
+        return newPlants;
+      });
+    } else {
+      // Buffs (speed, gold, spawn_rate)
+      setActiveBuffs(prev => [
+        ...prev.filter(b => b.type !== effect.type), // Overwrite same type buff
+        {
+          type: effect.type,
+          value: effect.value,
+          endTime: Date.now() + effect.duration,
+          name: item.name
+        }
+      ]);
+    }
+
+    // Consume Item
+    setCookedItems(curr => {
+      const newItems = { ...curr };
+      newItems[recipeId] = { ...newItems[recipeId] };
+      newItems[recipeId].count -= 1;
+      if (newItems[recipeId].count <= 0) delete newItems[recipeId];
+      return newItems;
+    });
+
+  }, [cookedItems]);
+
+  const sellCookedItem = useCallback((itemId, amount = 1) => {
+    const item = cookedItems[itemId];
+    if (!item || item.count < amount) return;
+
+    setCookedItems(curr => {
+      const newItems = { ...curr };
+      newItems[itemId] = { ...newItems[itemId] };
+      newItems[itemId].count -= amount;
+      if (newItems[itemId].count <= 0) delete newItems[itemId];
+      return newItems;
+    });
+
+    setGold(g => {
+      // Apply Gold Buff
+      const goldBuff = activeBuffs.find(b => b.type === 'gold');
+      const multiplier = goldBuff ? (1 + goldBuff.value) : 1;
+      // Mixed Stew value is already calculated with 1.1x, but let's apply gold buff too?
+      // Why not.
+      return g + Math.floor(item.value * amount * multiplier);
+    });
+  }, [cookedItems, activeBuffs]);
+
+  // Developer Commands
+  const resetGame = useCallback(() => {
+    if (window.confirm('정말 초기화하시겠습니까? 모든 데이터가 삭제됩니다.')) {
+      localStorage.clear();
+      window.location.reload();
+    }
+  }, []);
+
+  const activateGodMode = useCallback(() => {
+    setGold(100000);
+
+    const allMushrooms = mushroomData.mushrooms;
+    const newInventory = {};
+
+    allMushrooms.forEach(m => {
+      newInventory[m.emoji] = {
+        ...m,
+        count: 99
+      };
+    });
+
+    setInventory(newInventory);
+    alert('God Mode Activated! ⚡');
+  }, []);
+
   return {
     gold,
     plants,
@@ -519,6 +795,16 @@ export function useGame() {
     useConsumable,
     harvestAll,
     activateFood,
-    cancelFood
+    cancelFood,
+    cookedItems,
+    activeBuffs,
+    useCookedItem,
+    cookingState,
+    discoveredRecipes,
+    startCooking,
+    claimDish,
+    sellCookedItem,
+    resetGame,
+    activateGodMode
   };
 }

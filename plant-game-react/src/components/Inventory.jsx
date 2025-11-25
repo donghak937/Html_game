@@ -13,7 +13,7 @@ const getRarityColor = (rarity) => {
     return colors[rarity] || '#95a5a6';
 };
 
-export function Inventory({ inventory, consumables, onSell, onSellAll, onUseConsumable }) {
+export function Inventory({ inventory, consumables, onSell, onSellAll, onUseConsumable, cookedItems = {}, useCookedItem, onSellCookedItem }) {
     const [selectedItems, setSelectedItems] = useState({});
     const [activeTab, setActiveTab] = useState('items');
 
@@ -93,7 +93,7 @@ export function Inventory({ inventory, consumables, onSell, onSellAll, onUseCons
                         transition: 'all 0.2s'
                     }}
                 >
-                    🎒 소모품 ({(consumables?.seedBomb || 0) + (consumables?.growthPotion || 0)})
+                    🎒 소모품 ({(consumables?.seedBomb || 0) + (consumables?.growthPotion || 0) + Object.values(cookedItems).reduce((sum, i) => sum + i.count, 0)})
                 </button>
             </div>
 
@@ -232,7 +232,7 @@ export function Inventory({ inventory, consumables, onSell, onSellAll, onUseCons
                         gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
                         gap: '15px'
                     }}>
-                        {(!consumables || (consumables.seedBomb === 0 && consumables.growthPotion === 0)) ? (
+                        {(!consumables || (consumables.seedBomb === 0 && consumables.growthPotion === 0 && Object.keys(cookedItems).length === 0)) ? (
                             <div style={{
                                 gridColumn: '1 / -1',
                                 textAlign: 'center',
@@ -349,12 +349,84 @@ export function Inventory({ inventory, consumables, onSell, onSellAll, onUseCons
                                         </div>
                                     </motion.div>
                                 )}
+                                {Object.values(cookedItems).map(item => (
+                                    <motion.div
+                                        key={item.id}
+                                        initial={{ opacity: 0, scale: 0.9 }}
+                                        animate={{ opacity: 1, scale: 1 }}
+                                        style={{
+                                            background: 'white',
+                                            borderRadius: '12px',
+                                            padding: '20px',
+                                            boxShadow: '0 2px 10px rgba(0,0,0,0.08)',
+                                            border: '2px solid #fdcb6e'
+                                        }}
+                                    >
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '15px', marginBottom: '15px' }}>
+                                            <div style={{ fontSize: '3em' }}>{item.emoji}</div>
+                                            <div style={{ flex: 1 }}>
+                                                <div style={{
+                                                    fontSize: '1.1em',
+                                                    fontWeight: 'bold',
+                                                    whiteSpace: 'nowrap',
+                                                    color: '#2d3436',
+                                                    marginBottom: '4px'
+                                                }}>
+                                                    {item.name}
+                                                </div>
+                                                <div style={{ fontSize: '0.9em', color: '#636e72' }}>
+                                                    x{item.count}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div style={{ display: 'flex', gap: '10px' }}>
+                                            {/* Sell Button (Always available for cooked items) */}
+                                            <button
+                                                onClick={() => onSellCookedItem(item.id)}
+                                                style={{
+                                                    flex: 1,
+                                                    padding: '10px',
+                                                    background: '#00b894',
+                                                    color: 'white',
+                                                    border: 'none',
+                                                    borderRadius: '8px',
+                                                    fontWeight: 'bold',
+                                                    whiteSpace: 'nowrap',
+                                                    cursor: 'pointer'
+                                                }}
+                                            >
+                                                판매 (💰 {item.value})
+                                            </button>
+
+                                            {/* Eat Button (Only if it has an effect) */}
+                                            {item.effect && (
+                                                <button
+                                                    onClick={() => useCookedItem(item.id)}
+                                                    style={{
+                                                        flex: 1,
+                                                        padding: '10px',
+                                                        background: '#fdcb6e',
+                                                        color: 'white',
+                                                        border: 'none',
+                                                        borderRadius: '8px',
+                                                        fontWeight: 'bold',
+                                                        whiteSpace: 'nowrap',
+                                                        cursor: 'pointer'
+                                                    }}
+                                                >
+                                                    먹기
+                                                </button>
+                                            )}
+                                        </div>
+
+                                    </motion.div>
+                                ))}
                             </>
                         )}
                     </div>
                 )}
             </div>
-        </div>
+        </div >
     );
 }
 

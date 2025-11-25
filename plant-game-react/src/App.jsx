@@ -5,6 +5,8 @@ import { Inventory } from './components/Inventory';
 import { Shop } from './components/Shop';
 import { Collection } from './components/Collection';
 import { FoodControls } from './components/FoodControls';
+import { Kitchen } from './components/Kitchen';
+import { Settings } from './components/Settings';
 import mushroomData from './data/mushroom_types.json';
 import './styles/main.css';
 
@@ -32,7 +34,18 @@ function App() {
     useConsumable,
     harvestAll,
     activateFood,
-    cancelFood
+    cancelFood,
+    cookItem,
+    cookedItems,
+    useCookedItem,
+    activeBuffs,
+    cookingState,
+    discoveredRecipes,
+    startCooking,
+    claimDish,
+    sellCookedItem,
+    resetGame,
+    activateGodMode
   } = useGame();
 
   const [view, setView] = useState('game');
@@ -101,6 +114,12 @@ function App() {
           <div className="stat-label">아이템</div>
           <div className="stat-value">📦 {inventoryCount}</div>
         </div>
+        {activeBuffs.length > 0 && (
+          <div className="stat-box" style={{ background: '#e8f5e9', border: '1px solid #00b894' }}>
+            <div className="stat-label" style={{ color: '#00b894' }}>버프</div>
+            <div className="stat-value" style={{ fontSize: '0.9em' }}>✨ {activeBuffs.length}개</div>
+          </div>
+        )}
       </div>
 
       {view === 'game' && (
@@ -184,6 +203,9 @@ function App() {
           onSell={sell}
           onSellAll={sellAll}
           onUseConsumable={useConsumable}
+          cookedItems={cookedItems}
+          useCookedItem={useCookedItem}
+          onSellCookedItem={sellCookedItem}
         />
       )}
 
@@ -204,6 +226,25 @@ function App() {
 
       {view === 'collection' && (
         <Collection collection={collection} />
+      )}
+
+      {view === 'kitchen' && (
+        <Kitchen
+          inventory={inventory}
+          cookedItems={cookedItems}
+          useCookedItem={useCookedItem}
+          cookingState={cookingState}
+          discoveredRecipes={discoveredRecipes}
+          startCooking={startCooking}
+          claimDish={claimDish}
+        />
+      )}
+
+      {view === 'settings' && (
+        <Settings
+          resetGame={resetGame}
+          activateGodMode={activateGodMode}
+        />
       )}
 
       <div className="controls">
@@ -231,13 +272,27 @@ function App() {
         >
           📚 도감
         </button>
-      </div>
+        <button
+          className={`btn ${view === 'kitchen' ? '' : 'btn-secondary'}`}
+          onClick={() => setView('kitchen')}
+        >
+          🍳 요리
+        </button>
+        <button
+          className={`btn ${view === 'settings' ? '' : 'btn-secondary'}`}
+          onClick={() => setView('settings')}
+        >
+          ⚙️ 설정
+        </button>
+      </div >
 
       <div className="info" style={{ marginTop: '20px', fontSize: '0.9em', color: '#8b4513' }}>
         {view === 'game' && '💡 먹이를 주면 식물이 자랍니다!'}
         {view === 'inventory' && '💡 아이템을 클릭하면 판매할 수 있습니다!'}
         {view === 'shop' && '💡 업그레이드를 구매하여 더 빠르게 성장시키세요!'}
         {view === 'collection' && '💡 수확하여 새로운 식물을 발견하세요!'}
+        {view === 'kitchen' && '💡 재료를 모아 특별한 요리를 만들어보세요!'}
+        {view === 'settings' && '💡 게임 설정을 변경할 수 있습니다.'}
       </div>
 
       <div style={{
@@ -246,9 +301,9 @@ function App() {
         color: '#b2bec3',
         textAlign: 'center'
       }}>
-        v1.2.0
+        v1.6.0
       </div>
-    </div>
+    </div >
   );
 }
 
