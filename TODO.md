@@ -1,32 +1,33 @@
 # 📝 Future Development Tasks
 
-## 📅 Daily Bonus System (Priority: High)
-- [ ] **Logic**: Implement `lastClaimDate` and `streakDays` in `useGame.js`.
-- [ ] **UI**: Create a "Daily Login" popup component.
-- [ ] **Rewards**: Design a 7-day reward table (Gold, Consumables, Rare Items).
-- [ ] **Storage**: Persist claim data in LocalStorage.
+## 🏆 Achievements System (Priority: 1)
+- [ ] **UI**: Add "Achievements" tab.
+- [ ] **Interaction**: Click achievement to view details (Date Achieved, Description, Reward).
+- [ ] **Data**: Track milestones (e.g., "Harvest 1000 Plants", "Earn 1M Gold").
+- [ ] **Rewards**: Claimable rewards (Gold, Gems, Permanent Buffs).
 
-## 🏆 Achievements System
-- [ ] **Data**: Define achievement criteria (e.g., "Harvest 1000 Plants", "Earn 1M Gold").
-- [ ] **UI**: Add an "Achievements" tab or popup.
-- [ ] **Notification**: Toast notification when an achievement is unlocked.
-- [ ] **Rewards**: Permanent buffs or unique titles/skins for completing achievements.
+## 📜 Quest System (Priority: 2)
+- [ ] **Concept**: NPCs request specific items (e.g., "I need 4 Mushrooms!", "Bring me a Red Stew!").
+- [ ] **UI**: Quest board or NPC dialogue popup.
+- [ ] **Mechanic**: Submit items from inventory to complete quests.
+- [ ] **Rewards**: High Gold return or special items (Consumables).
+
+## 🎉 Special Events (Priority: 3)
+- [ ] **Golden Time**: Random events that boost growth speed for a short time.
+- [ ] **Seasonal Themes**: Halloween, Christmas skins/crops.
+
+## 📅 Daily Bonus System (Priority: 4)
+- [ ] **Logic**: Streak-based rewards (1-7 days).
+- [ ] **UI**: Daily login popup.
+- [ ] **Rewards**: Gold, Consumables, Rare Items.
 
 ## 🎵 Sound & Audio
-- [ ] **Assets**: Source royalty-free BGM and SFX (Pop, Harvest, Level Up).
-- [ ] **Settings**: Add Volume sliders and Mute toggle in Settings.
-- [ ] **Implementation**: Integrate audio playback on game events.
+- [ ] **Assets**: BGM and SFX.
+- [ ] **Settings**: Volume controls.
 
 ## 📱 Mobile Optimization
-- [ ] **Layout**: Adjust grid size and button spacing for touch screens.
-- [ ] **Controls**: Ensure drag-and-drop works smoothly on mobile (if applicable) or optimize tap interactions.
-- [ ] **Viewport**: Prevent zooming and handle safe areas (notch).
+- [ ] **Layout**: Touch-friendly UI adjustments.
 
 ## 🌿 Content Expansion
-- [ ] **New Plants**: Add more plant types (Alien Flora, Crystal Plants, etc.).
-- [ ] **New Recipes**: Add high-tier recipes for late-game players.
-- [ ] **Prestige System**: "Rebirth" mechanic to reset progress for permanent multipliers.
-
-## 🎉 Special Events
-- [ ] **Seasonal Events**: Halloween, Christmas themes (temporary skins/crops).
-- [ ] **Golden Time**: Random events that boost growth speed for a short time.
+- [ ] **New Plants**: More varieties.
+- [ ] **Prestige**: Rebirth system.
