@@ -63,7 +63,7 @@ export function Inventory({ inventory, consumables, onSell, onSellAll, onUseCons
                     }}
                 >
                     🌱 식물 ({Object.values(inventory).reduce((sum, i) => sum + i.count, 0)})
-                </button>
+                </button >
                 <button
                     onClick={() => setActiveTab('consumables')}
                     style={{
@@ -77,210 +77,253 @@ export function Inventory({ inventory, consumables, onSell, onSellAll, onUseCons
                         cursor: 'pointer',
                         transition: 'all 0.2s'
                     }}
-                    textAlign: 'center',
-                padding: '60px 20px',
-                color: '#636e72'
-                                }}>
-                <div style={{ fontSize: '4em', marginBottom: '10px' }}>🌾</div>
-                <p style={{ fontSize: '1.1em', margin: 0 }}>수확한 식물이 없습니다</p>
-                <p style={{ fontSize: '0.9em', color: '#b2bec3' }}>식물을 키워서 수확해보세요!</p>
+                >
+                    🎒 소모품 ({(consumables?.seedBomb || 0) + (consumables?.growthPotion || 0)})
+                </button>
             </div>
-            ) : (
-                                Object.values(inventory).map((item) => (
-            <motion.div
-                key={item.emoji}
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.9 }}
-                layout
-                style={{
-                    background: 'white',
-                    borderRadius: '12px',
-                    padding: '20px',
-                    boxShadow: '0 2px 10px rgba(0,0,0,0.08)',
-                    border: '2px solid #dfe6e9'
-                }}
-            >
-                <div style={{ display: 'flex', alignItems: 'center', gap: '15px', marginBottom: '15px' }}>
-                    <div style={{ fontSize: '3em' }}>{item.emoji}</div>
-                    <div style={{ flex: 1 }}>
-                        <div style={{
-                            fontSize: '1.1em',
-                            fontWeight: 'bold',
-                            color: '#2d3436',
-                            marginBottom: '4px'
-                        }}>
-                            {item.name}
-                        </div>
-                        <div style={{
-                            fontSize: '0.9em',
-                            color: '#636e72',
-                            display: 'flex',
-                            gap: '10px'
-                        }}>
-                            <span>💰 {item.value}</span>
-                            <span>x{item.count}</span>
-                        </div>
-                    </div>
-                </div>
 
-                <div style={{
-                    borderTop: '1px solid #dfe6e9',
-                    paddingTop: '15px'
-                }}>
+            {/* Content */}
+            <div style={{
+                maxHeight: '600px',
+                overflowY: 'auto',
+                paddingRight: '10px',
+                scrollbarWidth: 'none',
+                msOverflowStyle: 'none'
+            }}>
+                <style>{`
+          div::-webkit-scrollbar {
+            display: none;
+          }
+        `}</style>
+                {activeTab === 'items' ? (
                     <div style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '10px',
-                        marginBottom: '8px'
+                        display: 'grid',
+                        gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
+                        gap: '15px'
                     }}>
-                        <span style={{ fontSize: '0.9em', color: '#636e72', minWidth: '60px' }}>
-                            {selectedItems[item.emoji] || 1}개 선택
-                        </span>
-                        <input
-                            type="range"
-                            min="1"
-                            max={item.count}
-                            value={selectedItems[item.emoji] || 1}
-                            onChange={(e) => handleSliderChange(item.emoji, e.target.value)}
-                            style={{ flex: 1 }}
-                        />
+                        <AnimatePresence>
+                            {isEmpty ? (
+                                <div style={{
+                                    gridColumn: '1 / -1',
+                                    textAlign: 'center',
+                                    padding: '60px 20px',
+                                    color: '#636e72'
+                                }}>
+                                    <div style={{ fontSize: '4em', marginBottom: '10px' }}>🌾</div>
+                                    <p style={{ fontSize: '1.1em', margin: 0 }}>수확한 식물이 없습니다</p>
+                                    <p style={{ fontSize: '0.9em', color: '#b2bec3' }}>식물을 키워서 수확해보세요!</p>
+                                </div>
+                            ) : (
+                                Object.values(inventory).map((item) => (
+                                    <motion.div
+                                        key={item.emoji}
+                                        initial={{ opacity: 0, scale: 0.9 }}
+                                        animate={{ opacity: 1, scale: 1 }}
+                                        exit={{ opacity: 0, scale: 0.9 }}
+                                        layout
+                                        style={{
+                                            background: 'white',
+                                            borderRadius: '12px',
+                                            padding: '20px',
+                                            boxShadow: '0 2px 10px rgba(0,0,0,0.08)',
+                                            border: '2px solid #dfe6e9'
+                                        }}
+                                    >
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '15px', marginBottom: '15px' }}>
+                                            <div style={{ fontSize: '3em' }}>{item.emoji}</div>
+                                            <div style={{ flex: 1 }}>
+                                                <div style={{
+                                                    fontSize: '1.1em',
+                                                    fontWeight: 'bold',
+                                                    color: '#2d3436',
+                                                    marginBottom: '4px'
+                                                }}>
+                                                    {item.name}
+                                                </div>
+                                                <div style={{
+                                                    fontSize: '0.9em',
+                                                    color: '#636e72',
+                                                    display: 'flex',
+                                                    gap: '10px'
+                                                }}>
+                                                    <span>💰 {item.value}</span>
+                                                    <span>x{item.count}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div style={{
+                                            borderTop: '1px solid #dfe6e9',
+                                            paddingTop: '15px'
+                                        }}>
+                                            <div style={{
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                gap: '10px',
+                                                marginBottom: '8px'
+                                            }}>
+                                                <span style={{ fontSize: '0.9em', color: '#636e72', minWidth: '60px' }}>
+                                                    {selectedItems[item.emoji] || 1}개 선택
+                                                </span>
+                                                <input
+                                                    type="range"
+                                                    min="1"
+                                                    max={item.count}
+                                                    value={selectedItems[item.emoji] || 1}
+                                                    onChange={(e) => handleSliderChange(item.emoji, e.target.value)}
+                                                    style={{ flex: 1 }}
+                                                />
+                                            </div>
+                                            <button
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    const amount = selectedItems[item.emoji] || 1;
+                                                    onSell(item.emoji, amount);
+                                                    setSelectedItems(prev => ({ ...prev, [item.emoji]: 1 }));
+                                                }}
+                                                style={{
+                                                    width: '100%',
+                                                    padding: '10px',
+                                                    background: '#00b894',
+                                                    color: 'white',
+                                                    border: 'none',
+                                                    borderRadius: '8px',
+                                                    fontWeight: 'bold',
+                                                    cursor: 'pointer'
+                                                }}
+                                            >
+                                                판매 (💰 {item.value * (selectedItems[item.emoji] || 1)})
+                                            </button>
+                                        </div>
+                                    </motion.div>
+                                ))
+                            )}
+                        </AnimatePresence>
                     </div>
-                    <button
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            const amount = selectedItems[item.emoji] || 1;
-                            onSell(item.emoji, amount);
-                            setSelectedItems(prev => ({ ...prev, [item.emoji]: 1 }));
-                        }}
-                        style={{
-                            width: '100%',
-                            padding: '10px',
-                            background: '#00b894',
-                            color: 'white',
-                            border: 'none',
-                            borderRadius: '8px',
-                            fontWeight: 'bold',
-                            cursor: 'pointer'
-                        }}
-                    >
-                        판매 (💰 {item.value * (selectedItems[item.emoji] || 1)})
-                    </button>
-                </div>
-                }}>
-                <div style={{ fontSize: '4em', marginBottom: '10px' }}>🎒</div>
-                <p style={{ fontSize: '1.1em', margin: 0 }}>보유한 소모품이 없습니다</p>
-                <p style={{ fontSize: '0.9em', color: '#b2bec3' }}>상점에서 구매해보세요!</p>
+                ) : (
+                    <div style={{
+                        display: 'grid',
+                        gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
+                        gap: '15px'
+                    }}>
+                        {(!consumables || (consumables.seedBomb === 0 && consumables.growthPotion === 0)) ? (
+                            <div style={{
+                                gridColumn: '1 / -1',
+                                textAlign: 'center',
+                                padding: '60px 20px',
+                                color: '#636e72'
+                            }}>
+                                <div style={{ fontSize: '4em', marginBottom: '10px' }}>🎒</div>
+                                <p style={{ fontSize: '1.1em', margin: 0 }}>보유한 소모품이 없습니다</p>
+                                <p style={{ fontSize: '0.9em', color: '#b2bec3' }}>상점에서 구매해보세요!</p>
+                            </div>
+                        ) : (
+                            <>
+                                {consumables.seedBomb > 0 && (
+                                    <motion.div
+                                        initial={{ opacity: 0, scale: 0.9 }}
+                                        animate={{ opacity: 1, scale: 1 }}
+                                        style={{
+                                            background: 'white',
+                                            borderRadius: '12px',
+                                            padding: '20px',
+                                            boxShadow: '0 2px 10px rgba(0,0,0,0.08)',
+                                            border: '2px solid #e17055'
+                                        }}
+                                    >
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '15px', marginBottom: '15px' }}>
+                                            <div style={{ fontSize: '3em' }}>💣</div>
+                                            <div style={{ flex: 1 }}>
+                                                <div style={{
+                                                    fontSize: '1.1em',
+                                                    fontWeight: 'bold',
+                                                    color: '#2d3436',
+                                                    marginBottom: '4px'
+                                                }}>
+                                                    씨앗 폭탄
+                                                </div>
+                                                <div style={{ fontSize: '0.9em', color: '#636e72' }}>
+                                                    x{consumables.seedBomb}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div style={{ borderTop: '1px solid #dfe6e9', paddingTop: '15px' }}>
+                                            <p style={{ fontSize: '0.85em', color: '#636e72', margin: '0 0 10px 0' }}>
+                                                빈 땅에 식물을 가득 채웁니다
+                                            </p>
+                                            <button
+                                                onClick={() => onUseConsumable('seedBomb')}
+                                                style={{
+                                                    width: '100%',
+                                                    padding: '10px',
+                                                    background: '#e17055',
+                                                    color: 'white',
+                                                    border: 'none',
+                                                    borderRadius: '8px',
+                                                    fontWeight: 'bold',
+                                                    cursor: 'pointer'
+                                                }}
+                                            >
+                                                사용하기
+                                            </button>
+                                        </div>
+                                    </motion.div>
+                                )}
+                                {consumables.growthPotion > 0 && (
+                                    <motion.div
+                                        initial={{ opacity: 0, scale: 0.9 }}
+                                        animate={{ opacity: 1, scale: 1 }}
+                                        style={{
+                                            background: 'white',
+                                            borderRadius: '12px',
+                                            padding: '20px',
+                                            boxShadow: '0 2px 10px rgba(0,0,0,0.08)',
+                                            border: '2px solid #6c5ce7'
+                                        }}
+                                    >
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '15px', marginBottom: '15px' }}>
+                                            <div style={{ fontSize: '3em' }}>🧪</div>
+                                            <div style={{ flex: 1 }}>
+                                                <div style={{
+                                                    fontSize: '1.1em',
+                                                    fontWeight: 'bold',
+                                                    color: '#2d3436',
+                                                    marginBottom: '4px'
+                                                }}>
+                                                    성장 물약
+                                                </div>
+                                                <div style={{ fontSize: '0.9em', color: '#636e72' }}>
+                                                    x{consumables.growthPotion}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div style={{ borderTop: '1px solid #dfe6e9', paddingTop: '15px' }}>
+                                            <p style={{ fontSize: '0.85em', color: '#636e72', margin: '0 0 10px 0' }}>
+                                                모든 식물을 즉시 성장시킵니다
+                                            </p>
+                                            <button
+                                                onClick={() => onUseConsumable('growthPotion')}
+                                                style={{
+                                                    width: '100%',
+                                                    padding: '10px',
+                                                    background: '#6c5ce7',
+                                                    color: 'white',
+                                                    border: 'none',
+                                                    borderRadius: '8px',
+                                                    fontWeight: 'bold',
+                                                    cursor: 'pointer'
+                                                }}
+                                            >
+                                                사용하기
+                                            </button>
+                                        </div>
+                                    </motion.div>
+                                )}
+                            </>
+                        )}
+                    </div>
+                )}
+            </div>
         </div>
-    ) : (
-        <>
-            {consumables.seedBomb > 0 && (
-                <motion.div
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    style={{
-                        background: 'white',
-                        borderRadius: '12px',
-                        padding: '20px',
-                        boxShadow: '0 2px 10px rgba(0,0,0,0.08)',
-                        border: '2px solid #e17055'
-                    }}
-                >
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '15px', marginBottom: '15px' }}>
-                        <div style={{ fontSize: '3em' }}>💣</div>
-                        <div style={{ flex: 1 }}>
-                            <div style={{
-                                fontSize: '1.1em',
-                                fontWeight: 'bold',
-                                color: '#2d3436',
-                                marginBottom: '4px'
-                            }}>
-                                씨앗 폭탄
-                            </div>
-                            <div style={{ fontSize: '0.9em', color: '#636e72' }}>
-                                x{consumables.seedBomb}
-                            </div>
-                        </div>
-                    </div>
-                    <div style={{ borderTop: '1px solid #dfe6e9', paddingTop: '15px' }}>
-                        <p style={{ fontSize: '0.85em', color: '#636e72', margin: '0 0 10px 0' }}>
-                            빈 땅에 식물을 가득 채웁니다
-                        </p>
-                        <button
-                            onClick={() => onUseConsumable('seedBomb')}
-                            style={{
-                                width: '100%',
-                                padding: '10px',
-                                background: '#e17055',
-                                color: 'white',
-                                border: 'none',
-                                borderRadius: '8px',
-                                fontWeight: 'bold',
-                                cursor: 'pointer'
-                            }}
-                        >
-                            사용하기
-                        </button>
-                    </div>
-                </motion.div>
-            )}
-            {consumables.growthPotion > 0 && (
-                <motion.div
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    style={{
-                        background: 'white',
-                        borderRadius: '12px',
-                        padding: '20px',
-                        boxShadow: '0 2px 10px rgba(0,0,0,0.08)',
-                        border: '2px solid #6c5ce7'
-                    }}
-                >
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '15px', marginBottom: '15px' }}>
-                        <div style={{ fontSize: '3em' }}>🧪</div>
-                        <div style={{ flex: 1 }}>
-                            <div style={{
-                                fontSize: '1.1em',
-                                fontWeight: 'bold',
-                                color: '#2d3436',
-                                marginBottom: '4px'
-                            }}>
-                                성장 물약
-                            </div>
-                            <div style={{ fontSize: '0.9em', color: '#636e72' }}>
-                                x{consumables.growthPotion}
-                            </div>
-                        </div>
-                    </div>
-                    <div style={{ borderTop: '1px solid #dfe6e9', paddingTop: '15px' }}>
-                        <p style={{ fontSize: '0.85em', color: '#636e72', margin: '0 0 10px 0' }}>
-                            모든 식물을 즉시 성장시킵니다
-                        </p>
-                        <button
-                            onClick={() => onUseConsumable('growthPotion')}
-                            style={{
-                                width: '100%',
-                                padding: '10px',
-                                background: '#6c5ce7',
-                                color: 'white',
-                                border: 'none',
-                                borderRadius: '8px',
-                                fontWeight: 'bold',
-                                cursor: 'pointer'
-                            }}
-                        >
-                            사용하기
-                        </button>
-                    </div>
-                </motion.div>
-            )}
-        </>
-    )
-}
-        </div >
-    )
-}
-            </div >
-        </div >
     );
 }
