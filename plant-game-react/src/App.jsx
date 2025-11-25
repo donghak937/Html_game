@@ -59,8 +59,8 @@ function App() {
 
   const getSpawnProbability = () => {
     if (!foodState.active) return '0% (비활성)';
-    const baseChance = 0.05 * foodState.multiplier;
-    const pityBonus = (pityCounter || 0) * 0.05;
+    const baseChance = 0.01 * foodState.multiplier;
+    const pityBonus = (pityCounter || 0) * 0.01;
     const totalChance = Math.min(baseChance + pityBonus, 1.0);
     return `${(totalChance * 100).toFixed(0)}%`;
   };
@@ -227,7 +227,7 @@ function App() {
         color: '#b2bec3',
         textAlign: 'center'
       }}>
-        v1.2.2
+        v1.2.3
       </div>
     </div>
   );

@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import mushroomData from '../data/mushroom_types.json';
 
 const TOTAL_SLOTS = 25;
-const GROWTH_PROBABILITY = 0.05;
+const GROWTH_PROBABILITY = 0.01;
 
 export function useGame() {
   // --- State ---
@@ -105,7 +105,7 @@ export function useGame() {
 
         // Pity System: increase spawn chance with each failure
         const baseChance = GROWTH_PROBABILITY * currentFood.multiplier;
-        const pityBonus = currentPity * 0.05; // +5% per failure
+        const pityBonus = currentPity * 0.01; // +1% per failure
         const totalChance = Math.min(baseChance + pityBonus, 1.0); // Cap at 100%
 
         if (emptyIndices.length > 0 && Math.random() < totalChance) {
