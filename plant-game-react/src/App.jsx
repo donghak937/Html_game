@@ -227,7 +227,7 @@ function App() {
         color: '#b2bec3',
         textAlign: 'center'
       }}>
-        v1.2.3
+        v1.2.4
       </div>
     </div>
   );

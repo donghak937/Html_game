@@ -155,6 +155,7 @@ export function useGame() {
             id: Date.now() + Math.random(),
             stage: 'baby',
             plantedAt: Date.now(),
+            growthProgress: 0, // Track accumulated growth time
             growthDuration: duration
           };
 
@@ -165,16 +166,26 @@ export function useGame() {
         }
 
         // 2. Growing
-        newPlants = newPlants.map(plant => {
-          if (plant && plant.stage === 'baby') {
-            const elapsed = Date.now() - plant.plantedAt;
-            if (elapsed >= plant.growthDuration) {
+        // Only grow if food is active
+        if (currentFood.active) {
+          newPlants = newPlants.map(plant => {
+            if (plant && plant.stage === 'baby') {
+              // Initialize growthProgress if missing (migration for existing plants)
+              const currentProgress = plant.growthProgress || 0;
+              const newProgress = currentProgress + 1000; // Add 1 second per tick
+
+              if (newProgress >= plant.growthDuration) {
+                changed = true;
+                return { ...plant, stage: 'adult', growthProgress: newProgress };
+              }
+
+              // Update progress
               changed = true;
-              return { ...plant, stage: 'adult' };
+              return { ...plant, growthProgress: newProgress };
             }
-          }
-          return plant;
-        });
+            return plant;
+          });
+        }
 
         return changed ? newPlants : prevPlants;
       });
