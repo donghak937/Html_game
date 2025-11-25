@@ -522,7 +522,7 @@ export function useGame() {
   const activateFood = useCallback((type) => {
     const foodTypes = {
       '3min-free': { duration: 180000, multiplier: 0.5, cost: 0, name: '3min Free' },
-      '1min': { duration: 60000, multiplier: 2.5, cost: 200, name: '1min Speed' },
+      '1min': { duration: 60000, multiplier: 2.5, cost: 200, name: '1min Speed (2.5x)' }, // Updated name
       '5min': { duration: 300000, multiplier: 1.0, cost: 150, name: '5min Normal' },
       '10min': { duration: 600000, multiplier: 0.7, cost: 350, name: '10min Slow' }
     };
@@ -701,6 +701,30 @@ export function useGame() {
         });
 
         return newPlants;
+      });
+    } else if (effect.type === 'fill_empty_slots') {
+      // Mass Spawn Effect
+      setPlants(prev => {
+        const newPlants = [...prev];
+        let changed = false;
+        for (let i = 0; i < TOTAL_SLOTS; i++) {
+          if (!newPlants[i]) {
+            const selectedType = getRandomMushroom(rarityLevel);
+            // Base: 60s, reduces by 3s per upgrade level, min 5s
+            const baseGrowthTime = Math.max(60000 - (upgradeLevel * 3000), 5000);
+
+            newPlants[i] = {
+              ...selectedType,
+              id: Date.now() + Math.random() + i,
+              stage: 'baby', // Start as baby
+              plantedAt: Date.now(),
+              growthProgress: 0,
+              growthDuration: baseGrowthTime
+            };
+            changed = true;
+          }
+        }
+        return changed ? newPlants : prev;
       });
     } else {
       // Buffs (speed, gold, spawn_rate)
