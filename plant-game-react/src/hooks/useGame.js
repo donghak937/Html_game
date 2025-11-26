@@ -668,7 +668,7 @@ export function useGame() {
   }, [gold, unlocks]);
 
   const buyRarityUpgrade = useCallback(() => {
-    const cost = 1000 * rarityLevel;
+    const cost = 500 * rarityLevel;
     if (gold >= cost) {
       setGold(g => g - cost);
       setRarityLevel(l => l + 1);
@@ -742,6 +742,16 @@ export function useGame() {
       setPlants(prev => {
         const newPlants = [...prev];
         let changed = false;
+
+        // 1. Grow existing babies
+        newPlants.forEach((plant, index) => {
+          if (plant && plant.stage === 'baby') {
+            newPlants[index] = { ...plant, stage: 'adult', growthProgress: plant.growthDuration };
+            changed = true;
+          }
+        });
+
+        // 2. Fill empty slots
         for (let i = 0; i < TOTAL_SLOTS; i++) {
           if (!newPlants[i]) {
             const selectedType = getRandomMushroom(rarityLevel);
