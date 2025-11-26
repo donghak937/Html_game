@@ -1,4 +1,6 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { auth, loginWithGoogle, logout, saveGameData, loadGameData } from '../firebase';
+import { onAuthStateChanged } from 'firebase/auth';
 import mushroomData from '../data/mushroom_types.json';
 import recipeData from '../data/recipes.json';
 import achievementData from '../data/achievements.json';
@@ -116,6 +118,123 @@ export function useGame() {
     const saved = localStorage.getItem('plant_game_discoveredRecipes');
     return saved ? JSON.parse(saved) : [];
   });
+
+  // --- Auth & Cloud Save Logic ---
+  const [user, setUser] = useState(null);
+  const [isSaving, setIsSaving] = useState(false);
+  const [lastSaved, setLastSaved] = useState(null);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+    });
+    return () => unsubscribe();
+  }, []);
+
+  const handleLogin = async () => {
+    try {
+      await loginWithGoogle();
+    } catch (error) {
+      alert("로그인 실패: " + error.message);
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+      setUser(null);
+    } catch (error) {
+      alert("로그아웃 실패: " + error.message);
+    }
+  };
+
+  const handleSaveGame = async () => {
+    if (!user) {
+      alert("로그인이 필요합니다.");
+      return;
+    }
+    setIsSaving(true);
+    const gameData = {
+      gold,
+      plants,
+      inventory,
+      collection,
+      upgradeLevel,
+      unlocks,
+      rarityLevel,
+      fertilizerLevel,
+      consumables,
+      cookedItems,
+      discoveredRecipes,
+      stats,
+      achievements,
+      foodState,
+      activeBuffs,
+      cookingState,
+      pityCounter,
+      questTimer,
+      activeQuests,
+      // Timestamps
+      savedAt: Date.now()
+    };
+
+    const success = await saveGameData(user.uid, gameData);
+    setIsSaving(false);
+    if (success) {
+      setLastSaved(new Date());
+      alert("클라우드에 저장되었습니다! ☁️");
+    } else {
+      alert("저장 실패. 다시 시도해주세요.");
+    }
+  };
+
+  const handleLoadGame = async () => {
+    if (!user) {
+      alert("로그인이 필요합니다.");
+      return;
+    }
+    if (!window.confirm("현재 진행 상황을 덮어쓰고 불러오시겠습니까?")) return;
+
+    setIsSaving(true);
+    try {
+      const data = await loadGameData(user.uid);
+      if (data) {
+        setGold(data.gold || 50);
+        setPlants(data.plants || Array(TOTAL_SLOTS).fill(null));
+        setInventory(data.inventory || {});
+        setCollection(data.collection || {});
+        setUpgradeLevel(data.upgradeLevel || 0);
+        setUnlocks(data.unlocks || { statistics: false, harvestAll: false });
+        setRarityLevel(data.rarityLevel || 1);
+        setFertilizerLevel(data.fertilizerLevel || 0);
+        setConsumables(data.consumables || { seedBomb: 0, growthPotion: 0 });
+        setCookedItems(data.cookedItems || {});
+        setDiscoveredRecipes(data.discoveredRecipes || []);
+        setStats(data.stats || {
+          total_harvest: 0,
+          total_gold: 0,
+          total_cook: 0,
+          collection_count: 0
+        });
+        setAchievements(data.achievements || {});
+        setFoodState(data.foodState || { active: false, endTime: 0, type: null, multiplier: 1 });
+        setActiveBuffs(data.activeBuffs || []);
+        setCookingState(data.cookingState || { active: false, startTime: 0, duration: 0, ingredients: [], result: null });
+        setPityCounter(data.pityCounter || 0);
+        setQuestTimer(data.questTimer || Date.now() + 1800000);
+        setActiveQuests(data.activeQuests || []);
+
+        alert("데이터를 성공적으로 불러왔습니다! 🎉");
+      } else {
+        alert("저장된 데이터가 없습니다.");
+      }
+    } catch (error) {
+      console.error(error);
+      alert("불러오기 실패.");
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
   // --- Persistence ---
   useEffect(() => {
@@ -1137,6 +1256,16 @@ export function useGame() {
   }, []);
 
   return {
+    // Auth & Cloud Save
+    user,
+    handleLogin,
+    handleLogout,
+    handleSaveGame,
+    handleLoadGame,
+    isSaving,
+    lastSaved,
+
+    // Game State
     gold,
     plants,
     inventory,

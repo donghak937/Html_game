@@ -16,6 +16,16 @@ import './styles/main.css';
 
 function App() {
   const {
+    // Auth & Cloud Save
+    user,
+    handleLogin,
+    handleLogout,
+    handleSaveGame,
+    handleLoadGame,
+    isSaving,
+    lastSaved,
+
+    // Game State
     gold,
     plants,
     inventory,
@@ -429,6 +439,13 @@ function App() {
         <Settings
           resetGame={resetGame}
           activateGodMode={activateGodMode}
+          user={user}
+          onLogin={handleLogin}
+          onLogout={handleLogout}
+          onSave={handleSaveGame}
+          onLoad={handleLoadGame}
+          isSaving={isSaving}
+          lastSaved={lastSaved}
         />
       )}
 
