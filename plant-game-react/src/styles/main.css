@@ -120,19 +120,6 @@ h1 {
 
 .mushroom:hover {
     transform: scale(1.2);
-}
-
-.mushroom:active {
-    transform: scale(0.95);
-}
-
-/* Rarity Glowing Effects for Growing Field */
-.mushroom-slot.rarity-epic .mushroom {
-    filter: drop-shadow(0 0 10px #9b59b6) drop-shadow(0 0 20px #9b59b6);
-    animation: glow-epic 2s ease-in-out infinite;
-}
-
-.mushroom-slot.rarity-legendary .mushroom {
     filter: drop-shadow(0 0 10px #f39c12) drop-shadow(0 0 20px #f39c12);
     animation: glow-legendary 2s ease-in-out infinite;
 }
@@ -140,6 +127,18 @@ h1 {
 .mushroom-slot.rarity-mythic .mushroom {
     filter: drop-shadow(0 0 15px #e74c3c) drop-shadow(0 0 30px #e74c3c);
     animation: glow-mythic 2s ease-in-out infinite;
+}
+
+@keyframes glow-rare {
+
+    0%,
+    100% {
+        filter: drop-shadow(0 0 5px #3498db) drop-shadow(0 0 10px #3498db);
+    }
+
+    50% {
+        filter: drop-shadow(0 0 10px #3498db) drop-shadow(0 0 20px #3498db);
+    }
 }
 
 @keyframes glow-epic {

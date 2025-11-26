@@ -6,9 +6,9 @@ export function GameField({ plants, onHarvest }) {
         <div className="log-container">
             <div className="mushroom-field">
                 {plants.map((plant, index) => {
-                    // Add rarity class for epic+ plants
+                    // Add rarity class for rare+ plants
                     const rarityClass = plant && plant.stage === 'adult' &&
-                        (plant.rarity === 'epic' || plant.rarity === 'legendary' || plant.rarity === 'mythic')
+                        (plant.rarity === 'rare' || plant.rarity === 'epic' || plant.rarity === 'legendary' || plant.rarity === 'mythic')
                         ? `rarity-${plant.rarity}` : '';
 
                     return (
