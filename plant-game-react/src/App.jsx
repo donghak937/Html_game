@@ -76,25 +76,32 @@ function App() {
   const getRarityProbabilities = () => {
     const rarityBuffs = activeBuffs.filter(b => b.type === 'rarity_boost');
 
-    const weightedMushrooms = mushroomData.mushrooms.map(m => {
-      let weightMultiplier = 1;
+    const weightedMushrooms = mushroomData.mushrooms
+      .filter(m => {
+        if (m.rarity === 'epic' && rarityLevel < 5) return false;
+        if (m.rarity === 'legendary' && rarityLevel < 10) return false;
+        if (m.rarity === 'mythic' && rarityLevel < 15) return false;
+        return true;
+      })
+      .map(m => {
+        let weightMultiplier = 1;
 
-      // Apply Rarity Buffs
-      rarityBuffs.forEach(buff => {
-        if (buff.target === 'all' && m.rarity !== 'common') {
-          weightMultiplier *= buff.value;
-        } else if (buff.target === m.rarity) {
-          weightMultiplier *= buff.value;
-        }
+        // Apply Rarity Buffs
+        rarityBuffs.forEach(buff => {
+          if (buff.target === 'all' && m.rarity !== 'common') {
+            weightMultiplier *= buff.value;
+          } else if (buff.target === m.rarity) {
+            weightMultiplier *= buff.value;
+          }
+        });
+
+        return {
+          ...m,
+          effectiveWeight: m.rarity === 'common'
+            ? m.weight
+            : m.weight * (1 + (rarityLevel - 1) * 0.25) * weightMultiplier
+        };
       });
-
-      return {
-        ...m,
-        effectiveWeight: m.rarity === 'common'
-          ? m.weight
-          : m.weight * (1 + (rarityLevel - 1) * 0.5) * weightMultiplier
-      };
-    });
 
     const totalWeight = weightedMushrooms.reduce((sum, m) => sum + m.effectiveWeight, 0);
 
