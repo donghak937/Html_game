@@ -58,7 +58,7 @@ function App() {
     questTimer,
     refreshQuests,
     completeQuest,
-    cookedItems
+
   } = useGame();
 
   const [view, setView] = useState('game');
