@@ -896,7 +896,7 @@ export function useGame() {
       const multiplier = goldBuff ? (1 + goldBuff.value) : 1;
       // Mixed Stew value is already calculated with 1.1x, but let's apply gold buff too?
       // Why not.
-      const multiplier = goldBuff ? (1 + goldBuff.value) : 1;
+
       const earned = Math.floor(item.value * amount * multiplier);
       updateStats('total_gold', earned);
       return g + earned;
