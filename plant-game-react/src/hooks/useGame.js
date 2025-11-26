@@ -436,15 +436,73 @@ export function useGame() {
   }, [rarityLevel, discoveredRecipes]);
 
   const refreshQuests = useCallback((cost = 0) => {
-    if (cost > 0) {
+    // Check if free refresh is available
+    if (Date.now() >= questTimer) {
+      generateQuests();
+      // Timer resets in generateQuests
+    } else {
+      // Paid refresh
       if (gold >= cost) {
         setGold(g => g - cost);
         generateQuests();
       }
-    } else {
-      generateQuests();
     }
-  }, [gold, generateQuests]);
+  }, [gold, generateQuests, questTimer]);
+
+  const rerollQuest = useCallback((questId) => {
+    const cost = 100;
+    if (gold < cost) return;
+
+    setGold(g => g - cost);
+
+    // Generate single new quest
+    const npcs = questData.npcs;
+    const npc = npcs[Math.floor(Math.random() * npcs.length)];
+
+    // Determine request type (Plant or Dish)
+    const isDish = discoveredRecipes.length > 0 && Math.random() < 0.3;
+
+    let requestItem;
+    let count;
+    let rewardGold;
+
+    if (isDish) {
+      const recipeId = discoveredRecipes[Math.floor(Math.random() * discoveredRecipes.length)];
+      const recipe = recipeData.recipes.find(r => r.id === recipeId);
+      if (!recipe) return; // Should not happen
+
+      requestItem = { type: 'dish', id: recipe.id, name: recipe.name, emoji: recipe.emoji, value: recipe.value };
+      count = Math.floor(Math.random() * 3) + 1;
+    } else {
+      const availableMushrooms = mushroomData.mushrooms.filter(m => {
+        if (m.rarity === 'common') return true;
+        if (m.rarity === 'rare' && rarityLevel >= 2) return true;
+        if (m.rarity === 'epic' && rarityLevel >= 5) return true;
+        if (m.rarity === 'legendary' && rarityLevel >= 10) return true;
+        return false;
+      });
+
+      const mushroom = availableMushrooms[Math.floor(Math.random() * availableMushrooms.length)];
+      requestItem = { type: 'plant', id: mushroom.emoji, name: mushroom.name, emoji: mushroom.emoji, value: mushroom.value };
+      count = Math.floor(Math.random() * 10) + 5;
+    }
+
+    const marketValue = requestItem.value * count;
+    const multiplier = 1.5 + (Math.random() * 0.5);
+    rewardGold = Math.floor(marketValue * multiplier);
+
+    const newQuest = {
+      id: Date.now(), // Unique ID
+      npcId: npc.id,
+      npcName: npc.name,
+      npcEmoji: npc.emoji,
+      dialogue: npc.dialogue[Math.floor(Math.random() * npc.dialogue.length)],
+      request: { ...requestItem, count },
+      reward: { gold: rewardGold }
+    };
+
+    setActiveQuests(prev => prev.map(q => q.id === questId ? newQuest : q));
+  }, [gold, rarityLevel, discoveredRecipes]);
 
   const completeQuest = useCallback((questId) => {
     const quest = activeQuests.find(q => q.id === questId);
@@ -488,15 +546,13 @@ export function useGame() {
 
   }, [activeQuests, inventory, cookedItems]);
 
-  // Auto-refresh timer
+  // Auto-refresh timer removed - manual only
+  // Just ensure timer state exists for UI
   useEffect(() => {
-    const interval = setInterval(() => {
-      if (Date.now() >= questTimer) {
-        generateQuests();
-      }
-    }, 1000);
-    return () => clearInterval(interval);
-  }, [questTimer, generateQuests]);
+    if (!questTimer) {
+      setQuestTimer(Date.now() + 1800000);
+    }
+  }, [questTimer]);
 
   // Initial generation if empty
   useEffect(() => {
@@ -1110,6 +1166,7 @@ export function useGame() {
     activeQuests,
     questTimer,
     refreshQuests,
+    rerollQuest,
     completeQuest
   };
 }

@@ -57,6 +57,7 @@ function App() {
     activeQuests,
     questTimer,
     refreshQuests,
+    rerollQuest,
     completeQuest,
 
   } = useGame();
@@ -394,6 +395,7 @@ function App() {
           activeQuests={activeQuests}
           questTimer={questTimer}
           onRefresh={refreshQuests}
+          onReroll={rerollQuest}
           onComplete={completeQuest}
           inventory={inventory}
           cookedItems={cookedItems}
