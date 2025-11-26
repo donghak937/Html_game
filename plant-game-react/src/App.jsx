@@ -98,8 +98,8 @@ function App() {
         return {
           ...m,
           effectiveWeight: m.rarity === 'common'
-            ? m.weight
-            : m.weight * (1 + (rarityLevel - 1) * 0.25) * weightMultiplier
+            ? m.weight / (1 + rarityLevel * 0.1)
+            : m.weight * (1 + (rarityLevel - 1) * 0.5) * weightMultiplier
         };
       });
 
