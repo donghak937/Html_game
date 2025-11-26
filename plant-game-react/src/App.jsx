@@ -159,10 +159,19 @@ function App() {
 
   const getSpawnProbability = () => {
     if (!foodState.active) return '0% (비활성)';
-    const baseChance = 0.01 * foodState.multiplier;
+
+    // Calculate Spawn Multiplier from Buffs
+    const spawnBuffValue = activeBuffs
+      .filter(b => b.type === 'spawn_rate')
+      .reduce((sum, b) => sum + b.value, 0);
+    const spawnMultiplier = 1 + spawnBuffValue;
+
+    const baseChance = 0.01 * foodState.multiplier * spawnMultiplier;
     const pityBonus = (pityCounter || 0) * 0.01;
     const totalChance = Math.min(baseChance + pityBonus, 1.0);
-    return `${(totalChance * 100).toFixed(0)}%`;
+
+    // Show 1 decimal place if < 10%, else 0
+    return `${(totalChance * 100).toFixed(totalChance < 0.1 ? 1 : 0)}%`;
   };
 
   const getGrowthTime = () => {
