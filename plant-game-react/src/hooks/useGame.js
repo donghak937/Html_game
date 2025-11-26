@@ -428,7 +428,6 @@ export function useGame() {
       // Apply Gold Buff
       const goldBuff = activeBuffs.find(b => b.type === 'gold');
       const multiplier = goldBuff ? (1 + goldBuff.value) : 1;
-      const multiplier = goldBuff ? (1 + goldBuff.value) : 1;
       const earned = Math.floor(item.value * amount * multiplier);
       updateStats('total_gold', earned);
       return g + earned;
@@ -446,14 +445,11 @@ export function useGame() {
       setGold(g => {
         const goldBuff = activeBuffs.find(b => b.type === 'gold');
         const multiplier = goldBuff ? (1 + goldBuff.value) : 1;
-        setGold(g => {
-          const goldBuff = activeBuffs.find(b => b.type === 'gold');
-          const multiplier = goldBuff ? (1 + goldBuff.value) : 1;
-          const earned = Math.floor(totalValue * multiplier);
-          updateStats('total_gold', earned);
-          return g + earned;
-        });
-      }
+        const earned = Math.floor(totalValue * multiplier);
+        updateStats('total_gold', earned);
+        return g + earned;
+      });
+    }
   }, [inventory, activeBuffs, updateStats]);
 
   const buyUpgrade = useCallback(() => {
