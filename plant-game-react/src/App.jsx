@@ -7,7 +7,7 @@ import { Shop } from './components/Shop';
 import { Collection } from './components/Collection';
 import { FoodControls } from './components/FoodControls';
 import { Kitchen } from './components/Kitchen';
-import { Kitchen } from './components/Kitchen';
+
 import { Settings } from './components/Settings';
 import { Achievements } from './components/Achievements';
 import mushroomData from './data/mushroom_types.json';
@@ -48,7 +48,7 @@ function App() {
     claimDish,
     sellCookedItem,
     resetGame,
-    resetGame,
+
     activateGodMode,
     stats,
     achievements,
