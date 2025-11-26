@@ -88,10 +88,7 @@ export function useGame() {
     return saved ? JSON.parse(saved) : {};
   });
 
-  const [activeBuffs, setActiveBuffs] = useState(() => {
-    const saved = localStorage.getItem('plant_game_activeBuffs');
-    return saved ? JSON.parse(saved) : [];
-  });
+
 
   const [cookingState, setCookingState] = useState(() => {
     const saved = localStorage.getItem('plant_game_cookingState');
