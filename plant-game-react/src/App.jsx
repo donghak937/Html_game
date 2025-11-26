@@ -386,7 +386,11 @@ function App() {
       )}
 
       {view === 'collection' && (
-        <Collection collection={collection} />
+        <Collection
+          collection={collection}
+          rarityLevel={rarityLevel}
+          activeBuffs={activeBuffs}
+        />
       )}
 
       {view === 'achievements' && (

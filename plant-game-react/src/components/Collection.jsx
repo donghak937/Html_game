@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import mushroomData from '../data/mushroom_types.json';
 
-export function Collection({ collection }) {
+export function Collection({ collection, rarityLevel = 1, activeBuffs = [] }) {
     const [filter, setFilter] = useState('all');
     const [selectedPlant, setSelectedPlant] = useState(null);
 
@@ -41,7 +41,41 @@ export function Collection({ collection }) {
         return names[rarity] || '알 수 없음';
     };
 
+    const getProbability = (plant) => {
+        const rarityBuffs = activeBuffs.filter(b => b.type === 'rarity_boost');
 
+        // Calculate total weight for all available mushrooms
+        const weightedMushrooms = allMushrooms
+            .filter(m => {
+                if (m.rarity === 'epic' && rarityLevel < 5) return false;
+                if (m.rarity === 'legendary' && rarityLevel < 10) return false;
+                if (m.rarity === 'mythic' && rarityLevel < 15) return false;
+                return true;
+            })
+            .map(m => {
+                let weightMultiplier = 1;
+                rarityBuffs.forEach(buff => {
+                    if (buff.target === 'all' && m.rarity !== 'common') {
+                        weightMultiplier *= buff.value;
+                    } else if (buff.target === m.rarity) {
+                        weightMultiplier *= buff.value;
+                    }
+                });
+
+                return {
+                    ...m,
+                    effectiveWeight: m.rarity === 'common'
+                        ? m.weight / (1 + rarityLevel * 0.15)
+                        : m.weight * (1 + (rarityLevel - 1) * 0.8) * weightMultiplier
+                };
+            });
+
+        const totalWeight = weightedMushrooms.reduce((sum, m) => sum + m.effectiveWeight, 0);
+        const plantInWeighted = weightedMushrooms.find(m => m.emoji === plant.emoji);
+
+        if (!plantInWeighted) return "0.00";
+        return ((plantInWeighted.effectiveWeight / totalWeight) * 100).toFixed(2);
+    };
 
     return (
         <div className="collection-container">
@@ -221,7 +255,7 @@ export function Collection({ collection }) {
                             </div>
                             <div style={{ textAlign: 'center' }}>
                                 <div style={{ fontSize: '0.8em', color: '#2d3436', marginBottom: '5px' }}>등장 확률</div>
-                                <div style={{ fontWeight: 'bold', color: '#2d3436' }}>🎲 {((selectedPlant.weight / allMushrooms.reduce((sum, m) => sum + m.weight, 0)) * 100).toFixed(2)}%</div>
+                                <div style={{ fontWeight: 'bold', color: '#2d3436' }}>🎲 {getProbability(selectedPlant)}%</div>
                             </div>
                             <div style={{ textAlign: 'center' }}>
                                 <div style={{ fontSize: '0.8em', color: '#2d3436', marginBottom: '5px' }}>수확 횟수</div>
