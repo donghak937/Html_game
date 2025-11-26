@@ -237,7 +237,7 @@ export function useGame() {
                 ...m,
                 effectiveWeight: m.rarity === 'common'
                   ? m.weight
-                  : m.weight * (1 + (currentRarity - 1) * 0.1) * weightMultiplier
+                  : m.weight * (1 + (currentRarity - 1) * 0.25) * weightMultiplier
               };
             });
 
@@ -412,7 +412,7 @@ export function useGame() {
 
         const mushroom = availableMushrooms[Math.floor(Math.random() * availableMushrooms.length)];
         requestItem = { type: 'plant', id: mushroom.emoji, name: mushroom.name, emoji: mushroom.emoji, value: mushroom.value };
-        count = Math.floor(Math.random() * 10) + 5; // 5-15 plants
+        count = Math.floor(Math.random() * 5) + 3; // 3-7 plants
       }
 
       // Reward Calculation (1.5x - 2.0x market value)
