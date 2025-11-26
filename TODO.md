@@ -1,10 +1,14 @@
 # 📝 Future Development Tasks
 
-## 🏆 Achievements System (Priority: 1)
-- [ ] **UI**: Add "Achievements" tab.
-- [ ] **Interaction**: Click achievement to view details (Date Achieved, Description, Reward).
-- [ ] **Data**: Track milestones (e.g., "Harvest 1000 Plants", "Earn 1M Gold").
-- [ ] **Rewards**: Claimable rewards (Gold, Gems, Permanent Buffs).
+## 🏆 Achievements System v1.8.0
+- [ ] **Planning**: Define achievement list and data structure
+- [ ] **Data**: Create `achievements.json`
+- [ ] **useGame.js**: Add `stats` state (total harvests, total gold, etc.)
+- [ ] **useGame.js**: Implement `checkAchievements` and `claimAchievement` logic
+- [ ] **App.jsx**: Add "Achievements" tab and pass props
+- [ ] **Achievements.jsx**: Create UI component (List, Detail Popup, Claim Button)
+- [ ] **Verification**: Test unlocking and claiming rewards
+- [ ] **Deploy**: Deploy to GitHub Pages
 
 ## 📜 Quest System (Priority: 2)
 - [ ] **Concept**: NPCs request specific items (e.g., "I need 4 Mushrooms!", "Bring me a Red Stew!").

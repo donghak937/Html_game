@@ -7,7 +7,9 @@ import { Shop } from './components/Shop';
 import { Collection } from './components/Collection';
 import { FoodControls } from './components/FoodControls';
 import { Kitchen } from './components/Kitchen';
+import { Kitchen } from './components/Kitchen';
 import { Settings } from './components/Settings';
+import { Achievements } from './components/Achievements';
 import mushroomData from './data/mushroom_types.json';
 import './styles/main.css';
 
@@ -46,7 +48,11 @@ function App() {
     claimDish,
     sellCookedItem,
     resetGame,
-    activateGodMode
+    resetGame,
+    activateGodMode,
+    stats,
+    achievements,
+    claimAchievement
   } = useGame();
 
   const [view, setView] = useState('game');
@@ -154,6 +160,12 @@ function App() {
           onClick={() => setView('collection')}
         >
           📚 도감
+        </button>
+        <button
+          className={`btn ${view === 'achievements' ? '' : 'btn-secondary'}`}
+          onClick={() => setView('achievements')}
+        >
+          🏆 업적
         </button>
         <button
           className={`btn ${view === 'kitchen' ? '' : 'btn-secondary'}`}
@@ -357,6 +369,14 @@ function App() {
         <Collection collection={collection} />
       )}
 
+      {view === 'achievements' && (
+        <Achievements
+          stats={stats}
+          achievements={achievements}
+          onClaim={claimAchievement}
+        />
+      )}
+
       {view === 'kitchen' && (
         <Kitchen
           inventory={inventory}
@@ -382,7 +402,9 @@ function App() {
         {view === 'game' && '💡 먹이를 주면 식물이 자랍니다!'}
         {view === 'inventory' && '💡 아이템을 클릭하면 판매할 수 있습니다!'}
         {view === 'shop' && '💡 업그레이드를 구매하여 더 빠르게 성장시키세요!'}
+        {view === 'shop' && '💡 업그레이드를 구매하여 더 빠르게 성장시키세요!'}
         {view === 'collection' && '💡 수확하여 새로운 식물을 발견하세요!'}
+        {view === 'achievements' && '💡 목표를 달성하고 보상을 획득하세요!'}
         {view === 'kitchen' && '💡 재료를 모아 특별한 요리를 만들어보세요!'}
         {view === 'settings' && '💡 게임 설정을 변경할 수 있습니다.'}
       </div>
