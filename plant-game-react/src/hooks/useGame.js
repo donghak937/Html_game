@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import mushroomData from '../data/mushroom_types.json';
 import recipeData from '../data/recipes.json';
 import achievementData from '../data/achievements.json';
+import questData from '../data/quests.json';
 
 const TOTAL_SLOTS = 25;
 const GROWTH_PROBABILITY = 0.01;
@@ -68,6 +69,16 @@ export function useGame() {
     return saved ? JSON.parse(saved) : {};
   });
 
+  const [activeQuests, setActiveQuests] = useState(() => {
+    const saved = localStorage.getItem('plant_game_activeQuests');
+    return saved ? JSON.parse(saved) : [];
+  });
+
+  const [questTimer, setQuestTimer] = useState(() => {
+    const saved = localStorage.getItem('plant_game_questTimer');
+    return saved ? parseInt(saved) : Date.now() + 1800000; // 30 mins default
+  });
+
   const [pityCounter, setPityCounter] = useState(() => {
     const saved = localStorage.getItem('plant_game_pityCounter');
     return saved ? parseInt(saved) : 0;
@@ -125,7 +136,9 @@ export function useGame() {
     localStorage.setItem('plant_game_discoveredRecipes', JSON.stringify(discoveredRecipes));
     localStorage.setItem('plant_game_stats', JSON.stringify(stats));
     localStorage.setItem('plant_game_achievements', JSON.stringify(achievements));
-  }, [gold, plants, inventory, collection, upgradeLevel, unlocks, rarityLevel, foodState, pityCounter, fertilizerLevel, consumables, cookedItems, activeBuffs, cookingState, discoveredRecipes, stats, achievements]);
+    localStorage.setItem('plant_game_activeQuests', JSON.stringify(activeQuests));
+    localStorage.setItem('plant_game_questTimer', questTimer);
+  }, [gold, plants, inventory, collection, upgradeLevel, unlocks, rarityLevel, foodState, pityCounter, fertilizerLevel, consumables, cookedItems, activeBuffs, cookingState, discoveredRecipes, stats, achievements, activeQuests, questTimer]);
 
   // --- Refs for Loop ---
   const stateRef = useRef({
@@ -362,6 +375,135 @@ export function useGame() {
       [id]: { ...prev[id], claimed: true }
     }));
   }, [achievements]);
+
+  // --- Quest Logic ---
+  const generateQuests = useCallback(() => {
+    const newQuests = [];
+    const npcs = questData.npcs;
+
+    for (let i = 0; i < 3; i++) {
+      const npc = npcs[Math.floor(Math.random() * npcs.length)];
+
+      // Determine request type (Plant or Dish)
+      // 70% Plant, 30% Dish (if recipes discovered)
+      const isDish = discoveredRecipes.length > 0 && Math.random() < 0.3;
+
+      let requestItem;
+      let count;
+      let rewardGold;
+
+      if (isDish) {
+        const recipeId = discoveredRecipes[Math.floor(Math.random() * discoveredRecipes.length)];
+        const recipe = recipeData.recipes.find(r => r.id === recipeId);
+        if (!recipe) continue; // Skip if error
+
+        requestItem = { type: 'dish', id: recipe.id, name: recipe.name, emoji: recipe.emoji, value: recipe.value };
+        count = Math.floor(Math.random() * 3) + 1; // 1-3 dishes
+      } else {
+        // Plant request
+        // Select random mushroom based on rarity level (can request slightly higher rarity)
+        const availableMushrooms = mushroomData.mushrooms.filter(m => {
+          if (m.rarity === 'common') return true;
+          if (m.rarity === 'rare' && rarityLevel >= 2) return true;
+          if (m.rarity === 'epic' && rarityLevel >= 5) return true;
+          if (m.rarity === 'legendary' && rarityLevel >= 10) return true;
+          return false;
+        });
+
+        const mushroom = availableMushrooms[Math.floor(Math.random() * availableMushrooms.length)];
+        requestItem = { type: 'plant', id: mushroom.emoji, name: mushroom.name, emoji: mushroom.emoji, value: mushroom.value };
+        count = Math.floor(Math.random() * 10) + 5; // 5-15 plants
+      }
+
+      // Reward Calculation (1.5x - 2.0x market value)
+      const marketValue = requestItem.value * count;
+      const multiplier = 1.5 + (Math.random() * 0.5);
+      rewardGold = Math.floor(marketValue * multiplier);
+
+      newQuests.push({
+        id: Date.now() + i,
+        npcId: npc.id,
+        npcName: npc.name,
+        npcEmoji: npc.emoji,
+        dialogue: npc.dialogue[Math.floor(Math.random() * npc.dialogue.length)],
+        request: { ...requestItem, count },
+        reward: { gold: rewardGold }
+      });
+    }
+
+    setActiveQuests(newQuests);
+    setQuestTimer(Date.now() + 1800000); // Reset timer to 30 mins
+  }, [rarityLevel, discoveredRecipes]);
+
+  const refreshQuests = useCallback((cost = 0) => {
+    if (cost > 0) {
+      if (gold >= cost) {
+        setGold(g => g - cost);
+        generateQuests();
+      }
+    } else {
+      generateQuests();
+    }
+  }, [gold, generateQuests]);
+
+  const completeQuest = useCallback((questId) => {
+    const quest = activeQuests.find(q => q.id === questId);
+    if (!quest) return;
+
+    const req = quest.request;
+
+    // Check Inventory
+    if (req.type === 'plant') {
+      if (!inventory[req.id] || inventory[req.id].count < req.count) return;
+
+      // Deduct Items
+      setInventory(curr => {
+        const newInv = { ...curr };
+        newInv[req.id] = { ...newInv[req.id] };
+        newInv[req.id].count -= req.count;
+        if (newInv[req.id].count <= 0) delete newInv[req.id];
+        return newInv;
+      });
+    } else if (req.type === 'dish') {
+      if (!cookedItems[req.id] || cookedItems[req.id].count < req.count) return;
+
+      // Deduct Items
+      setCookedItems(curr => {
+        const newItems = { ...curr };
+        newItems[req.id] = { ...newItems[req.id] };
+        newItems[req.id].count -= req.count;
+        if (newItems[req.id].count <= 0) delete newItems[req.id];
+        return newItems;
+      });
+    }
+
+    // Give Reward
+    setGold(g => g + quest.reward.gold);
+
+    // Remove Quest
+    setActiveQuests(prev => prev.filter(q => q.id !== questId));
+
+    // Update Stats (Optional: Track completed quests)
+    // updateStats('quests_completed', 1); 
+
+  }, [activeQuests, inventory, cookedItems]);
+
+  // Auto-refresh timer
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (Date.now() >= questTimer) {
+        generateQuests();
+      }
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [questTimer, generateQuests]);
+
+  // Initial generation if empty
+  useEffect(() => {
+    if (activeQuests.length === 0) {
+      generateQuests();
+    }
+  }, []); // Run once on mount if empty
 
   // --- Actions ---
 
@@ -964,6 +1106,10 @@ export function useGame() {
     activateGodMode,
     stats,
     achievements,
-    claimAchievement
+    claimAchievement,
+    activeQuests,
+    questTimer,
+    refreshQuests,
+    completeQuest
   };
 }
