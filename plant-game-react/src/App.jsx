@@ -7,10 +7,10 @@ import { Shop } from './components/Shop';
 import { Collection } from './components/Collection';
 import { FoodControls } from './components/FoodControls';
 import { Kitchen } from './components/Kitchen';
-
 import { Settings } from './components/Settings';
 import { Achievements } from './components/Achievements';
 import { Quests } from './components/Quests';
+import { DailyReward } from './components/DailyReward';
 import mushroomData from './data/mushroom_types.json';
 import './styles/main.css';
 
@@ -24,6 +24,10 @@ function App() {
     handleLoadGame,
     isSaving,
     lastSaved,
+
+    // Daily Reward
+    dailyReward,
+    claimDailyReward,
 
     // Game State
     gold,
@@ -73,11 +77,37 @@ function App() {
   } = useGame();
 
   const [view, setView] = useState('game');
+  const [showDailyReward, setShowDailyReward] = useState(false);
 
   // Scroll to top when view changes
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [view]);
+
+  // Check Daily Reward on Mount
+  useEffect(() => {
+    if (dailyReward.lastClaimed) {
+      const lastDate = new Date(dailyReward.lastClaimed);
+      const now = new Date();
+      const isSameDay = lastDate.getFullYear() === now.getFullYear() &&
+        lastDate.getMonth() === now.getMonth() &&
+        lastDate.getDate() === now.getDate();
+      if (!isSameDay) {
+        setShowDailyReward(true);
+      }
+    } else {
+      // First time
+      setShowDailyReward(true);
+    }
+  }, []); // Run once
+
+  const handleClaimReward = () => {
+    const result = claimDailyReward();
+    if (result.success) {
+      // Optional: Show confetti or toast
+    }
+    return result;
+  };
 
   const adultsCount = plants.filter(p => p && p.stage === 'adult').length;
   const inventoryCount = Object.values(inventory).reduce((sum, item) => sum + item.count, 0);
@@ -156,6 +186,14 @@ function App() {
 
   return (
     <div className="game-container">
+      {showDailyReward && (
+        <DailyReward
+          dailyReward={dailyReward}
+          onClaim={handleClaimReward}
+          onClose={() => setShowDailyReward(false)}
+        />
+      )}
+
       <div className="header">
         <h1>🌱 Plant Tycoon</h1>
       </div>
@@ -449,8 +487,6 @@ function App() {
         />
       )}
 
-
-
       <div className="info" style={{ marginTop: '20px', fontSize: '0.9em', color: '#8b4513' }}>
         {view === 'game' && '💡 먹이를 주면 식물이 자랍니다!'}
         {view === 'inventory' && '💡 아이템을 클릭하면 판매할 수 있습니다!'}
@@ -469,7 +505,7 @@ function App() {
         color: '#b2bec3',
         textAlign: 'center'
       }}>
-        v1.7.0
+        v2.1.0
       </div>
     </div >
   );

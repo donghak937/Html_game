@@ -1255,6 +1255,88 @@ export function useGame() {
     alert('God Mode Activated! ⚡');
   }, []);
 
+  // --- Daily Reward Logic ---
+  const [dailyReward, setDailyReward] = useState(() => {
+    const saved = localStorage.getItem('plant_game_dailyReward');
+    return saved ? JSON.parse(saved) : { streak: 0, lastClaimed: null };
+  });
+
+  useEffect(() => {
+    localStorage.setItem('plant_game_dailyReward', JSON.stringify(dailyReward));
+  }, [dailyReward]);
+
+  const claimDailyReward = useCallback(() => {
+    const now = Date.now();
+    const lastClaimed = dailyReward.lastClaimed ? new Date(dailyReward.lastClaimed).getTime() : 0;
+    const oneDay = 24 * 60 * 60 * 1000;
+
+    // Check if already claimed today (reset at midnight or just 24h interval? Let's use 24h for simplicity or calendar day?)
+    // User expects "Daily", usually resets at midnight.
+    // Let's use simple 24h check for now, or check if dates are different.
+    // Better: Check if lastClaimed is from a previous calendar day.
+
+    const lastDate = new Date(lastClaimed);
+    const currentDate = new Date(now);
+
+    const isSameDay = lastDate.getFullYear() === currentDate.getFullYear() &&
+      lastDate.getMonth() === currentDate.getMonth() &&
+      lastDate.getDate() === currentDate.getDate();
+
+    if (isSameDay && dailyReward.lastClaimed !== null) {
+      return { success: false, message: "이미 오늘 보상을 받았습니다." };
+    }
+
+    // Check streak break (if > 48 hours since last claim, reset)
+    // Actually, if it's been more than 1 day gap (e.g. claimed on 1st, now it's 3rd), reset.
+    // 1st -> 2nd (Consecutive)
+    // 1st -> 3rd (Broken)
+
+    const diffTime = Math.abs(currentDate - lastDate);
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+    let newStreak = dailyReward.streak + 1;
+
+    // If first time or streak broken (diffDays > 1 means missed a day? No, diffDays=1 is consecutive. diffDays > 2 is broken?)
+    // Let's keep it simple: if (now - lastClaimed > 48 hours) reset.
+    if (dailyReward.lastClaimed && (now - lastClaimed) > (48 * 60 * 60 * 1000)) {
+      newStreak = 1;
+    }
+
+    if (newStreak > 7) newStreak = 1; // Loop after 7 days
+
+    // Give Reward
+    const rewards = [
+      { day: 1, type: 'gold', value: 500 },
+      { day: 2, type: 'gold', value: 1000 },
+      { day: 3, type: 'consumable', id: 'growthPotion', count: 1 },
+      { day: 4, type: 'gold', value: 2000 },
+      { day: 5, type: 'consumable', id: 'seedBomb', count: 1 },
+      { day: 6, type: 'consumable', id: 'growthPotion', count: 2 },
+      { day: 7, type: 'mixed', gold: 5000, items: [{ id: 'seedBomb', count: 3 }] }
+    ];
+
+    const reward = rewards[newStreak - 1];
+
+    if (reward.type === 'gold') {
+      setGold(g => g + reward.value);
+    } else if (reward.type === 'consumable') {
+      setConsumables(prev => ({ ...prev, [reward.id]: (prev[reward.id] || 0) + reward.count }));
+    } else if (reward.type === 'mixed') {
+      setGold(g => g + reward.gold);
+      setConsumables(prev => {
+        const newCons = { ...prev };
+        reward.items.forEach(item => {
+          newCons[item.id] = (newCons[item.id] || 0) + item.count;
+        });
+        return newCons;
+      });
+    }
+
+    setDailyReward({ streak: newStreak, lastClaimed: new Date().toISOString() });
+    return { success: true, streak: newStreak, reward };
+
+  }, [dailyReward]);
+
   return {
     // Auth & Cloud Save
     user,
@@ -1264,6 +1346,10 @@ export function useGame() {
     handleLoadGame,
     isSaving,
     lastSaved,
+
+    // Daily Reward
+    dailyReward,
+    claimDailyReward,
 
     // Game State
     gold,
