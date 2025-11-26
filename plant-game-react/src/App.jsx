@@ -61,12 +61,28 @@ function App() {
 
   // Calculate Statistics
   const getRarityProbabilities = () => {
-    const weightedMushrooms = mushroomData.mushrooms.map(m => ({
-      ...m,
-      effectiveWeight: m.rarity === 'common'
-        ? m.weight
-        : m.weight * (1 + (rarityLevel - 1) * 0.5)
-    }));
+    const rarityBuffs = activeBuffs.filter(b => b.type === 'rarity_boost');
+
+    const weightedMushrooms = mushroomData.mushrooms.map(m => {
+      let weightMultiplier = 1;
+
+      // Apply Rarity Buffs
+      rarityBuffs.forEach(buff => {
+        if (buff.target === 'all' && m.rarity !== 'common') {
+          weightMultiplier *= buff.value;
+        } else if (buff.target === m.rarity) {
+          weightMultiplier *= buff.value;
+        }
+      });
+
+      return {
+        ...m,
+        effectiveWeight: m.rarity === 'common'
+          ? m.weight
+          : m.weight * (1 + (rarityLevel - 1) * 0.5) * weightMultiplier
+      };
+    });
+
     const totalWeight = weightedMushrooms.reduce((sum, m) => sum + m.effectiveWeight, 0);
 
     const rarityGroups = {};

@@ -76,7 +76,7 @@ export function FoodControls({ gold, foodState, fertilizerLevel, onActivateFood,
 
     const foodOptions = [
         { id: '3min-free', name: '무료', baseDuration: 180000, info: '느림 (0.5x)', cost: 0, color: 'linear-gradient(135deg, #a8e6cf 0%, #3dccc7 100%)' },
-        { id: '1min', name: '속도', baseDuration: 60000, info: '빠름 (2x)', cost: 200, color: 'linear-gradient(135deg, #ff9a9e 0%, #ff6b6b 100%)' },
+        { id: '1min', name: '속도', baseDuration: 60000, info: '빠름 (2.5x)', cost: 200, color: 'linear-gradient(135deg, #ff9a9e 0%, #ff6b6b 100%)' },
         { id: '5min', name: '보통', baseDuration: 300000, info: '보통 (1x)', cost: 150, color: 'linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%)' },
         { id: '10min', name: '장기', baseDuration: 600000, info: '느림 (0.7x)', cost: 350, color: 'linear-gradient(135deg, #95e1d3 0%, #38ada9 100%)' }
     ];
