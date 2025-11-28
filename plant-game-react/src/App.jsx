@@ -11,6 +11,9 @@ import { Settings } from './components/Settings';
 import { Achievements } from './components/Achievements';
 import { Quests } from './components/Quests';
 import { DailyReward } from './components/DailyReward';
+import { LuckyBoxPopup } from './components/LuckyBoxPopup';
+import { Pet } from './components/Pet';
+import DiscoveryPopup from './components/DiscoveryPopup';
 import mushroomData from './data/mushroom_types.json';
 import './styles/main.css';
 
@@ -68,16 +71,34 @@ function App() {
     stats,
     achievements,
     claimAchievement,
+    buyLuckyBox,
+    pests,
+    removePest,
     activeQuests,
     questTimer,
     refreshQuests,
     rerollQuest,
     completeQuest,
-
+    pets,
+    buyPet,
+    discoveredPlant,
+    setDiscoveredPlant,
+    maxSlots,
+    buyLandExpansion
   } = useGame();
 
   const [view, setView] = useState('game');
   const [showDailyReward, setShowDailyReward] = useState(false);
+  const [luckyBoxResult, setLuckyBoxResult] = useState(null);
+
+  const handleBuyLuckyBox = () => {
+    const result = buyLuckyBox();
+    if (result && result.success) {
+      setLuckyBoxResult(result.result);
+    } else if (result && !result.success) {
+      alert(result.message);
+    }
+  };
 
   // Scroll to top when view changes
   useEffect(() => {
@@ -203,6 +224,16 @@ function App() {
         />
       )}
 
+      <LuckyBoxPopup
+        result={luckyBoxResult}
+        onClose={() => setLuckyBoxResult(null)}
+      />
+
+      <DiscoveryPopup
+        plant={discoveredPlant}
+        onClose={() => setDiscoveredPlant(null)}
+      />
+
       <div className="header">
         <h1>🌱 Plant Tycoon</h1>
       </div>
@@ -274,7 +305,7 @@ function App() {
       </div>
 
       {/* Buff List - Moved inside flow to avoid overlap */}
-      {activeBuffs.length > 0 && (
+      {Array.isArray(activeBuffs) && activeBuffs.length > 0 && (
         <div style={{
           display: 'flex',
           flexWrap: 'wrap',
@@ -344,9 +375,9 @@ function App() {
               boxShadow: '0 2px 5px rgba(0,0,0,0.1)'
             }}>
               <div style={{ marginBottom: '5px', color: '#2d3436' }}>
-                🎲 현재 스폰 확률: <strong style={{ color: activeBuffs.some(b => b.type === 'spawn_rate') ? '#2ecc71' : 'inherit' }}>
+                🎲 현재 스폰 확률: <strong style={{ color: Array.isArray(activeBuffs) && activeBuffs.some(b => b.type === 'spawn_rate') ? '#2ecc71' : 'inherit' }}>
                   {getSpawnProbability()}
-                  {activeBuffs.some(b => b.type === 'spawn_rate') && (
+                  {Array.isArray(activeBuffs) && activeBuffs.some(b => b.type === 'spawn_rate') && (
                     <span style={{ fontSize: '0.8em', marginLeft: '5px' }}>
                       (+{(activeBuffs.filter(b => b.type === 'spawn_rate').reduce((sum, b) => sum + b.value, 0) * 100).toFixed(0)}%)
                     </span>
@@ -354,9 +385,9 @@ function App() {
                 </strong>
               </div>
               <div style={{ color: '#2d3436' }}>
-                🌱 성장 시간: <strong style={{ color: activeBuffs.some(b => b.type === 'speed') ? '#2ecc71' : 'inherit' }}>
+                🌱 성장 시간: <strong style={{ color: Array.isArray(activeBuffs) && activeBuffs.some(b => b.type === 'speed') ? '#2ecc71' : 'inherit' }}>
                   {getGrowthTime()}
-                  {activeBuffs.some(b => b.type === 'speed') && (
+                  {Array.isArray(activeBuffs) && activeBuffs.some(b => b.type === 'speed') && (
                     <span style={{ fontSize: '0.8em', marginLeft: '5px' }}>
                       (+{(activeBuffs.filter(b => b.type === 'speed').reduce((sum, b) => sum + b.value, 0) * 100).toFixed(0)}%)
                     </span>
@@ -365,10 +396,10 @@ function App() {
               </div>
               <div style={{ marginTop: '5px', color: '#636e72', fontSize: '0.9em' }}>
                 ⚡ 현재 속도: <strong>
-                  {((foodState.active ? foodState.multiplier : 0) * (1 + activeBuffs.filter(b => b.type === 'speed').reduce((sum, b) => sum + b.value, 0))).toFixed(1)}x
+                  {((foodState.active ? foodState.multiplier : 0) * (1 + (Array.isArray(activeBuffs) ? activeBuffs.filter(b => b.type === 'speed').reduce((sum, b) => sum + b.value, 0) : 0))).toFixed(1)}x
                 </strong>
               </div>
-              {activeBuffs.some(b => b.type === 'rarity_boost') && (
+              {Array.isArray(activeBuffs) && activeBuffs.some(b => b.type === 'rarity_boost') && (
                 <div style={{ marginTop: '5px', color: '#9b59b6', fontSize: '0.9em' }}>
                   ✨ 레어도 보정:
                   {activeBuffs.filter(b => b.type === 'rarity_boost').map((b, i) => (
@@ -410,96 +441,124 @@ function App() {
             </button>
           )}
 
-          <GameField plants={plants} onHarvest={harvest} />
+          <GameField
+            plants={plants}
+            onHarvest={harvest}
+            pests={pests}
+            onRemovePest={removePest}
+            maxSlots={maxSlots}
+          />
         </>
-      )}
+      )
+      }
 
-      {view === 'inventory' && (
-        <Inventory
-          inventory={inventory}
-          consumables={consumables}
-          onSell={sell}
-          onSellAll={sellAll}
-          onUseConsumable={useConsumable}
-          cookedItems={cookedItems}
-          useCookedItem={useCookedItem}
-          onSellCookedItem={sellCookedItem}
-        />
-      )}
+      {
+        view === 'inventory' && (
+          <Inventory
+            inventory={inventory}
+            consumables={consumables}
+            onSell={sell}
+            onSellAll={sellAll}
+            onUseConsumable={useConsumable}
+            cookedItems={cookedItems}
+            useCookedItem={useCookedItem}
+            onSellCookedItem={sellCookedItem}
+          />
+        )
+      }
 
-      {view === 'shop' && (
-        <Shop
-          gold={gold}
-          upgradeLevel={upgradeLevel}
-          unlocks={unlocks}
-          rarityLevel={rarityLevel}
-          fertilizerLevel={fertilizerLevel}
-          onBuyUpgrade={buyUpgrade}
-          onBuyUnlock={buyUnlock}
-          onBuyRarityUpgrade={buyRarityUpgrade}
-          onBuyFertilizerUpgrade={buyFertilizerUpgrade}
-          onBuyConsumable={buyConsumable}
-        />
-      )}
+      {
+        view === 'shop' && (
+          <Shop
+            gold={gold}
+            upgradeLevel={upgradeLevel}
+            unlocks={unlocks}
+            rarityLevel={rarityLevel}
+            fertilizerLevel={fertilizerLevel}
+            onBuyUpgrade={buyUpgrade}
+            onBuyUnlock={buyUnlock}
+            onBuyRarityUpgrade={buyRarityUpgrade}
+            onBuyFertilizerUpgrade={buyFertilizerUpgrade}
+            onBuyConsumable={buyConsumable}
+            onBuyLuckyBox={handleBuyLuckyBox}
+            pets={pets}
+            onBuyPet={buyPet}
+            maxSlots={maxSlots}
+            onBuyLandExpansion={buyLandExpansion}
+          />
+        )
+      }
 
-      {view === 'collection' && (
-        <Collection
-          collection={collection}
-          rarityLevel={rarityLevel}
-          activeBuffs={activeBuffs}
-        />
-      )}
+      {/* Pet - Phase 3: Render only when owned */}
+      {/* Pet - Phase 3: Render only when owned AND in game view */}
+      {pets && pets.dog && view === 'game' && <Pet type="dog" />}
 
-      {view === 'achievements' && (
-        <Achievements
-          stats={stats}
-          achievements={achievements}
-          onClaim={claimAchievement}
-        />
-      )}
+      {
+        view === 'collection' && (
+          <Collection
+            collection={collection}
+            mushroomData={mushroomData}
+          />
+        )
+      }
 
-      {view === 'quests' && (
-        <Quests
-          activeQuests={activeQuests}
-          questTimer={questTimer}
-          onRefresh={refreshQuests}
-          onReroll={rerollQuest}
-          onComplete={completeQuest}
-          inventory={inventory}
-          cookedItems={cookedItems}
-        />
-      )}
+      {
+        view === 'achievements' && (
+          <Achievements
+            stats={stats}
+            achievements={achievements}
+            onClaim={claimAchievement}
+          />
+        )
+      }
 
-      {view === 'kitchen' && (
-        <Kitchen
-          inventory={inventory}
-          cookedItems={cookedItems}
-          useCookedItem={useCookedItem}
-          cookingState={cookingState}
-          discoveredRecipes={discoveredRecipes}
-          startCooking={startCooking}
-          claimDish={claimDish}
-        />
-      )}
+      {
+        view === 'quests' && (
+          <Quests
+            activeQuests={activeQuests}
+            questTimer={questTimer}
+            onRefresh={refreshQuests}
+            onReroll={rerollQuest}
+            onComplete={completeQuest}
+            inventory={inventory}
+            cookedItems={cookedItems}
+          />
+        )
+      }
 
-      {view === 'settings' && (
-        <Settings
-          resetGame={resetGame}
-          activateGodMode={activateGodMode}
-          user={user}
-          onLogin={handleLogin}
-          onLogout={handleLogout}
-          onSave={handleSaveGame}
-          onLoad={handleLoadGame}
-          isSaving={isSaving}
-          lastSaved={lastSaved}
-        />
-      )}
+      {
+        view === 'kitchen' && (
+          <Kitchen
+            inventory={inventory}
+            cookedItems={cookedItems}
+            useCookedItem={useCookedItem}
+            cookingState={cookingState}
+            discoveredRecipes={discoveredRecipes}
+            startCooking={startCooking}
+            claimDish={claimDish}
+          />
+        )
+      }
+
+      {
+        view === 'settings' && (
+          <Settings
+            resetGame={resetGame}
+            activateGodMode={activateGodMode}
+            user={user}
+            onLogin={handleLogin}
+            onLogout={handleLogout}
+            onSave={handleSaveGame}
+            onLoad={handleLoadGame}
+            isSaving={isSaving}
+            lastSaved={lastSaved}
+          />
+        )
+      }
 
       <div className="info" style={{ marginTop: '20px', fontSize: '0.9em', color: '#8b4513' }}>
         {view === 'game' && '💡 먹이를 주면 식물이 자랍니다!'}
         {view === 'inventory' && '💡 아이템을 클릭하면 판매할 수 있습니다!'}
-        {view === 'shop' && '💡 업그레이드를 구매하여 더 빠르게 성장시키세요!'}
         {view === 'shop' && '💡 업그레이드를 구매하여 더 빠르게 성장시키세요!'}
         {view === 'collection' && '💡 수확하여 새로운 식물을 발견하세요!'}
         {view === 'achievements' && '💡 목표를 달성하고 보상을 획득하세요!'}

@@ -6,7 +6,6 @@ import recipeData from '../data/recipes.json';
 import achievementData from '../data/achievements.json';
 import questData from '../data/quests.json';
 
-const TOTAL_SLOTS = 25;
 const GROWTH_PROBABILITY = 0.01;
 
 export function useGame() {
@@ -16,9 +15,24 @@ export function useGame() {
     return saved ? parseInt(saved) : 50;
   });
 
+  const [maxSlots, setMaxSlots] = useState(() => {
+    const saved = localStorage.getItem('plant_game_maxSlots');
+    return saved ? parseInt(saved) : 25;
+  });
+
   const [plants, setPlants] = useState(() => {
     const saved = localStorage.getItem('plant_game_plants');
-    return saved ? JSON.parse(saved) : Array(TOTAL_SLOTS).fill(null);
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      // Ensure array matches current maxSlots
+      const savedMaxSlots = localStorage.getItem('plant_game_maxSlots');
+      const currentMax = savedMaxSlots ? parseInt(savedMaxSlots) : 25;
+      if (parsed.length < currentMax) {
+        return [...parsed, ...Array(currentMax - parsed.length).fill(null)];
+      }
+      return parsed;
+    }
+    return Array(25).fill(null);
   });
 
   const [inventory, setInventory] = useState(() => {
@@ -53,7 +67,8 @@ export function useGame() {
 
   const [activeBuffs, setActiveBuffs] = useState(() => {
     const saved = localStorage.getItem('plant_game_activeBuffs');
-    return saved ? JSON.parse(saved) : [];
+    const parsed = saved ? JSON.parse(saved) : [];
+    return Array.isArray(parsed) ? parsed : [];
   });
 
   const [stats, setStats] = useState(() => {
@@ -118,6 +133,9 @@ export function useGame() {
     const saved = localStorage.getItem('plant_game_discoveredRecipes');
     return saved ? JSON.parse(saved) : [];
   });
+
+  const [discoveredPlant, setDiscoveredPlant] = useState(null); // For discovery popup
+
 
   // --- Auth & Cloud Save Logic ---
   const [user, setUser] = useState(null);
@@ -200,7 +218,8 @@ export function useGame() {
       const data = await loadGameData(user.uid);
       if (data) {
         setGold(data.gold || 50);
-        setPlants(data.plants || Array(TOTAL_SLOTS).fill(null));
+        setMaxSlots(data.maxSlots || 25);
+        setPlants(data.plants || Array(data.maxSlots || 25).fill(null));
         setInventory(data.inventory || {});
         setCollection(data.collection || {});
         setUpgradeLevel(data.upgradeLevel || 0);
@@ -238,6 +257,7 @@ export function useGame() {
 
   // --- Persistence ---
   useEffect(() => {
+    localStorage.setItem('plant_game_maxSlots', maxSlots);
     localStorage.setItem('plant_game_gold', gold);
     localStorage.setItem('plant_game_plants', JSON.stringify(plants));
     localStorage.setItem('plant_game_inventory', JSON.stringify(inventory));
@@ -257,7 +277,7 @@ export function useGame() {
     localStorage.setItem('plant_game_achievements', JSON.stringify(achievements));
     localStorage.setItem('plant_game_activeQuests', JSON.stringify(activeQuests));
     localStorage.setItem('plant_game_questTimer', questTimer);
-  }, [gold, plants, inventory, collection, upgradeLevel, unlocks, rarityLevel, foodState, pityCounter, fertilizerLevel, consumables, cookedItems, activeBuffs, cookingState, discoveredRecipes, stats, achievements, activeQuests, questTimer]);
+  }, [maxSlots, gold, plants, inventory, collection, upgradeLevel, unlocks, rarityLevel, foodState, pityCounter, fertilizerLevel, consumables, cookedItems, activeBuffs, cookingState, discoveredRecipes, stats, achievements, activeQuests, questTimer]);
 
   // --- Refs for Loop ---
   const stateRef = useRef({
@@ -425,7 +445,6 @@ export function useGame() {
     }, 1000);
 
     return () => clearInterval(intervalId);
-    return () => clearInterval(intervalId);
   }, []);
 
   // --- Achievement Logic ---
@@ -463,10 +482,6 @@ export function useGame() {
   const updateStats = useCallback((type, amount = 1) => {
     setStats(prev => {
       const newStats = { ...prev, [type]: (prev[type] || 0) + amount };
-      // Check achievements immediately after stat update
-      // We need collection for check, so we pass it or use ref?
-      // Since collection updates separately, we might check achievements in a useEffect or pass it.
-      // For simplicity, let's rely on a useEffect that watches stats.
       return newStats;
     });
   }, []);
@@ -660,9 +675,6 @@ export function useGame() {
     // Remove Quest
     setActiveQuests(prev => prev.filter(q => q.id !== questId));
 
-    // Update Stats (Optional: Track completed quests)
-    // updateStats('quests_completed', 1); 
-
   }, [activeQuests, inventory, cookedItems]);
 
   // Auto-refresh timer removed - manual only
@@ -685,6 +697,9 @@ export function useGame() {
   const harvest = useCallback((index) => {
     const plant = plants[index];
     if (!plant || plant.stage !== 'adult') return;
+
+    // Check if this is a new discovery BEFORE updating collection
+    const isNewDiscovery = !collection[plant.emoji];
 
     setPlants(current => {
       const newPlants = [...current];
@@ -720,9 +735,17 @@ export function useGame() {
       return newCol;
     });
 
+    // Show discovery popup if new
+    if (isNewDiscovery) {
+      setDiscoveredPlant({
+        emoji: plant.emoji,
+        name: plant.name,
+        rarity: plant.rarity
+      });
+    }
 
     updateStats('total_harvest', 1);
-  }, [plants, updateStats]);
+  }, [plants, collection, updateStats]);
 
   const sell = useCallback((emoji, amount = 1) => {
     const item = inventory[emoji];
@@ -812,6 +835,30 @@ export function useGame() {
     }
   }, [gold]);
 
+  const buyLandExpansion = useCallback(() => {
+    const expansionLevels = [
+      { slots: 25, cost: 0 },     // Starting
+      { slots: 36, cost: 5000 },  // 6x6
+      { slots: 49, cost: 15000 }, // 7x7
+      { slots: 64, cost: 30000 }  // 8x8
+    ];
+
+    const currentLevel = expansionLevels.findIndex(l => l.slots === maxSlots);
+    if (currentLevel === -1 || currentLevel >= expansionLevels.length - 1) {
+      return false; // Already at max
+    }
+
+    const nextLevel = expansionLevels[currentLevel + 1];
+    if (gold >= nextLevel.cost) {
+      setGold(g => g - nextLevel.cost);
+      setMaxSlots(nextLevel.slots);
+      // Expand plants array
+      setPlants(prev => [...prev, ...Array(nextLevel.slots - maxSlots).fill(null)]);
+      return true;
+    }
+    return false;
+  }, [gold, maxSlots]);
+
   // Helper to get random mushroom type (duplicated logic for seed bomb)
   const getRandomMushroom = (currentRarity) => {
     const rarityBuffs = activeBuffs.filter(b => b.type === 'rarity_boost');
@@ -871,7 +918,7 @@ export function useGame() {
         });
 
         // 2. Fill empty slots
-        for (let i = 0; i < TOTAL_SLOTS; i++) {
+        for (let i = 0; i < maxSlots; i++) {
           if (!newPlants[i]) {
             const selectedType = getRandomMushroom(rarityLevel);
             // Base: 60s, reduces by 3s per upgrade level, min 5s
@@ -913,64 +960,128 @@ export function useGame() {
     }
   }, [consumables, rarityLevel, upgradeLevel]);
 
+  // Lucky Box Logic
+  const buyLuckyBox = useCallback(() => {
+    const cost = 250; // Price adjusted
+    if (gold < cost) {
+      return { success: false, message: "골드가 부족합니다!" };
+    }
+
+    setGold(g => g - cost);
+
+    const rand = Math.random() * 100;
+    let result = {};
+
+    // New Probabilities (High Risk)
+    // 0.5% Jackpot (3000G)
+    // 5% Big Win (500G)
+    // 40% Small Win (50G) - Loss
+    // 54.5% Trash (0G) - Loss
+
+    if (rand < 0.5) {
+      // Jackpot
+      const reward = 3000;
+      setGold(g => g + reward);
+      result = { type: 'jackpot', message: "🎉 잭팟! 인생 역전!", rewardText: `+${reward} Gold` };
+    } else if (rand < 5.5) {
+      // Big Win (Break even + profit)
+      const reward = 500;
+      setGold(g => g + reward);
+      result = { type: 'big_win', message: "✨ 오! 꽤 짭짤한데요?", rewardText: `+${reward} Gold` };
+    } else if (rand < 45.5) {
+      // Small Win (Loss)
+      const reward = 50;
+      setGold(g => g + reward);
+      result = { type: 'small_win', message: "🪙 소소한 용돈벌이...", rewardText: `+${reward} Gold` };
+    } else {
+      // Trash
+      result = { type: 'trash', message: "💨 꽝! 아무것도 없네요...", rewardText: "먼지 획득..." };
+    }
+
+    return { success: true, result };
+  }, [gold]);
+
   const harvestAll = useCallback(() => {
     if (!unlocks.harvestAll) return;
 
+    // First, collect all the data we need
+    const adultsToHarvest = [];
+    plants.forEach((plant, index) => {
+      if (plant && plant.stage === 'adult') {
+        adultsToHarvest.push({ plant, index });
+      }
+    });
+
+    if (adultsToHarvest.length === 0) return;
+
+    // Group harvested items
+    const harvestedItems = {};
+    adultsToHarvest.forEach(({ plant }) => {
+      if (!harvestedItems[plant.emoji]) {
+        harvestedItems[plant.emoji] = { ...plant, count: 0 };
+      }
+      harvestedItems[plant.emoji].count++;
+    });
+
+    // Detect first new plant
+    let firstNewPlant = null;
+    Object.values(harvestedItems).forEach(item => {
+      if (!collection[item.emoji] && !firstNewPlant) {
+        firstNewPlant = {
+          emoji: item.emoji,
+          name: item.name,
+          rarity: item.rarity
+        };
+      }
+    });
+
+    // Now update all states
     setPlants(current => {
       const newPlants = [...current];
-      let harvestedCount = 0;
-      const harvestedItems = {};
-
-      newPlants.forEach((plant, index) => {
-        if (plant && plant.stage === 'adult') {
-          newPlants[index] = null;
-          harvestedCount++;
-
-          // Count for inventory/collection
-          if (!harvestedItems[plant.emoji]) {
-            harvestedItems[plant.emoji] = { ...plant, count: 0 };
-          }
-          harvestedItems[plant.emoji].count++;
-        }
+      adultsToHarvest.forEach(({ index }) => {
+        newPlants[index] = null;
       });
-
-      if (harvestedCount === 0) return current;
-
-      // Update Inventory
-      setInventory(currInv => {
-        const newInv = { ...currInv };
-        Object.values(harvestedItems).forEach(item => {
-          if (!newInv[item.emoji]) {
-            newInv[item.emoji] = { ...item, count: 0 };
-          } else {
-            newInv[item.emoji] = { ...newInv[item.emoji] }; // Deep copy
-          }
-          newInv[item.emoji].count += item.count;
-        });
-        return newInv;
-      });
-
-      // Update Collection
-      setCollection(currCol => {
-        const newCol = { ...currCol };
-        Object.values(harvestedItems).forEach(item => {
-          if (!newCol[item.emoji]) {
-            newCol[item.emoji] = {
-              discovered: true,
-              count: 0,
-              firstDiscoveredAt: new Date().toISOString()
-            };
-          } else {
-            newCol[item.emoji] = { ...newCol[item.emoji] }; // Deep copy
-          }
-          newCol[item.emoji].count += item.count;
-        });
-        return newCol;
-      });
-
       return newPlants;
     });
-  }, [unlocks.harvestAll]);
+
+    setInventory(currInv => {
+      const newInv = { ...currInv };
+      Object.values(harvestedItems).forEach(item => {
+        if (!newInv[item.emoji]) {
+          newInv[item.emoji] = { ...item, count: 0 };
+        } else {
+          newInv[item.emoji] = { ...newInv[item.emoji] };
+        }
+        newInv[item.emoji].count += item.count;
+      });
+      return newInv;
+    });
+
+    setCollection(currCol => {
+      const newCol = { ...currCol };
+      Object.values(harvestedItems).forEach(item => {
+        if (!newCol[item.emoji]) {
+          newCol[item.emoji] = {
+            discovered: true,
+            count: 0,
+            firstDiscoveredAt: new Date().toISOString()
+          };
+        } else {
+          newCol[item.emoji] = { ...newCol[item.emoji] };
+        }
+        newCol[item.emoji].count += item.count;
+      });
+      return newCol;
+    });
+
+    // Show popup for new discovery
+    if (firstNewPlant) {
+      setTimeout(() => setDiscoveredPlant(firstNewPlant), 100);
+    }
+
+    // Update stats
+    updateStats('total_harvest', adultsToHarvest.length);
+  }, [unlocks.harvestAll, plants, collection, updateStats]);
 
   const activateFood = useCallback((type) => {
     const foodTypes = {
@@ -1250,10 +1361,71 @@ export function useGame() {
         count: 99
       };
     });
-
     setInventory(newInventory);
     alert('God Mode Activated! ⚡');
   }, []);
+
+  // --- Pest System ---
+  const [pests, setPests] = useState({}); // { slotIndex: true }
+
+  const removePest = useCallback((slotIndex) => {
+    setPests(prev => {
+      const newPests = { ...prev };
+      if (newPests[slotIndex]) {
+        delete newPests[slotIndex];
+        setGold(g => g + 50); // 50 Gold reward
+        return newPests;
+      }
+      return prev;
+    });
+  }, []);
+
+  // --- Pet System (Phase 1-4) ---
+  const [pets, setPets] = useState(() => {
+    const saved = localStorage.getItem('plant_game_pets');
+    try {
+      return saved ? JSON.parse(saved) : { dog: false };
+    } catch (e) {
+      return { dog: false };
+    }
+  });
+
+  useEffect(() => {
+    localStorage.setItem('plant_game_pets', JSON.stringify(pets));
+  }, [pets]);
+
+  const buyPet = useCallback((type, cost) => {
+    if (gold >= cost && !pets[type]) {
+      setGold(g => g - cost);
+      setPets(prev => ({ ...prev, [type]: true }));
+      return true;
+    }
+    return false;
+  }, [gold, pets]);
+
+  // Phase 4: Auto-harvest using harvest function
+  const plantsRef = useRef(plants);
+  useEffect(() => {
+    plantsRef.current = plants;
+  }, [plants]);
+
+  useEffect(() => {
+    if (!pets.dog) return;
+
+    const interval = setInterval(() => {
+      const currentPlants = plantsRef.current;
+      const adultIndices = currentPlants
+        .map((p, i) => (p && p.stage === 'adult') ? i : -1)
+        .filter(i => i !== -1);
+
+      if (adultIndices.length > 0) {
+        const randomIndex = adultIndices[Math.floor(Math.random() * adultIndices.length)];
+        harvest(randomIndex);
+      }
+    }, 15000); // Every 15 seconds
+
+    return () => clearInterval(interval);
+  }, [pets.dog, harvest]);
 
   // --- Daily Reward Logic ---
   const [dailyReward, setDailyReward] = useState(() => {
@@ -1372,6 +1544,8 @@ export function useGame() {
     buyFertilizerUpgrade,
     buyConsumable,
     useConsumable,
+    buyLandExpansion,
+    maxSlots,
     harvestAll,
     activateFood,
     cancelFood,
@@ -1392,6 +1566,13 @@ export function useGame() {
     questTimer,
     refreshQuests,
     rerollQuest,
-    completeQuest
+    completeQuest,
+    buyLuckyBox,
+    pests,
+    removePest,
+    pets,
+    buyPet,
+    discoveredPlant,
+    setDiscoveredPlant
   };
 }

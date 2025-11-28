@@ -1,0 +1,123 @@
+/* === MOBILE RESPONSIVE DESIGN === */
+@media (max-width: 767px) {
+    body {
+        padding: 5px 0;
+        align-items: flex-start;
+        overflow-x: hidden;
+    }
+
+    .game-container {
+        padding: 10px;
+        width: 100%;
+        max-width: 100%;
+        border-radius: 0;
+        min-height: 100vh;
+        box-shadow: none;
+    }
+
+    h1 {
+        font-size: 1.2em;
+        margin-bottom: 10px;
+    }
+
+    /* Stats: 가로 스크롤 */
+    .stats {
+        padding: 8px;
+        margin-bottom: 10px;
+        display: flex;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        gap: 10px;
+        justify-content: flex-start;
+        -webkit-overflow-scrolling: touch;
+        /* 부드러운 스크롤 */
+    }
+
+    .stats::-webkit-scrollbar {
+        display: none;
+        /* 스크롤바 숨김 */
+    }
+
+    .stat-box {
+        flex: 0 0 auto;
+        /* 줄어들지 않음 */
+        min-width: 60px;
+    }
+
+    .stat-label {
+        font-size: 0.6em;
+    }
+
+    .stat-value {
+        font-size: 0.8em;
+        white-space: nowrap;
+    }
+
+    .log-container {
+        padding: 8px;
+        margin-bottom: 10px;
+        font-size: 0.8em;
+    }
+
+    .mushroom-field {
+        gap: 3px;
+        margin-bottom: 10px;
+    }
+
+    .mushroom {
+        font-size: 1.2em;
+    }
+
+    /* Tabs: 가로 스크롤 */
+    .tabs {
+        gap: 5px;
+        margin-bottom: 10px;
+        display: flex;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        justify-content: flex-start;
+        padding-bottom: 5px;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .tabs::-webkit-scrollbar {
+        height: 4px;
+        /* 얇은 스크롤바 */
+    }
+
+    .tabs::-webkit-scrollbar-thumb {
+        background: rgba(0, 0, 0, 0.1);
+        border-radius: 10px;
+    }
+
+    .tab {
+        padding: 6px 10px;
+        font-size: 0.75em;
+        flex: 0 0 auto;
+        /* 줄어들지 않음 */
+        min-height: 36px;
+        white-space: nowrap;
+    }
+
+    .btn {
+        padding: 8px 12px;
+        font-size: 0.8em;
+        min-height: 36px;
+    }
+
+    .inventory-grid,
+    .shop-grid {
+        grid-template-columns: repeat(3, 1fr);
+        /* 2열 -> 3열로 변경 (더 작게) */
+        gap: 8px;
+        max-height: 50vh;
+    }
+
+    .inventory-item {
+        padding: 8px;
+    }
+
+    .item-icon {
+        font-size: 1.5em;
+    }
+}

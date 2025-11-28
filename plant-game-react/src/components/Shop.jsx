@@ -11,11 +11,16 @@ export function Shop({
     onBuyUnlock,
     onBuyRarityUpgrade,
     onBuyFertilizerUpgrade,
-    onBuyConsumable
+    onBuyConsumable,
+    onBuyLuckyBox,
+    pets,
+    onBuyPet,
+    maxSlots,
+    onBuyLandExpansion
 }) {
     const upgradeCost = 100 + (upgradeLevel * 50);
-    // Fix: Match useGame.js formula: Linear (1000 * Level)
-    const rarityCost = 1000 * rarityLevel;
+    // Fix: Match useGame.js formula: Linear (500 * Level)
+    const rarityCost = 500 * rarityLevel;
     const statsCost = 500;
     const harvestAllCost = 500;
 
@@ -180,6 +185,47 @@ export function Shop({
                     </button>
                 </motion.div>
 
+                {/* Land Expansion */}
+                <motion.div
+                    className="shop-item"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.45 }}
+                    style={{
+                        background: 'white',
+                        borderRadius: '16px',
+                        padding: '20px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '20px',
+                        boxShadow: '0 4px 15px rgba(0,0,0,0.05)',
+                        border: maxSlots >= 64 ? '2px solid #b2bec3' : '2px solid #00b894'
+                    }}
+                >
+                    <div style={{ fontSize: '3em' }}>🏗️</div>
+                    <div style={{ flex: 1 }}>
+                        <div className="text-black" style={{ fontSize: '1.2em', fontWeight: 'bold' }}>토지 확장</div>
+                        <div style={{ color: '#636e72', fontSize: '0.9em' }}>
+                            {maxSlots === 25 && '5×5 → 6×6 (11칸 추가)'}
+                            {maxSlots === 36 && '6×6 → 7×7 (13칸 추가)'}
+                            {maxSlots === 49 && '7×7 → 8×8 (15칸 추가)'}
+                            {maxSlots >= 64 && '최대 확장 완료!'}
+                        </div>
+                        <div style={{ color: '#00b894', fontWeight: 'bold', fontSize: '0.9em' }}>현재: {maxSlots}칸</div>
+                    </div>
+                    <button
+                        className="btn"
+                        onClick={onBuyLandExpansion}
+                        disabled={maxSlots >= 64 || gold < (maxSlots === 25 ? 5000 : maxSlots === 36 ? 15000 : 30000)}
+                        style={{
+                            opacity: (maxSlots >= 64 || gold < (maxSlots === 25 ? 5000 : maxSlots === 36 ? 15000 : 30000)) ? 0.5 : 1,
+                            background: maxSlots >= 64 ? '#b2bec3' : '#00b894'
+                        }}
+                    >
+                        {maxSlots >= 64 ? '최대' : `💰 ${maxSlots === 25 ? 5000 : maxSlots === 36 ? 15000 : 30000}`}
+                    </button>
+                </motion.div>
+
                 {/* Divider */}
                 <div style={{
                     borderTop: '2px solid #dfe6e9',
@@ -209,15 +255,94 @@ export function Shop({
                     <div style={{ fontSize: '3em' }}>💣</div>
                     <div style={{ flex: 1 }}>
                         <div className="text-black" style={{ fontSize: '1.2em', fontWeight: 'bold' }}>씨앗 폭탄</div>
-                        <div style={{ color: '#636e72', fontSize: '0.9em' }}>빈 땅에 다 자란 식물을 가득 채웁니다!</div>
+                        <div style={{ color: '#636e72', fontSize: '0.9em' }}>빈 땅에 다 자란 식물을 가득 채웁니다! ({maxSlots}칸)</div>
                     </div>
                     <button
                         className="btn"
-                        onClick={() => onBuyConsumable('seedBomb', 2000)}
-                        disabled={gold < 2000}
-                        style={{ opacity: gold < 2000 ? 0.5 : 1, background: '#e17055' }}
+                        onClick={() => onBuyConsumable('seedBomb', maxSlots === 25 ? 2000 : maxSlots === 36 ? 3000 : maxSlots === 49 ? 4500 : 6000)}
+                        disabled={gold < (maxSlots === 25 ? 2000 : maxSlots === 36 ? 3000 : maxSlots === 49 ? 4500 : 6000)}
+                        style={{
+                            opacity: gold < (maxSlots === 25 ? 2000 : maxSlots === 36 ? 3000 : maxSlots === 49 ? 4500 : 6000) ? 0.5 : 1,
+                            background: '#e17055'
+                        }}
                     >
-                        💰 2000
+                        💰 {maxSlots === 25 ? 2000 : maxSlots === 36 ? 3000 : maxSlots === 49 ? 4500 : 6000}
+                    </button>
+                </motion.div>
+
+                {/* Lucky Box */}
+                <motion.div
+                    className="shop-item"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.6 }}
+                    style={{
+                        background: 'white',
+                        borderRadius: '16px',
+                        padding: '20px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '20px',
+                        boxShadow: '0 4px 15px rgba(0,0,0,0.05)',
+                        border: '2px solid #a29bfe'
+                    }}
+                >
+                    <div style={{ fontSize: '3em' }}>🎁</div>
+                    <div style={{ flex: 1 }}>
+                        <div className="text-black" style={{ fontSize: '1.2em', fontWeight: 'bold' }}>럭키 박스</div>
+                        <div style={{ color: '#636e72', fontSize: '0.9em' }}>무엇이 나올지 모릅니다! (꽝 주의)</div>
+                        <div style={{ fontSize: '0.75em', color: '#b2bec3', marginTop: '5px' }}>
+                            확률: 잭팟(0.5%), 대박(5%), 소박(40%), 꽝(54.5%)
+                        </div>
+                    </div>
+                    <button
+                        className="btn"
+                        onClick={onBuyLuckyBox}
+                        disabled={gold < 250}
+                        style={{ opacity: gold < 250 ? 0.5 : 1, background: '#a29bfe' }}
+                    >
+                        💰 250
+                    </button>
+                </motion.div>
+
+                {/* Pet Dog - Phase 2 */}
+                <motion.div
+                    className="shop-item"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.7 }}
+                    style={{
+                        background: 'white',
+                        borderRadius: '16px',
+                        padding: '20px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '20px',
+                        boxShadow: '0 4px 15px rgba(0,0,0,0.05)',
+                        border: pets && pets.dog ? '2px solid #b2bec3' : '2px solid #fdcb6e'
+                    }}
+                >
+                    <div style={{ fontSize: '3em' }}>🐶</div>
+                    <div style={{ flex: 1 }}>
+                        <div className="text-black" style={{ fontSize: '1.2em', fontWeight: 'bold' }}>반려견 입양</div>
+                        <div style={{ color: '#636e72', fontSize: '0.9em' }}>
+                            귀여운 강아지가 화면을 걸어다니며<br />
+                            15초마다 무작위로 식물을 자동 수확해줍니다!
+                        </div>
+                        <div style={{ color: '#fdcb6e', fontWeight: 'bold', fontSize: '0.9em', marginTop: '5px' }}>
+                            {pets && pets.dog ? '✅ 입양완료' : '미입양'}
+                        </div>
+                    </div>
+                    <button
+                        className="btn"
+                        onClick={() => onBuyPet('dog', 3000)}
+                        disabled={gold < 3000 || (pets && pets.dog)}
+                        style={{
+                            opacity: (gold < 3000 || (pets && pets.dog)) ? 0.5 : 1,
+                            background: (pets && pets.dog) ? '#b2bec3' : '#fdcb6e'
+                        }}
+                    >
+                        {pets && pets.dog ? '입양완료' : '💰 3000'}
                     </button>
                 </motion.div>
 
